@@ -1,9 +1,11 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  turbopack: {
-    root: __dirname,
+// next.config.ts
+const nextConfig = {
+  experimental: {
+    webpackBuildWorker: true,
   },
-};
+  turbopack: {
+    root: __dirname, // 👈 force le bon répertoire
+  },
+}
 
-export default nextConfig;
+export default nextConfig

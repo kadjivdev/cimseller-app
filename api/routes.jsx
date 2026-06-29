@@ -1,7 +1,6 @@
 // BASE URL
-const baseUrl = import.meta.env.VITE_LOGIN_API_URL
 
-const myRoutes = {
+const apiRoutes = {
 
   // auth routes
   login: `auth/login`,
@@ -18,6 +17,7 @@ const myRoutes = {
 
   // role's routes
   allRole: `roles`,
+  retrieveRole: (id) => (`roles/${id}`),
   createRole: `roles`,
   updateRole: (id) => (`roles/${id}`),
   deleteRole: (id) => (`roles/${id}`),
@@ -79,7 +79,6 @@ const myRoutes = {
   validateReglement: (id) => (`reglements/${id}`),
   deleteReglement: (id) => (`reglements/${id}`),
 
-
   // vente comptabilitz's routes
   allComptabilities: `comptabilities`,
   createComptabilities: `comptabilities`,
@@ -140,4 +139,4 @@ const myRoutes = {
   deleteClient: (id) => (`clients/${id}`),
 }
 
-export default myRoutes
+export default apiRoutes

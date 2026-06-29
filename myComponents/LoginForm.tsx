@@ -29,27 +29,64 @@ import { Separator } from "@/components/ui/separator"
 import { UserRoundKey } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
+import { useApp } from "../app/AppContext"
+import { redirect, useRouter } from "next/navigation"
+
+type LoginResponse = {
+  success: boolean
+  status?: number
+  message?: string
+  error?: string
+  errors?: Record<string, any>
+}
 
 export function LoginForm() {
 
-  const [loading, setLoading] = React.useState(false)
+  // const [loading, setLoading] = React.useState(false)
+  const { login, loading, setLoading } = useApp()
+  const router = useRouter()
 
-  function handleSubmit(e) {
+  // Se connecter
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    // loading....
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email")
+    const password = formData.get("password")
+
+    // loading...
     setLoading(true)
-    toast.promise<{ name: string }>(
-      () => new Promise((resolve) =>
-        setTimeout(() => resolve({ name: "Event" }), 2000)
-      ),
+
+    // traitement...
+    await toast.promise<LoginResponse>(
+      login(email, password),
       {
         loading: "Connexion en cours...",
-        success: (data) => `${data.name} has been created`,
-        error: "Error",
+        success: function (data: LoginResponse) {
+          setLoading(false)
+          console.log("Data obtenu après request :", data)
+
+          if (data.success) {
+            setTimeout(() => router.push("/dashboard"), 1000);
+            return (
+              <>
+                <span style={{ whiteSpace: "pre-line" }}>
+                  {"Vous êtes connecté.e avec succès!\nRedirection en cours"}
+                </span>
+                <Spinner />
+              </>
+            );
+          }
+          return data.error || data.errors?.[0] || "Erreur de connexion"
+        },
+        error: function (err) {
+          setLoading(false)
+
+          console.log("Console dans loginForm :", err)
+          return err?.message || "Erreur de connexion"
+        },
       }
     )
-
   }
 
   return (
@@ -61,7 +98,9 @@ export function LoginForm() {
               <InputGroup className="h-auto">
                 <InputGroupInput
                   id="block-start-input1"
-                  placeholder="Email ou identifiant"
+                  type="email"
+                  name="email"
+                  placeholder="*************"
                   required
                 />
                 <InputGroupAddon align="block-start">
@@ -72,7 +111,8 @@ export function LoginForm() {
               <InputGroup className="h-auto">
                 <InputGroupInput
                   id="block-start-input2"
-                  placeholder="Mot de passe"
+                  name="password"
+                  placeholder="**************"
                   type="password"
                   required
                 />
@@ -101,3 +141,4 @@ export function LoginForm() {
     </Card>
   )
 }
+
