@@ -13,23 +13,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export type Role = {
+export type User = {
   id: number
-  name: string
-  description: string
-  created_at: string
+  fullname: string
+  email: string
+  role: {
+    name: String
+    description: String
+    permissions: []
+  }
+  createdAt: string
 }
 
 // export type Name:String
 
-export function useColumns(onEdit: (role: Role) => void, onDelete: (role: Role) => void): ColumnDef<Role>[] {
+export function useColumns(onEdit: (user: User) => void, onDelete: (user: User) => void): ColumnDef<User>[] {
   // verifier si le user a cette permission
   // const isUserPermitted = (name:String) => {
   //   return (rolePermissions).some(per => per.name == name);
   // }
 
   return [
-     {
+    {
       accessorKey: "id",
       header: ({ column }) => (
         <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
@@ -40,27 +45,38 @@ export function useColumns(onEdit: (role: Role) => void, onDelete: (role: Role) 
       cell: ({ row }) => row.getValue("id") || "—",
     },
     {
-      accessorKey: "name",
+      accessorKey: "fullname",
       header: ({ column }) => (
         <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Nom <ArrowUpDown className="ml-2 h-4 w-4" />
+          Nom Complet<ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("name") || "—",
+      cell: ({ row }) => row.getValue("fullname") || "—",
     },
     {
-      accessorKey: "description",
+      accessorKey: "email",
       header: ({ column }) => (
         <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Description <ArrowUpDown className="ml-2 h-4 w-4" />
+          Email <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("description") || "—",
+      cell: ({ row }) => row.getValue("email") || "—",
     },
     {
-      accessorKey: "created_at",
+      accessorKey: "role",
+      header: ({ column }) => (
+        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Rôle <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      // cell: ({ row }) => row.getValue("row.role?.name") || "—",
+      cell: ({ row }) => <span className="badge bg-light border rounded shadow-sm text-dark">{row.original.role?.name || "—"} </span>,
+    },
+    {
+      accessorKey: "createdAt",
       header: ({ column }) => (
         <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -68,7 +84,7 @@ export function useColumns(onEdit: (role: Role) => void, onDelete: (role: Role) 
       ),
       // ✅ Formater la date
       cell: ({ row }) => {
-        const date = row.getValue("created_at") as string
+        const date = row.getValue("createdAt") as string
         if (!date) {
           return new Date().toLocaleDateString("fr-FR", {
             day: "2-digit",
@@ -93,7 +109,7 @@ export function useColumns(onEdit: (role: Role) => void, onDelete: (role: Role) 
         </Button>
       ),
       cell: ({ row }) => {
-        const role = row.original
+        const user = row.original
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -112,7 +128,7 @@ export function useColumns(onEdit: (role: Role) => void, onDelete: (role: Role) 
                 className="text-warning"
                 onSelect={(e) => {
                   e.preventDefault()
-                  onEdit(role) // 👈 remonte juste le role
+                  onEdit(user) // 👈 remonte juste le role
                 }}
               >
                 <PencilLine /> Modifier
@@ -123,7 +139,7 @@ export function useColumns(onEdit: (role: Role) => void, onDelete: (role: Role) 
                 className="text-danger"
                 onSelect={(e) => {
                   e.preventDefault()
-                  onDelete(role) // 👈 remonte juste le role
+                  onDelete(user) // 👈 remonte juste le role
                 }}>
                 <Eraser /> Supprimer
               </DropdownMenuItem>

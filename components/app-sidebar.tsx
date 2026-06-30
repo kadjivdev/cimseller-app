@@ -615,7 +615,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter()
 
   return (
-    <Sidebar collapsible="offcanvas" {...props} className="shadow-sm">
+    <Sidebar 
+    collapsible="offcanvas" 
+    {...props} 
+    className="shadow-sm border" style={{width:'50vh'}} >
       <SidebarHeader className="border-bottom rounded shadow-sm">
         <SidebarMenu>
           <SidebarMenuItem>
@@ -638,17 +641,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <Separator />
           </div>
         ))}
-        {/* <NavMain label="ENTREES" items={data.navEnter} />
-        <Separator />
-        <NavMain label="SORTIES" items={data.navOut} />
-        <Separator />
-        <NavMain label="SOLDES" items={data.navSoldes} />
-        <Separator />
-        <NavMain label="CLIENTS" items={data.navClients} />
-        <Separator />
-        <NavMain label="PARAMETRAGE" items={data.navSettings} />
-        <Separator />
-        <NavMain label="SECUTITE" items={data.navSecuritys} /> */}
       </SidebarContent>
 
       <SidebarFooter className="border-top shadow-sm">

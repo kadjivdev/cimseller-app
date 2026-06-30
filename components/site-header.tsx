@@ -18,8 +18,6 @@ export function SiteHeader() {
   const { user, logout, loading, setLoading } = useApp()
   const router = useRouter()
 
-  console.log("user from site-header:", user)
-
   // deconnexion
   const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -39,7 +37,6 @@ export function SiteHeader() {
           error?: string
           errors?: Record<string, any>
         }) {
-          console.log("Data obtenu après request :", data)
 
           setLoading(false)
           setTimeout(() => router.push("/"), 1000);
@@ -52,7 +49,6 @@ export function SiteHeader() {
         error: function (err) {
           setLoading(false)
 
-          console.log("Console dans handleLogout :", err)
           return err?.message || "Erreur de déconnexion"
         },
       }

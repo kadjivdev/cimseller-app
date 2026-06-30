@@ -9,9 +9,10 @@ import { toast } from "sonner"
 import { Separator } from "@/components/ui/separator"
 import { Spinner } from "@/components/ui/spinner"
 import routes from "@/app/routes"
+import { Logs } from "lucide-react"
 
 // Composant interne qui a accès au contexte
-function DashboardContent({ title, children }) {
+function DashboardContent({ title, children,icon=null }) {
     const router = useRouter()
     const { isAuthenticated, loading, initialized } = useApp()
     const newDate = new Date()
@@ -48,7 +49,7 @@ function DashboardContent({ title, children }) {
                         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
                             {title && (
                                 <>
-                                    <h3 className="text-center">{title}</h3>
+                                    <h3 className="text-center"> {title}</h3>
                                     <Separator />
                                 </>
                             )}
