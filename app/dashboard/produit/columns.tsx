@@ -12,17 +12,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Textarea } from "@/components/ui/textarea"
+import Link from "next/link"
 
-export type Zone = {
+export type Produit = {
   id: number
   name: string
   description: string
+  fournisseurPrice: Number
+  type: {
+    id: Number,
+    name: String,
+  }
+  typeId: Number
+  image: string
   createdAt: string
 }
 
 // export type Name:String
 
-export function useColumns(onEdit: (zone: Zone) => void, onDelete: (user: Zone) => void): ColumnDef<Zone>[] {
+export function useColumns(onEdit: (produit: Produit) => void, onDelete: (produit: Produit) => void): ColumnDef<Produit>[] {
   // verifier si le user a cette permission
   // const isUserPermitted = (name:String) => {
   //   return (rolePermissions).some(per => per.name == name);
@@ -50,6 +59,36 @@ export function useColumns(onEdit: (zone: Zone) => void, onDelete: (user: Zone) 
       cell: ({ row }) => row.getValue("name") || "—",
     },
     {
+      accessorKey: "type",
+      header: ({ column }) => (
+        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Type <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {row.original.type?.name || "—"} </span>,
+    },
+    {
+      accessorKey: "fournisseurPrice",
+      header: ({ column }) => (
+        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Prix fournisseur <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.getValue("fournisseurPrice") || "—",
+    },
+    {
+      accessorKey: "image",
+      header: ({ column }) => (
+        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Image <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.original?.image? <Link href={row.original?.image}/>:'--',
+    },
+    {
       accessorKey: "description",
       header: ({ column }) => (
         <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
@@ -57,7 +96,7 @@ export function useColumns(onEdit: (zone: Zone) => void, onDelete: (user: Zone) 
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.original.description || "—",
+      cell: ({ row }) => <Textarea defaultValue={row.getValue("description") || "—"} rows={1}></Textarea>,
     },
     {
       accessorKey: "createdAt",
@@ -93,7 +132,7 @@ export function useColumns(onEdit: (zone: Zone) => void, onDelete: (user: Zone) 
         </Button>
       ),
       cell: ({ row }) => {
-        const zone = row.original
+        const produit = row.original
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -112,7 +151,7 @@ export function useColumns(onEdit: (zone: Zone) => void, onDelete: (user: Zone) 
                 className="text-warning"
                 onSelect={(e) => {
                   e.preventDefault()
-                  onEdit(zone) // 👈 remonte juste le role
+                  onEdit(produit) // 👈 remonte juste le produit
                 }}
               >
                 <PencilLine /> Modifier
@@ -123,7 +162,7 @@ export function useColumns(onEdit: (zone: Zone) => void, onDelete: (user: Zone) 
                 className="text-danger"
                 onSelect={(e) => {
                   e.preventDefault()
-                  onDelete(zone) // 👈 remonte juste le role
+                  onDelete(produit) // 👈 remonte juste le produit
                 }}>
                 <Eraser /> Supprimer
               </DropdownMenuItem>

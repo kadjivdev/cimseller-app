@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useColumns, Zone } from "../zone/columns"
+import { useColumns, Produit } from "../produit/columns"
 import { TableActions } from "./tableActions"
 import { Card } from "@/components/ui/card"
 import {
@@ -29,32 +29,34 @@ import {
 import { Settings2 } from "lucide-react"
 
 // modals
-import UpdateZoneModal from "./modal"
-import DeleteZoneModal from "./delete-modal"
+import UpdateProduitModal from "./modal"
+import DeleteProduitModal from "./delete-modal"
 
 const exportColumns = [
     { label: "Nom ", key: "name" as const },
     { label: "Descriprion", key: "description" as const },
+    { label: "Type", key: "type" as const },
+    { label: "Image", key: "image" as const },
     { label: "Crée le", key: "createdAt" as const },
 ]
 
 export function DataTable({ data, setReload }) {
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
-    const [selectedZone, setSelectedZone] = useState<Zone | null>(null)
+    const [selectedProduit, setSelectedProduit] = useState<Produit | null>(null)
 
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // ✅ Nouveau
 
     // 
-    const handleEdit = (zone: Zone) => {
-        setSelectedZone(zone)
+    const handleEdit = (produit: Produit) => {
+        setSelectedProduit(produit)
         setOpen(true)
     }
 
-    const handleDelete = (zone: Zone) => {
-        setSelectedZone(zone)
+    const handleDelete = (produit: Produit) => {
+        setSelectedProduit(produit)
         setOpenDelete(true)
     }
 
@@ -174,17 +176,17 @@ export function DataTable({ data, setReload }) {
             </Card>
 
             {/* ✅ Une seule instance du modal pour toute la table */}
-            <UpdateZoneModal
+            <UpdateProduitModal
                 open={open}
                 onOpenChange={setOpen}
-                zone={selectedZone}
+                produit={selectedProduit}
                 setReload={setReload}
             />
 
-            <DeleteZoneModal
+            <DeleteProduitModal
                 open={openDelete}
                 onOpenChange={setOpenDelete}
-                zone={selectedZone}
+                produit={selectedProduit}
                 setReload={setReload}
             />
         </>

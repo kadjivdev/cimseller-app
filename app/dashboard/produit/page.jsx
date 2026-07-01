@@ -23,16 +23,16 @@ import {
 } from "@/components/ui/table"
 
 export default function index() {
-    const [zones, setZones] = useState([])
+    const [produits, setProduits] = useState([])
     const [reload, setReload] = useState(false)
 
     // get zones
     const retriveZones = async () => {
         try {
-            const response = await axiosInstance.get(apiRoutes.allZone)
+            const response = await axiosInstance.get(apiRoutes.allProduit)
             return response.data
         } catch (error) {
-            console.log("error lors de la recuperation des zones :", error)
+            console.log("error lors de la recuperation des produits :", error)
         }
     }
 
@@ -42,10 +42,10 @@ export default function index() {
         toast.promise(
             retriveZones(),
             {
-                loading: `Chargment des zones ...`,
+                loading: `Chargment des produits ...`,
                 success: function (data) {
                     console.log("Data obtenu après request :", data)
-                    setZones(data)
+                    setProduits(data)
                     return (
                         <>
                             <span className="">Chargement réussi!  </span>
@@ -53,20 +53,20 @@ export default function index() {
                     )
                 },
                 error: function (err) {
-                    return err?.message || "Erreur de chargement des utilisateurs"
+                    return err?.message || "Erreur de chargement des produits"
                 },
             }
         )
     }, [reload])
 
     return <>
-        <DashboardLayourt title="Liste des zones">
+        <DashboardLayourt title="Liste des produits">
             {/* listes des zones */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
                         <DataTable
-                            data={zones}
+                            data={produits}
                             setReload={setReload} />
                     </div>
                 </div>

@@ -12,26 +12,27 @@ import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
 import routes from "@/app/routes"
 
-export default function DeleteZoneModal({ open, onOpenChange, zone, setReload }) {
+export default function DeleteproduitModal({ open, onOpenChange, produit, setReload }) {
     const router = useRouter()
 
     // submission
     const submitDeleteForm = (e) => {
         e.preventDefault()
         toast.promise(
-            () => axiosInstance.delete(apiRoutes.deleteZone(zone.id)),
+            () => axiosInstance.delete(apiRoutes.deleteProduit(produit.id)),
             {
-                loading: `Suppression en cours de la zone ${zone?.name}...`,
+                loading: `Suppression en cours du produit ${produit?.name}...`,
                 success: (res) => {
                     console.log("Response de suppression :", res.data)
-                    router.push(routes.zone?.list)
+                    
+                    router.push(routes.produit?.list)
                     router.refresh() // 👈 recharge les données server-side sans full reload
                     setReload(true)
                     
                     // fermeture du modal
                     onOpenChange(false)
                     // 
-                    return 'Zone modifiée avec succès!'
+                    return 'Prdoduit modifié avec succès!'
                 },
                 error: (err) => err?.message || 'Erreur de chargement',
             }
@@ -46,7 +47,7 @@ export default function DeleteZoneModal({ open, onOpenChange, zone, setReload })
                         <DialogTitle>Êtes-vous sûre?</DialogTitle>
                         <DialogDescription>
                             Cette action est irréversible.
-                            La zone <span className="badge bg-light border rounded text-dark"> {zone?.name}</span> sera supprimée définitivement.
+                            Le produit <span className="badge bg-light border rounded text-dark"> {produit?.name}</span> sera supprimée définitivement.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="d-flex justify-content-center">

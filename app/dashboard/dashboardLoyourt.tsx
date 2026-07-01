@@ -9,10 +9,9 @@ import { toast } from "sonner"
 import { Separator } from "@/components/ui/separator"
 import { Spinner } from "@/components/ui/spinner"
 import routes from "@/app/routes"
-import { Logs } from "lucide-react"
 
 // Composant interne qui a accès au contexte
-function DashboardContent({ title, children,icon=null }) {
+function DashboardContent({ title, children, icon = null }) {
     const router = useRouter()
     const { isAuthenticated, loading, initialized } = useApp()
     const newDate = new Date()
@@ -25,7 +24,7 @@ function DashboardContent({ title, children,icon=null }) {
         // const storedUser = window.localStorage.getItem("user");
 
         if (!isAuthenticated) {
-            console.log("routes.dashboard :",routes.dashboard)
+            console.log("routes.dashboard :", routes.dashboard)
             toast("Vous n'êtes pas connecté.e")
             router.push(routes.dashboard)
         }
@@ -42,6 +41,7 @@ function DashboardContent({ title, children,icon=null }) {
             } as React.CSSProperties}
         >
             <AppSidebar variant="inset" className="rounded" />
+
             <SidebarInset>
                 <SiteHeader />
                 <div className="flex flex-1 flex-col">

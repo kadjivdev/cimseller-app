@@ -129,7 +129,6 @@ export default function UpdateUserModal({ open, onOpenChange, user, setReload })
   const handleSelect = (role_id) => {
     console.log("Le role selectionné :", role_id)
     setData((prev) => ({ ...prev, roleId: role_id }))
-    setData({ ...data, roleId: role_id })
   }
 
   // gestion des consoles

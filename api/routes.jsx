@@ -98,6 +98,7 @@ const apiRoutes = {
 
   // product's routes
   allProduit: `produits`,
+  allTypeProduit: `produits/types`,
   createProduit: `produits`,
   updateProduit: (id) => (`produits/${id}`),
   deleteProduit: (id) => (`produits/${id}`),

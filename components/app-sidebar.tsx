@@ -17,7 +17,7 @@ import { LayoutDashboardIcon, BaggageClaim, Van, ListTree, TruckElectric, Access
 import { Separator } from "./ui/separator"
 import routes from "@/app/routes"
 import { useRouter } from "next/navigation"
-import { title } from "process"
+import { Menu } from "@/myComponents/menu"
 
 const data = {
   user: {
@@ -209,8 +209,8 @@ const data = {
 
     // nav de comptabilite
     {
-      title:"COMPTABILITE",
-      menus:[
+      title: "COMPTABILITE",
+      menus: [
         // nav de comptabilites
         {
           id: 9,
@@ -615,37 +615,41 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter()
 
   return (
-    <Sidebar 
-    collapsible="offcanvas" 
-    {...props} 
-    className="shadow-sm border" style={{width:'50vh'}} >
-      <SidebarHeader className="border-bottom rounded shadow-sm">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:p-0!">
-              <img src="/cimseller_animated_logo.gif"
-                onClick={() => router.push(routes.dashboard)}
-                style={{ cursor: "pointer" }}
-                width={100} />
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
+    <>
+      <Sidebar
+        collapsible="offcanvas"
+        {...props}
+        className="shadow-sm border" style={{ width: '50vh' }} >
+        <SidebarHeader className="border-bottom rounded shadow-sm">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                className="data-[slot=sidebar-menu-button]:p-0!">
+                <img src="/cimseller_animated_logo.gif"
+                  onClick={() => router.push(routes.dashboard)}
+                  style={{ cursor: "pointer" }}
+                  width={100} />
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
 
-      <SidebarContent>
-        {data.navs.map((nav, key) => (
-          <div key={key}>
-            <NavMain  label={nav.title} items={nav.menus} />
-            <Separator />
-          </div>
-        ))}
-      </SidebarContent>
+        <SidebarContent>
+          {/* {data.navs.map((nav, key) => (
+            <div key={key}>
+              <NavMain label={nav.title} items={nav.menus} />
+              <Separator />
+            </div>
+          ))} */}
+          <Menu />
+        </SidebarContent>
 
-      <SidebarFooter className="border-top shadow-sm">
-        <NavUser user={data.user} />
-      </SidebarFooter>
-    </Sidebar>
+
+        <SidebarFooter className="border-top shadow-sm">
+          <NavUser user={data.user} />
+        </SidebarFooter>
+      </Sidebar>
+    </>
   )
 }
