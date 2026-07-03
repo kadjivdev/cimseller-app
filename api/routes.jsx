@@ -103,6 +103,18 @@ const apiRoutes = {
   updateProduit: (id) => (`produits/${id}`),
   deleteProduit: (id) => (`produits/${id}`),
 
+  // banque's routes
+  allBanque: `banques`,
+  createBanque: `banques`,
+  updateBanque: (id) => (`banques/${id}`),
+  deleteBanque: (id) => (`banques/${id}`),
+
+  // agent's routes
+  allAgent: `agents`,
+  createAgent: `agents`,
+  updateAgent: (id) => (`agents/${id}`),
+  deleteAgent: (id) => (`agents/${id}`),
+
   // marque camion's routes
   allMarqueCamion: `marques`,
   createMarqueCamion: `marques`,

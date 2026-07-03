@@ -377,7 +377,7 @@ export function Menu() {
           items: [
             {
               name: "Create",
-              url: routes.banque.list,
+              url: routes.banque.create,
               icon: <FolderPlus />,
             },
             {

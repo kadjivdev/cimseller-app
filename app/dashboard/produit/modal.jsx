@@ -135,7 +135,6 @@ export default function UpdateProduitModal({ open, onOpenChange, produit, setRel
     console.log("Les erreures :", errors)
   }, [errors])
 
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px] overflow-y-auto max-h-[90vh]">

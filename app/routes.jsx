@@ -48,7 +48,6 @@ const routes = {
     inactif: "/dashboard/client/inactif",
     bef: "/dashboard/client/bef",
   },
-
   fournisseur: {
     list: "/dashboard/fournisseur",
     create: "/dashboard/fournisseur/create",
