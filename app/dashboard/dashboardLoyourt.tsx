@@ -45,11 +45,11 @@ function DashboardContent({ title, children, icon = null }) {
             <SidebarInset>
                 <SiteHeader />
                 <div className="flex flex-1 flex-col">
-                    <div className="@container/main flex flex-1 flex-col gap-2">
-                        <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                    <div className="@container/main">
+                        <div className="py-4 md:gap-6 md:py-6 items-center justify-between">
                             {title && (
                                 <>
-                                    <h3 className="text-center"> {title}</h3>
+                                    <h3 className="text-center"> {icon??''} {title}</h3>
                                     <Separator />
                                 </>
                             )}
@@ -69,10 +69,12 @@ function DashboardContent({ title, children, icon = null }) {
 }
 
 // Wrapper qui fournit le contexte
-export default function DashboardLayourt({ title, children }) {
+export default function DashboardLayourt({ title, children,icon = null }) {
     return (
         <AppProvider>
-            <DashboardContent title={title}>{children}</DashboardContent>
+            <DashboardContent title={title} icon={icon}>
+                {children}
+            </DashboardContent>
         </AppProvider>
     )
 }

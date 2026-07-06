@@ -1,0 +1,269 @@
+name: 🚀 Deploy Laravel to GCP
+
+on:
+  push:
+    branches:
+      - main
+      - production
+  pull_request:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: europe-west1                        # Adapte selon ta région
+  SERVICE_NAME: laravel-app
+  REGISTRY: europe-west1-docker.pkg.dev       # Adapte selon ta région
+  IMAGE: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/laravel-app/app
+
+jobs:
+  # ─────────────────────────────────────────────
+  # JOB 1 — Tests & Qualité du code
+  # ─────────────────────────────────────────────
+  test:
+    name: 🧪 Tests & Lint
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: laravel_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐘 Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo, pdo_mysql, xml, curl, zip, gd, redis
+          coverage: xdebug
+
+      - name: 📦 Cache Composer
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: 📦 Installer les dépendances
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: ⚙️ Configurer l'environnement de test
+        run: |
+          cp .env.example .env.testing
+          php artisan key:generate --env=testing
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: laravel_test
+          DB_USERNAME: root
+          DB_PASSWORD: root
+
+      - name: 🗄️ Migrations de test
+        run: php artisan migrate --env=testing --force
+
+      - name: ✅ Lancer les tests PHPUnit
+        run: php artisan test --parallel --coverage-clover=coverage.xml
+
+      - name: 🔍 Analyse statique (Larastan)
+        run: ./vendor/bin/phpstan analyse --memory-limit=512M
+        continue-on-error: true
+
+  # ─────────────────────────────────────────────
+  # JOB 2 — Build & Push l'image Docker
+  # ─────────────────────────────────────────────
+  build:
+    name: 🐳 Build & Push Docker
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
+
+    outputs:
+      image_tag: ${{ steps.meta.outputs.version }}
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔑 Authentification Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: ⚙️ Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: 🐳 Configurer Docker pour Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGISTRY }} --quiet
+
+      - name: 🏷️ Métadonnées de l'image
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=sha,prefix=,format=short
+            type=ref,event=branch
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: 🔧 Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🏗️ Build et Push l'image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            APP_ENV=production
+
+  # ─────────────────────────────────────────────
+  # JOB 3 — Migrations de base de données
+  # ─────────────────────────────────────────────
+  migrate:
+    name: 🗄️ Migrations DB
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
+
+    steps:
+      - name: 🔑 Authentification Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: ⚙️ Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: 🗄️ Exécuter les migrations via Cloud Run Job
+        run: |
+          gcloud run jobs create laravel-migrate-${{ github.sha }} \
+            --image=${{ env.IMAGE }}:${{ github.sha }} \
+            --region=${{ env.REGION }} \
+            --set-secrets="APP_KEY=laravel-app-key:latest,DB_PASSWORD=laravel-db-password:latest" \
+            --set-env-vars="APP_ENV=production,DB_CONNECTION=mysql,DB_HOST=${{ secrets.DB_HOST }},DB_DATABASE=${{ secrets.DB_NAME }},DB_USERNAME=${{ secrets.DB_USERNAME }}" \
+            --command="php" \
+            --args="artisan,migrate,--force" \
+            --max-retries=1 \
+            --task-timeout=5m \
+            --project=${{ env.PROJECT_ID }}
+          
+          gcloud run jobs execute laravel-migrate-${{ github.sha }} \
+            --region=${{ env.REGION }} \
+            --wait \
+            --project=${{ env.PROJECT_ID }}
+
+  # ─────────────────────────────────────────────
+  # JOB 4 — Déploiement sur Cloud Run
+  # ─────────────────────────────────────────────
+  deploy:
+    name: 🚀 Déploiement Cloud Run
+    runs-on: ubuntu-latest
+    needs: migrate
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
+
+    environment:
+      name: ${{ github.ref == 'refs/heads/production' && 'production' || 'staging' }}
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+      - name: 🔑 Authentification Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: ⚙️ Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: 🚀 Déployer sur Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE_NAME }}
+          region: ${{ env.REGION }}
+          image: ${{ env.IMAGE }}:${{ github.sha }}
+          flags: |
+            --allow-unauthenticated
+            --min-instances=1
+            --max-instances=10
+            --memory=512Mi
+            --cpu=1
+            --concurrency=80
+            --timeout=60s
+            --port=8080
+          secrets: |
+            APP_KEY=laravel-app-key:latest
+            DB_PASSWORD=laravel-db-password:latest
+          env_vars: |
+            APP_ENV=production
+            APP_DEBUG=false
+            LOG_CHANNEL=stderr
+            DB_CONNECTION=mysql
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_DATABASE=${{ secrets.DB_NAME }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            CACHE_DRIVER=redis
+            SESSION_DRIVER=redis
+            QUEUE_CONNECTION=redis
+            REDIS_HOST=${{ secrets.REDIS_HOST }}
+
+      - name: 🌐 URL de déploiement
+        run: echo "✅ Déployé sur ${{ steps.deploy.outputs.url }}"
+
+      - name: 🔄 Vider les caches Laravel
+        run: |
+          # Exécuter les commandes de cache via un Cloud Run Job temporaire
+          gcloud run jobs create laravel-cache-clear-${{ github.sha }} \
+            --image=${{ env.IMAGE }}:${{ github.sha }} \
+            --region=${{ env.REGION }} \
+            --set-secrets="APP_KEY=laravel-app-key:latest" \
+            --set-env-vars="APP_ENV=production" \
+            --command="sh" \
+            --args="-c,php artisan config:cache && php artisan route:cache && php artisan view:cache" \
+            --max-retries=1 \
+            --project=${{ env.PROJECT_ID }}
+          
+          gcloud run jobs execute laravel-cache-clear-${{ github.sha }} \
+            --region=${{ env.REGION }} \
+            --wait \
+            --project=${{ env.PROJECT_ID }}
+
+  # ─────────────────────────────────────────────
+  # JOB 5 — Notification Slack (optionnel)
+  # ─────────────────────────────────────────────
+  notify:
+    name: 📢 Notification
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: always()
+
+    steps:
+      - name: ✅ Succès
+        if: needs.deploy.result == 'success'
+        run: |
+          echo "Déploiement réussi ! Envoyer notification Slack ici si besoin."
+          # curl -X POST ${{ secrets.SLACK_WEBHOOK }} \
+          #   -H 'Content-type: application/json' \
+          #   --data '{"text":"✅ Laravel déployé avec succès sur GCP (${{ github.ref_name }})"}'
+
+      - name: ❌ Échec
+        if: needs.deploy.result == 'failure'
+        run: |
+          echo "Déploiement échoué ! Envoyer alerte ici si besoin."
+          # curl -X POST ${{ secrets.SLACK_WEBHOOK }} \
+          #   -H 'Content-type: application/json' \
+          #   --data '{"text":"❌ ÉCHEC du déploiement Laravel sur GCP (${{ github.ref_name }})"}'

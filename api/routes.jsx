@@ -121,6 +121,12 @@ const apiRoutes = {
   updateMarqueCamion: (id) => (`marques/${id}`),
   deleteMarqueCamion: (id) => (`marques/${id}`),
 
+  // camion's routes
+  allCamion: `camions`,
+  createCamion: `camions`,
+  updateCamion: (id) => (`camions/${id}`),
+  deleteCamion: (id) => (`camions/${id}`),
+
   // avaliseur's routes
   allAvaliseur: `avaliseurs`,
   createAvaliseur: `avaliseurs`,
