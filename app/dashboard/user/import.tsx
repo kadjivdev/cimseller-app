@@ -90,7 +90,7 @@ export default function ImportUserModal({ open, onOpenChange, setReload }) {
       <DialogContent className="sm:max-w-[480px] overflow-y-auto max-h-[90vh]">
         <DialogHeader>
           <DialogTitle>
-            Importation de compte utilisateurs
+            <Import className="" /> Importation de compte utilisateurs
           </DialogTitle>
           <div className="alert alert-dark">
             <ul>

@@ -154,8 +154,12 @@ const apiRoutes = {
   // client's routes
   allClient: `clients`,
   createClient: `clients`,
+  importClient: `clients`,
   updateClient: (id) => (`clients/${id}`),
   deleteClient: (id) => (`clients/${id}`),
+  allClientStatus: `clients/status`,
+
+  // client's routes
 }
 
 export default apiRoutes

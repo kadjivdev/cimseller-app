@@ -107,7 +107,7 @@ export default function index() {
                                     <Input id="raison_sociale"
                                         type="text"
                                         name="raison_sociale"
-                                        placeholder="Ex: NOUVELLE CIMENTERIE BENIN"
+                                        placeholder="Ex: NOCIBE"
                                         required
                                         value={data.raison_sociale}
                                         onChange={handleChange} />

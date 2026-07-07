@@ -1,6 +1,5 @@
 'use client'
 
-
 import {
     Field,
     FieldContent,
@@ -19,9 +18,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { Logs, SquareArrowRightEnter, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox"
-
 
 import { useApp } from "@/app/AppContext"
 import { useRouter } from "next/navigation"
@@ -30,6 +27,7 @@ import axios from "axios";
 import apiRoutes from "@/api/routes";
 import routes from "@/app/routes"
 import { FilterSelect } from "@/myComponents/FilterSelect";
+import { SquareArrowRightEnter, X } from "lucide-react";
 
 
 export default function index() {
@@ -173,6 +171,7 @@ export default function index() {
                                         selected={data?.typeId}
                                     />
                                     {errors.typeId && <span className="text-danger">{errors.typeId}</span>}
+                                    
                                 </div>
                                 <div className="col-md-12 mb-2">
                                     <Field>
