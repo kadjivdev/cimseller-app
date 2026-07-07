@@ -36,52 +36,12 @@ export default function index() {
     const { loading, setLoading } = useApp()
     const router = useRouter()
 
-    const [representants, setRepresentants] = useState([])
-    const [data, setData] = useState({ name: '', description: '' })
-    const [errors, setErrors] = useState({ name: '', description: '' })
-
-    // get representants
-    const retriveRepresentants = async () => {
-        try {
-            const response = await axiosInstance.get(apiRoutes.allRepresentant)
-            return response.data
-        } catch (error) {
-            console.log("error lors de la recuperation des representants :", error)
-        }
-    }
-
-    useEffect(() => {
-        // chargement des representants
-        toast.promise(
-            retriveRepresentants(),
-            {
-                loading: `Chargment des representants ...`,
-                success: function (data) {
-                    console.log("Data obtenu après request :", data)
-                    setRepresentants(data)
-                    return (
-                        <>
-                            <span className="">Chargement réussi!  </span>
-                        </>
-                    )
-                },
-                error: function (err) {
-                    return err?.message || "Erreur de chargement des representants"
-                },
-            }
-        )
-
-    }, [])
+    const [data, setData] = useState({ nom: '', prenom: '', phone: '', email: '' })
+    const [errors, setErrors] = useState({ nom: '', prenom: '', phone: '', email: '' })
 
     const handleChange = (e) => {
         const { name, value } = e.target
         setData((prev) => ({ ...prev, [name]: value }))
-    }
-
-    // handle role selection
-    const handleSelect = (representantId) => {
-        console.log("Le representant selectionné :", representantId)
-        setData((prev) => ({ ...prev, representantId: representantId }))
     }
 
     // submission
@@ -90,32 +50,34 @@ export default function index() {
 
         try {
             await toast.promise(
-                axiosInstance.post(apiRoutes.createZone, data),
+                axiosInstance.post(apiRoutes.createRepresentant, data),
                 {
-                    loading: `Création de zone en cours ...`,
+                    loading: `Création de representant en cours ...`,
                     success: async (res) => {
                         console.log("Response de l'insertion à succès:", res.data)
 
                         await new Promise((resolve) => setTimeout(resolve, 2000))
 
                         // redirection
-                        router.push(routes.zone.list)
-                        return 'Zone ajouté.e avec succès!'
+                        router.push(routes.representant.list)
+                        return 'Representant ajouté avec succès!'
                     },
                     error: (err) => {
                         console.log("Erreur complète :", err.response)
 
                         if (err?.response?.status === 402) {
                             const validationErrors = err.response.data?.errors
-                            const { name, description } = validationErrors
+                            const { nom, prenom, phone, email } = validationErrors
                             setErrors({
-                                name: name?._errors[0],
-                                description: description?._errors[0],
+                                nom: nom?._errors[0],
+                                prenom: prenom?._errors[0],
+                                phone: phone?._errors[0],
+                                email: email?._errors[0],
                             })
                             return err.response.data?.message || 'Erreurs de validation, vérifiez le formulaire.'
                         }
 
-                        return err?.response?.data?.message || err?.message || "Erreur de mise à jour de l'utilisateur"
+                        return err?.response?.data?.error || err?.message || "Erreur de mise à jour de l'utilisateur"
                     },
                 }
             )
@@ -135,8 +97,8 @@ export default function index() {
 
 
     return <>
-        <DashboardLayourt title="➕ Ajouter une zone">
-            {/* listes des zones */}
+        <DashboardLayourt title="➕ Ajouter un representant">
+            {/* listes des representants */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
@@ -144,36 +106,47 @@ export default function index() {
                             <div className="row">
                                 <div className="col-md-12 mb-2">
                                     <Label htmlFor="fullname">Nom  <span className="text-danger">*</span></Label>
-                                    <Input id="name"
+                                    <Input id="nom"
                                         type="text"
-                                        name="name"
-                                        placeholder="Ex: Cotonou"
+                                        name="nom"
+                                        placeholder="Ex: CODJIO"
                                         autoFocus
                                         required
-                                        value={data.name}
+                                        value={data.nom}
                                         onChange={handleChange} />
-                                    {errors.name && <span className="text-danger">{errors.name}</span>}
+                                    {errors.nom && <span className="text-danger">{errors.nom}</span>}
+                                </div>
+
+                                <div className="col-md-12 mb-2">
+                                    <Label htmlFor="fullname">Prénom  <span className="text-danger">*</span></Label>
+                                    <Input id="prenom"
+                                        type="text"
+                                        name="prenom"
+                                        placeholder="Jérémie"
+                                        required
+                                        value={data.prenom}
+                                        onChange={handleChange} />
+                                    {errors.prenom && <span className="text-danger">{errors.prenom}</span>}
                                 </div>
                                 <div className="col-md-12 mb-2">
-                                    <Label htmlFor="description">Description  </Label>
-                                    <Textarea
-                                        rows={1}
-                                        placeholder="Ex :Description"
-                                        id="description"
-                                        name="description"
-                                        value={data.description}
-                                        onChange={handleChange}
-                                    ></Textarea>
-                                    {errors.description && <span className="text-danger">{errors.description}</span>}
+                                    <Label htmlFor="phone">Téléphone</Label>
+                                    <Input id="phone"
+                                        type="text"
+                                        name="phone"
+                                        placeholder="Ex: +2290156854397"
+                                        value={data.phone}
+                                        onChange={handleChange} />
+                                    {errors.phone && <span className="text-danger">{errors.phone}</span>}
                                 </div>
-                                <div className="col-md-12">
-                                    <Label htmlFor="representant_id">Choisissez un representant</Label>
-                                    <FilterSelect
-                                        options={representants?.map((r) => ({ id: r.id, label: `${r.nom} - ${r.prenom}` }))}
-                                        handleSelect={handleSelect}
-                                        selected={data?.representantId}
-                                    />
-                                    {errors.representantId && <span className="text-center">{errors.representantId}</span>}
+                                <div className="col-md-12 mb-2">
+                                    <Label htmlFor="email">Email  </Label>
+                                    <Input id="email"
+                                        type="text"
+                                        name="email"
+                                        placeholder="Ex: jeremie@gmaiL.com"
+                                        value={data.email}
+                                        onChange={handleChange} />
+                                    {errors.email && <span className="text-danger">{errors.email}</span>}
                                 </div>
                             </div>
                             <br />

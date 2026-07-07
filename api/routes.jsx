@@ -96,6 +96,12 @@ const apiRoutes = {
   updateZone: (id) => (`zones/${id}`),
   deleteZone: (id) => (`zones/${id}`),
 
+  // representant's routes
+  allRepresentant: `representants`,
+  createRepresentant: `representants`,
+  updateRepresentant: (id) => (`representants/${id}`),
+  deleteRepresentant: (id) => (`representants/${id}`),
+
   // product's routes
   allProduit: `produits`,
   allTypeProduit: `produits/types`,

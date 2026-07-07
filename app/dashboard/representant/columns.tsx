@@ -13,16 +13,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export type Zone = {
+export type Representant = {
   id: number
-  name: string
-  description: string
+  nom: string
+  prenom: string
+  phone: string
+  email: string
   createdAt: string
 }
 
 // export type Name:String
 
-export function useColumns(onEdit: (zone: Zone) => void, onDelete: (user: Zone) => void): ColumnDef<Zone>[] {
+export function useColumns(onEdit: (representant: Representant) => void, onDelete: (user: Representant) => void): ColumnDef<Representant>[] {
   // verifier si le user a cette permission
   // const isUserPermitted = (name:String) => {
   //   return (rolePermissions).some(per => per.name == name);
@@ -40,36 +42,44 @@ export function useColumns(onEdit: (zone: Zone) => void, onDelete: (user: Zone) 
       cell: ({ row }) => row.getValue("id") || "—",
     },
     {
-      accessorKey: "name",
+      accessorKey: "nom",
       header: ({ column }) => (
         <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Nom <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("name") || "—",
+      cell: ({ row }) => row.getValue("nom") || "—",
     },
     {
-      accessorKey: "representant",
+      accessorKey: "prenom",
       header: ({ column }) => (
         <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Representant <ArrowUpDown className="ml-2 h-4 w-4" />
+          Prénom <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      // cell: ({ row }) => row.original.representant? <span className="badge border rounded text-dark">{row.original.representant?.nom} - {row.original.representant?.prenom}</span> :'--',
-      cell: ({ row }) => <span className="badge border rounded text-dark">{row.original.representant?.nom} - {row.original.representant?.prenom}</span> ,
-
+      cell: ({ row }) => row.getValue("prenom") || "—",
     },
     {
-      accessorKey: "description",
+      accessorKey: "phone",
       header: ({ column }) => (
         <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Description <ArrowUpDown className="ml-2 h-4 w-4" />
+          Téléphone <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.original.description || "—",
+      cell: ({ row }) => row.original.phone || "—",
+    },
+    {
+      accessorKey: "zone",
+      header: ({ column }) => (
+        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Zone <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.original.zone?.name || "—",
     },
     {
       accessorKey: "createdAt",
@@ -105,7 +115,7 @@ export function useColumns(onEdit: (zone: Zone) => void, onDelete: (user: Zone) 
         </Button>
       ),
       cell: ({ row }) => {
-        const zone = row.original
+        const representant = row.original
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -124,7 +134,7 @@ export function useColumns(onEdit: (zone: Zone) => void, onDelete: (user: Zone) 
                 className="text-warning"
                 onSelect={(e) => {
                   e.preventDefault()
-                  onEdit(zone) // 👈 remonte juste le role
+                  onEdit(representant) // 👈 remonte juste le role
                 }}
               >
                 <PencilLine /> Modifier
@@ -135,7 +145,7 @@ export function useColumns(onEdit: (zone: Zone) => void, onDelete: (user: Zone) 
                 className="text-danger"
                 onSelect={(e) => {
                   e.preventDefault()
-                  onDelete(zone) // 👈 remonte juste le role
+                  onDelete(representant) // 👈 remonte juste le role
                 }}>
                 <Eraser /> Supprimer
               </DropdownMenuItem>

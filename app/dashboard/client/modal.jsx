@@ -83,7 +83,7 @@ export default function UpdateClientModal({ open, onOpenChange, client, setReloa
 
             // redirection
             setReload(true)
-            router.push(routes.client?.list)
+            // router.push(routes.client?.list)
             router.refresh()
             onOpenChange(false)
             return 'Client modifié.e avec succès!'

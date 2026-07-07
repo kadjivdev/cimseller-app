@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useColumns, Zone } from "../zone/columns"
+import { useColumns, Representant } from "../representant/columns"
 import { TableActions } from "./tableActions"
 import { Card } from "@/components/ui/card"
 import {
@@ -29,32 +29,34 @@ import {
 import { Settings2 } from "lucide-react"
 
 // modals
-import UpdateZoneModal from "./modal"
-import DeleteZoneModal from "./delete-modal"
+import UpdateRepresentantModal from "./modal"
+import DeleteRepresentantModal from "./delete-modal"
 
 const exportColumns = [
-    { label: "Nom ", key: "name" as const },
-    { label: "Descriprion", key: "description" as const },
+    { label: "Nom ", key: "nom" as const },
+    { label: "Prénom ", key: "prenom" as const },
+    { label: "Téléphone ", key: "phone" as const },
+    { label: "Email ", key: "email" as const },
     { label: "Crée le", key: "createdAt" as const },
 ]
 
-export function DataTable({ data, setReload,representants }) {
+export function DataTable({ data, setReload }) {
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
-    const [selectedZone, setSelectedZone] = useState<Zone | null>(null)
+    const [selectedRepresentant, setSelectedRepresentant] = useState<Representant | null>(null)
 
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // ✅ Nouveau
 
     // 
-    const handleEdit = (zone: Zone) => {
-        setSelectedZone(zone)
+    const handleEdit = (representant: Representant) => {
+        setSelectedRepresentant(representant)
         setOpen(true)
     }
 
-    const handleDelete = (zone: Zone) => {
-        setSelectedZone(zone)
+    const handleDelete = (representant: Representant) => {
+        setSelectedRepresentant(representant)
         setOpenDelete(true)
     }
 
@@ -148,7 +150,7 @@ export function DataTable({ data, setReload,representants }) {
                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                                            Aucune zone trouvée.
+                                            Aucun representant trouvé.
                                         </TableCell>
                                     </TableRow>
                                 )}
@@ -174,18 +176,17 @@ export function DataTable({ data, setReload,representants }) {
             </Card>
 
             {/* ✅ Une seule instance du modal pour toute la table */}
-            <UpdateZoneModal
+            <UpdateRepresentantModal
                 open={open}
                 onOpenChange={setOpen}
-                zone={selectedZone}
+                representant={selectedRepresentant}
                 setReload={setReload}
-                representants={representants}
             />
 
-            <DeleteZoneModal
+            <DeleteRepresentantModal
                 open={openDelete}
                 onOpenChange={setOpenDelete}
-                zone={selectedZone}
+                representant={selectedRepresentant}
                 setReload={setReload}
             />
         </>

@@ -23,19 +23,8 @@ import {
 } from "@/components/ui/table"
 
 export default function index() {
-    const [zones, setZones] = useState([])
     const [representants, setRepresentants] = useState([])
     const [reload, setReload] = useState(false)
-
-    // get zones
-    const retriveZones = async () => {
-        try {
-            const response = await axiosInstance.get(apiRoutes.allZone)
-            return response.data
-        } catch (error) {
-            console.log("error lors de la recuperation des zones :", error)
-        }
-    }
 
     // get representants
     const retriveRepresentants = async () => {
@@ -50,7 +39,6 @@ export default function index() {
     useEffect(() => {
         console.log("Reload state :", reload)
         // traitement...
-        // chargement des representants
         toast.promise(
             retriveRepresentants(),
             {
@@ -69,37 +57,17 @@ export default function index() {
                 },
             }
         )
-        // chargement des zones
-        toast.promise(
-            retriveZones(),
-            {
-                loading: `Chargment des zones ...`,
-                success: function (data) {
-                    console.log("Data obtenu après request :", data)
-                    setZones(data)
-                    return (
-                        <>
-                            <span className="">Chargement réussi!  </span>
-                        </>
-                    )
-                },
-                error: function (err) {
-                    return err?.message || "Erreur de chargement des utilisateurs"
-                },
-            }
-        )
     }, [reload])
 
     return <>
-        <DashboardLayourt title="Liste des zones">
+        <DashboardLayourt title="Liste des representants">
             {/* listes des zones */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
                         <DataTable
-                            data={zones}
-                            setReload={setReload} 
-                            representants={representants}/>
+                            data={representants}
+                            setReload={setReload} />
                     </div>
                 </div>
             </div>

@@ -405,6 +405,23 @@ export function Menu() {
           ]
         },
         {
+          name: "Representants",
+          url: routes.representant.list,
+          icon: <MapPinHouse />,
+          items: [
+            {
+              name: "Create",
+              url: routes.representant.create,
+              icon: <FolderPlus />,
+            },
+            {
+              name: "Liste",
+              url: routes.representant.list,
+              icon: <ListTree />,
+            },
+          ]
+        },
+        {
           name: "Zones",
           url: routes.zone.list,
           icon: <MapPinHouse />,
@@ -420,7 +437,8 @@ export function Menu() {
               icon: <ListTree />,
             },
           ]
-        }
+        },
+
       ]
     },
 

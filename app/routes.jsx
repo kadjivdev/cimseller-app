@@ -80,6 +80,10 @@ const routes = {
     list: "/dashboard/zone",
     create: "/dashboard/zone/create",
   },
+  representant: {
+    list: "/dashboard/representant",
+    create: "/dashboard/representant/create",
+  },
   user: {
     list: "/dashboard/user",
     create: "/dashboard/user/create",
