@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useColumns, Client } from "../client/columns"
+import { useColumns, CompteBancaire } from "../compte-bancaire/columns"
 import { TableActions } from "./tableActions"
 import { Card } from "@/components/ui/card"
 import {
@@ -26,60 +26,40 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Import, Settings2 } from "lucide-react"
+import { Settings2 } from "lucide-react"
 
 // modals
-import UpdateClientModal from "./modal"
-import DeleteClientModal from "./delete-modal"
-import ImportClientModal from "./import"
-import ShowApprovisionnements from "./approvisionnement/showApprovisionnements"
-import ShowReglements from "./reglement/showReglements"
+import UpdateCompteBancaireModal from "./modal"
+import DeleteCompteBancaireModal from "./delete-modal"
 
 const exportColumns = [
-    { label: "Raison sociale ", key: "raison_sociale" as const },
-    { label: "Zone ", key: "zone.name" as const },
-    { label: "Statut ", key: "statut.name" as const },
-    { label: "Profil", key: "profil" as const },
-    { label: "Téléphone", key: "phone" as const },
-    { label: "Email", key: "email" as const },
-    { label: "Adresse", key: "adresse" as const },
+    { label: "Intitulé ", key: "intitule" as const },
+    { label: "Numéro", key: "numero" as const },
+    { label: "Banque", key: "banque" as const },
     { label: "Crée le", key: "createdAt" as const },
 ]
 
-export function DataTable({ data, setReload, zones, status }) {
+export function DataTable({ data, setReload,banques }) {
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
-    const [openShowApprovisionnement, setOpenShowApprovisionnement] = useState(false)
-    const [openShowReglement, setOpenShowReglement] = useState(false)
-    const [openImport, setOpenImport] = useState(false)
-    const [selectedClient, setSelectedClient] = useState<Client | null>(null)
+    const [selectedCompteBancaire, setSelectedCompteBancaire] = useState<CompteBancaire | null>(null)
 
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // ✅ Nouveau
 
     // 
-    const handleEdit = (client: Client) => {
-        setSelectedClient(client)
+    const handleEdit = (compteBancaire: CompteBancaire) => {
+        setSelectedCompteBancaire(compteBancaire)
         setOpen(true)
     }
 
-    const handleDelete = (client: Client) => {
-        setSelectedClient(client)
+    const handleDelete = (compteBancaire: CompteBancaire) => {
+        setSelectedCompteBancaire(compteBancaire)
         setOpenDelete(true)
     }
 
-    const handleShowApprovisionnement = (client: Client) => {
-        setSelectedClient(client)
-        setOpenShowApprovisionnement(true)
-    }
-
-    const handleShowReglement = (client: Client) => {
-        setSelectedClient(client)
-        setOpenShowReglement(true)
-    }
-
-    const columns = useColumns(handleEdit, handleDelete, handleShowApprovisionnement, handleShowReglement) // 👈 passe les callbacks
+    const columns = useColumns(handleEdit, handleDelete) // 👈 passe les callbacks
 
     const table = useReactTable({
         data,
@@ -136,18 +116,9 @@ export function DataTable({ data, setReload, zones, status }) {
                             <TableActions
                                 data={data}
                                 columns={exportColumns}
-                                filename="clients"
+                                filename="utilisateurs"
                             />
                         </div>
-                    </div>
-
-                    {/* session importation */}
-                    <div className="d-flex justify-content-center">
-                        <Button variant="outline"
-                            className="border rounded bg-dark shadow-sm text-white"
-                            onClick={() => setOpenImport(true)}>
-                            <Import /> Importer des clients
-                        </Button>
                     </div>
 
                     {/* Table */}
@@ -178,7 +149,7 @@ export function DataTable({ data, setReload, zones, status }) {
                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                                            Aucun client trouvé.
+                                            Aucun compte bancaire trouvé.
                                         </TableCell>
                                     </TableRow>
                                 )}
@@ -204,42 +175,19 @@ export function DataTable({ data, setReload, zones, status }) {
             </Card>
 
             {/* ✅ Une seule instance du modal pour toute la table */}
-            <UpdateClientModal
+            <UpdateCompteBancaireModal
                 open={open}
                 onOpenChange={setOpen}
-                client={selectedClient}
+                compteBancaire={selectedCompteBancaire}
                 setReload={setReload}
-                zones={zones}
-                status={status}
+                banques={banques}
             />
 
-            <DeleteClientModal
+            <DeleteCompteBancaireModal
                 open={openDelete}
                 onOpenChange={setOpenDelete}
-                client={selectedClient}
+                compteBancaire={selectedCompteBancaire}
                 setReload={setReload}
-            />
-
-            {/* Importation de comptes */}
-            <ImportClientModal
-                open={openImport}
-                onOpenChange={setOpenImport}
-                setReload={setReload}
-                status={status}
-            />
-
-            {/* Afficher les approvisionnements */}
-            <ShowApprovisionnements
-                open={openShowApprovisionnement}
-                onOpenChange={setOpenShowApprovisionnement}
-                client={selectedClient}
-            />
-
-            {/* Afficher les reglements */}
-            <ShowReglements
-                open={openShowReglement}
-                onOpenChange={setOpenShowReglement}
-                client={selectedClient}
             />
         </>
     )

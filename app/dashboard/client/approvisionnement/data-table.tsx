@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useColumns, Client } from "../client/columns"
+import { useColumns } from "./columns"
 import { TableActions } from "./tableActions"
 import { Card } from "@/components/ui/card"
 import {
@@ -28,58 +28,26 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Import, Settings2 } from "lucide-react"
 
-// modals
-import UpdateClientModal from "./modal"
-import DeleteClientModal from "./delete-modal"
-import ImportClientModal from "./import"
-import ShowApprovisionnements from "./approvisionnement/showApprovisionnements"
-import ShowReglements from "./reglement/showReglements"
 
 const exportColumns = [
-    { label: "Raison sociale ", key: "raison_sociale" as const },
-    { label: "Zone ", key: "zone.name" as const },
-    { label: "Statut ", key: "statut.name" as const },
-    { label: "Profil", key: "profil" as const },
-    { label: "Téléphone", key: "phone" as const },
-    { label: "Email", key: "email" as const },
-    { label: "Adresse", key: "adresse" as const },
+    { label: "Code ", key: "code" as const },
+    { label: "Reference ", key: "reference" as const },
+    { label: "Montant ", key: "montant" as const },
+    { label: "Date", key: "date" as const },
+    { label: "Type", key: "type" as const },
+    { label: "Compte", key: "compte" as const },
+    { label: "Commentaire", key: "comment" as const },
     { label: "Crée le", key: "createdAt" as const },
+    { label: "Validée le", key: "validatedAt" as const },
 ]
 
-export function DataTable({ data, setReload, zones, status }) {
-    const [open, setOpen] = useState(false)
-    const [openDelete, setOpenDelete] = useState(false)
-    const [openShowApprovisionnement, setOpenShowApprovisionnement] = useState(false)
-    const [openShowReglement, setOpenShowReglement] = useState(false)
-    const [openImport, setOpenImport] = useState(false)
-    const [selectedClient, setSelectedClient] = useState<Client | null>(null)
-
+export function DataTable({ data }) {
+   
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // ✅ Nouveau
 
-    // 
-    const handleEdit = (client: Client) => {
-        setSelectedClient(client)
-        setOpen(true)
-    }
-
-    const handleDelete = (client: Client) => {
-        setSelectedClient(client)
-        setOpenDelete(true)
-    }
-
-    const handleShowApprovisionnement = (client: Client) => {
-        setSelectedClient(client)
-        setOpenShowApprovisionnement(true)
-    }
-
-    const handleShowReglement = (client: Client) => {
-        setSelectedClient(client)
-        setOpenShowReglement(true)
-    }
-
-    const columns = useColumns(handleEdit, handleDelete, handleShowApprovisionnement, handleShowReglement) // 👈 passe les callbacks
+    const columns = useColumns() // 👈 passe les callbacks
 
     const table = useReactTable({
         data,
@@ -136,18 +104,9 @@ export function DataTable({ data, setReload, zones, status }) {
                             <TableActions
                                 data={data}
                                 columns={exportColumns}
-                                filename="clients"
+                                filename="approvisionnements"
                             />
                         </div>
-                    </div>
-
-                    {/* session importation */}
-                    <div className="d-flex justify-content-center">
-                        <Button variant="outline"
-                            className="border rounded bg-dark shadow-sm text-white"
-                            onClick={() => setOpenImport(true)}>
-                            <Import /> Importer des clients
-                        </Button>
                     </div>
 
                     {/* Table */}
@@ -178,7 +137,7 @@ export function DataTable({ data, setReload, zones, status }) {
                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                                            Aucun client trouvé.
+                                            Aucun approvisionnement trouvé.
                                         </TableCell>
                                     </TableRow>
                                 )}
@@ -202,45 +161,6 @@ export function DataTable({ data, setReload, zones, status }) {
                     </div>
                 </div>
             </Card>
-
-            {/* ✅ Une seule instance du modal pour toute la table */}
-            <UpdateClientModal
-                open={open}
-                onOpenChange={setOpen}
-                client={selectedClient}
-                setReload={setReload}
-                zones={zones}
-                status={status}
-            />
-
-            <DeleteClientModal
-                open={openDelete}
-                onOpenChange={setOpenDelete}
-                client={selectedClient}
-                setReload={setReload}
-            />
-
-            {/* Importation de comptes */}
-            <ImportClientModal
-                open={openImport}
-                onOpenChange={setOpenImport}
-                setReload={setReload}
-                status={status}
-            />
-
-            {/* Afficher les approvisionnements */}
-            <ShowApprovisionnements
-                open={openShowApprovisionnement}
-                onOpenChange={setOpenShowApprovisionnement}
-                client={selectedClient}
-            />
-
-            {/* Afficher les reglements */}
-            <ShowReglements
-                open={openShowReglement}
-                onOpenChange={setOpenShowReglement}
-                client={selectedClient}
-            />
         </>
     )
 }

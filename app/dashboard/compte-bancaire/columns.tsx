@@ -12,20 +12,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Textarea } from "@/components/ui/textarea"
 
-export type Representant = {
+export type CompteBancaire = {
   id: number
-  nom: string
-  prenom: string
-  phone: string
-  email: string
+  banque: {
+    id: Number
+    name: String
+  }
+  intitule: string
+  numero: string
   createdAt: string
 }
 
 // export type Name:String
 
-export function useColumns(onEdit: (representant: Representant) => void, onDelete: (user: Representant) => void): ColumnDef<Representant>[] {
+export function useColumns(onEdit: (compteBancaire: CompteBancaire) => void, onDelete: (compteBancaire: CompteBancaire) => void): ColumnDef<CompteBancaire>[] {
   // verifier si le user a cette permission
   // const isUserPermitted = (name:String) => {
   //   return (rolePermissions).some(per => per.name == name);
@@ -43,44 +44,35 @@ export function useColumns(onEdit: (representant: Representant) => void, onDelet
       cell: ({ row }) => row.getValue("id") || "—",
     },
     {
-      accessorKey: "nom",
+      accessorKey: "numero",
       header: ({ column }) => (
         <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Nom <ArrowUpDown className="ml-2 h-4 w-4" />
+          Numéro <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("nom") || "—",
+      cell: ({ row }) => row.getValue("numero") || "—",
     },
     {
-      accessorKey: "prenom",
+      accessorKey: "banque",
       header: ({ column }) => (
         <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Prénom <ArrowUpDown className="ml-2 h-4 w-4" />
+          Banque <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("prenom") || "—",
+      cell: ({ row }) => <span className="badge border rounded text-dark">{row.original.banque?.name || '--'} </span>,
+
     },
     {
-      accessorKey: "phone",
+      accessorKey: "intitule",
       header: ({ column }) => (
         <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Téléphone <ArrowUpDown className="ml-2 h-4 w-4" />
+          Intitulé <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.original.phone || "—",
-    },
-    {
-      accessorKey: "zone",
-      header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Zones <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <Textarea placeholder={row.original.zones?.length>0?row.original.zones?.map((z)=> z.name):'--'}/>,
+      cell: ({ row }) => row.getValue("intitule") || "—",
     },
     {
       accessorKey: "createdAt",
@@ -116,7 +108,7 @@ export function useColumns(onEdit: (representant: Representant) => void, onDelet
         </Button>
       ),
       cell: ({ row }) => {
-        const representant = row.original
+        const compteBancaire = row.original
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -135,7 +127,7 @@ export function useColumns(onEdit: (representant: Representant) => void, onDelet
                 className="text-warning"
                 onSelect={(e) => {
                   e.preventDefault()
-                  onEdit(representant) // 👈 remonte juste le role
+                  onEdit(compteBancaire) // 👈 remonte juste le compteBancaire
                 }}
               >
                 <PencilLine /> Modifier
@@ -146,7 +138,7 @@ export function useColumns(onEdit: (representant: Representant) => void, onDelet
                 className="text-danger"
                 onSelect={(e) => {
                   e.preventDefault()
-                  onDelete(representant) // 👈 remonte juste le role
+                  onDelete(compteBancaire) // 👈 remonte juste le compteBancaire
                 }}>
                 <Eraser /> Supprimer
               </DropdownMenuItem>

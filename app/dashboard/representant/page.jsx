@@ -60,8 +60,8 @@ export default function index() {
     }, [reload])
 
     return <>
-        <DashboardLayourt title="Liste des representants">
-            {/* listes des zones */}
+        <DashboardLayourt title="Liste des representants" icon={<List />}>
+            {/* listes des representants */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">

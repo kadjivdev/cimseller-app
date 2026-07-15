@@ -388,6 +388,23 @@ export function Menu() {
           ]
         },
         {
+          name: "Compte Bancaires",
+          url: routes.compteBancaire.list,
+          icon: <Landmark />,
+          items: [
+            {
+              name: "Create",
+              url: routes.compteBancaire.create,
+              icon: <FolderPlus />,
+            },
+            {
+              name: "Liste",
+              url: routes.compteBancaire.list,
+              icon: <ListTree />,
+            },
+          ]
+        },
+        {
           name: "Produits",
           url: routes.produit.list,
           icon: <PackageSearch />,

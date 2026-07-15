@@ -2,7 +2,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Eraser, Eye, MoreHorizontal, PencilLine } from "lucide-react"
+import { ArrowUpDown, Eraser, Eye, ListOrdered, MoreHorizontal, PencilLine } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -17,16 +17,16 @@ import Link from "next/link"
 export type Client = {
   id: number
   zone: {
-    id:Number
-    name:String
+    id: Number
+    name: String
   }
   statut: {
-    id:Number
-    name:String
+    id: Number
+    name: String
   }
-  raison_sociale:String
-  profil:String
-  phone:String
+  raison_sociale: String
+  profil: String
+  phone: String
   email: string
   adresse: String
   createdAt: string
@@ -34,7 +34,7 @@ export type Client = {
 
 // export type Name:String
 
-export function useColumns(onEdit: (client: Client) => void, onDelete: (client: Client) => void): ColumnDef<Client>[] {
+export function useColumns(onEdit: (client: Client) => void, onDelete: (client: Client) => void, onShowApprovisionnement: (client: Client) => void, onShowReglement: (client: Client) => void): ColumnDef<Client>[] {
   // verifier si le user a cette permission
   // const isUserPermitted = (name:String) => {
   //   return (rolePermissions).some(per => per.name == name);
@@ -44,7 +44,7 @@ export function useColumns(onEdit: (client: Client) => void, onDelete: (client: 
     {
       accessorKey: "id",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           N° <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -54,17 +54,71 @@ export function useColumns(onEdit: (client: Client) => void, onDelete: (client: 
     {
       accessorKey: "raison_sociale",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Raison sociale <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("raison_sociale") || "—",
+      cell: ({ row }) => <span className="badge bg-light text-dark border"> {row.getValue("raison_sociale") || "—"}</span>,
+    },
+    {
+      accessorKey: "approvisionnementAmount",
+      header: ({ column }) => (
+        <Button className="w-100 rounded border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Montant approvisionné <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => {
+        let client = row.original
+        return <>
+          <span className="badge bg-light text-danger border">{row.getValue("approvisionnementAmount")?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span> <br />
+          <button
+            className="btn-sm bg-dark px-2 mt-1 text-white rounded border shadow-sm"
+            onClick={(e) => {
+              e.preventDefault()
+              onShowApprovisionnement(client)
+            }}
+          ><ListOrdered /></button>
+        </>
+      }
+    },
+    {
+      accessorKey: "reglementAmount",
+      header: ({ column }) => (
+        <Button className="w-100 rounded border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Montant réglé <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => {
+        let client = row.original
+        return <>
+          <span className="badge bg-light text-warning border">{row.getValue("reglementAmount")?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span> <br />
+          <button
+            className="btn-sm bg-dark px-2 mt-1 text-white rounded border shadow-sm"
+            onClick={(e) => {
+              e.preventDefault()
+              onShowReglement(client)
+            }}
+          ><ListOrdered /></button>
+        </>
+      },
+    },
+    {
+      accessorKey: "solde",
+      header: ({ column }) => (
+        <Button className="w-100 rounded border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Solde Client <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge bg-light text-success text-lg border">{(row.getValue('approvisionnementAmount') - row.getValue('reglementAmount')).toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span>,
     },
     {
       accessorKey: "zone",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Zone <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -74,27 +128,27 @@ export function useColumns(onEdit: (client: Client) => void, onDelete: (client: 
     {
       accessorKey: "statut",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Status <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className={`badge bg-light border ${row.original.statut?.id==1?'text-success': (row.original.statut?.id==2?'text-danger':'text-warning')}`}> {row.original.statut?.name || "—"} </span>,
+      cell: ({ row }) => <span className={`badge bg-light border ${row.original.statut?.id == 1 ? 'text-success' : (row.original.statut?.id == 2 ? 'text-danger' : 'text-warning')}`}> {row.original.statut?.name || "—"} </span>,
     },
     {
       accessorKey: "profil",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Profil <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.original?.profil?<Link href={row.original?.profil}><Eye /></Link> : "—",
+      cell: ({ row }) => row.original?.profil ? <Link href={row.original?.profil}><Eye /></Link> : "—",
     },
     {
       accessorKey: "phone",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Télephone <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -104,7 +158,7 @@ export function useColumns(onEdit: (client: Client) => void, onDelete: (client: 
     {
       accessorKey: "email",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Email <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -114,7 +168,7 @@ export function useColumns(onEdit: (client: Client) => void, onDelete: (client: 
     {
       accessorKey: "adresse",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Adresse <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -124,7 +178,7 @@ export function useColumns(onEdit: (client: Client) => void, onDelete: (client: 
     {
       accessorKey: "createdAt",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -150,7 +204,7 @@ export function useColumns(onEdit: (client: Client) => void, onDelete: (client: 
     {
       id: "actions",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Actions <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),

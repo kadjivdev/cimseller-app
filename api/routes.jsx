@@ -30,6 +30,7 @@ const apiRoutes = {
 
   // commande's routes
   allCommande: `commandes`,
+  allDetailRecuTypes: `commandes/detail-recus/types`,
   createCommande: `commandes`,
   updateCommande: (id) => (`commandes/${id}`),
   deleteCommande: (id) => (`commandes/${id}`),
@@ -67,10 +68,18 @@ const apiRoutes = {
 
   // vente's routes
   allVente: `ventes`,
+  allValidatedVente: `ventes/validated`,
   createVente: `ventes`,
   updateVente: (id) => (`ventes/${id}`),
   validateVente: (id) => (`ventes/${id}`),
   deleteVente: (id) => (`ventes/${id}`),
+
+  // approvisionnement's routes
+  allApprovisionnement: `approvisionnements`,
+  createApprovisionnement: `approvisionnements`,
+  updateApprovisionnement: (id) => (`approvisionnements/${id}`),
+  validateApprovisionnement: (id) => (`approvisionnements/${id}`),
+  deleteApprovisionnement: (id) => (`approvisionnements/${id}`),
 
   // reglement's routes
   allReglement: `reglements`,
@@ -115,6 +124,12 @@ const apiRoutes = {
   updateBanque: (id) => (`banques/${id}`),
   deleteBanque: (id) => (`banques/${id}`),
 
+  // compte bancaire's routes
+  allCompteBancaire: `compte-bancaires`,
+  createCompteBancaire: `compte-bancaires`,
+  updateCompteBancaire: (id) => (`compte-bancaires/${id}`),
+  deleteCompteBancaire: (id) => (`compte-bancaires/${id}`),
+
   // agent's routes
   allAgent: `agents`,
   createAgent: `agents`,
@@ -157,8 +172,15 @@ const apiRoutes = {
   updateFournisseur: (id) => (`fournisseurs/${id}`),
   deleteFournisseur: (id) => (`fournisseurs/${id}`),
 
-  // client's routes
+  /**
+   * client's routes
+   *  
+   */
+
   allClient: `clients`,
+  allActifClient: `client-filters/actifs`,
+  allInactifClient: `client-filters/inactifs`,
+  allBefClient: `client-filters/befs`,
   createClient: `clients`,
   importClient: `clients`,
   updateClient: (id) => (`clients/${id}`),

@@ -1,5 +1,5 @@
 'use client'
-import DashboardLayourt from "@/app/dashboard/dashboardLoyourt1";
+import DashboardLayourt from "@/app/dashboard/dashboardLoyourt";
 import { Spinner } from "@/components/ui/spinner";
 import { useEffect } from "react";
 import { toast } from "sonner";

@@ -60,12 +60,12 @@ export default function index() {
 
         // Charge tous les clients
         toast.promise(
-            () => axiosInstance.get(apiRoutes.allClient),
+            () => axiosInstance.get(apiRoutes.allActifClient),
             {
-                loading: 'Chargement des status de client...',
+                loading: 'Chargement des clients actifs...',
                 success: (res) => {
                     console.log("Les clients :", res.data)
-                    setClients(res.data?.filter((clt) => clt.statut?.id == 1) || [])
+                    setClients(res.data || [])
                     return 'Clients chargés avec succès'
                 },
                 error: (err) => err?.message || 'Erreur de chargement',

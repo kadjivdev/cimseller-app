@@ -72,6 +72,10 @@ const routes = {
     list: "/dashboard/banque",
     create: "/dashboard/banque/create",
   },
+  compteBancaire: {
+    list: "/dashboard/compte-bancaire",
+    create: "/dashboard/compte-bancaire/create",
+  },
   produit: {
     list: "/dashboard/produit",
     create: "/dashboard/produit/create",

@@ -60,15 +60,15 @@ export default function index() {
 
         // Charge tous les clients
         toast.promise(
-            () => axiosInstance.get(apiRoutes.allClient),
+            () => axiosInstance.get(apiRoutes.allBefClient),
             {
-                loading: 'Chargement des status de client...',
+                loading: 'Chargement des clients befs...',
                 success: (res) => {
-                    console.log("Les clients :", res.data)
+                    console.log("Les clients befs:", res.data)
                     setClients(res.data?.filter((clt) => clt.statut?.id == 3) || [])
-                    return 'Clients chargés avec succès'
+                    return 'Clients befs chargés avec succès'
                 },
-                error: (err) => err?.message || 'Erreur de chargement',
+                error: (err) => err?.message || 'Erreure de chargement',
             }
         )
     }, [reload])

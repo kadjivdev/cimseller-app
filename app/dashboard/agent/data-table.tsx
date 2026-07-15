@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type Dispatch, type SetStateAction } from "react"
 import {
     flexRender,
     getCoreRowModel,
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useColumns, Agent, Agent } from "../agent/columns"
+import { useColumns, Agent } from "../agent/columns"
 import { TableActions } from "./tableActions"
 import { Card } from "@/components/ui/card"
 import {
@@ -41,7 +41,12 @@ const exportColumns = [
     { label: "Crée le", key: "createdAt" as const },
 ]
 
-export function DataTable({ data, setReload }) {
+type DataTableProps = {
+    data: Agent[]
+    setReload: Dispatch<SetStateAction<boolean>>
+}
+
+export function DataTable({ data, setReload }: DataTableProps) {
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
     const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null)

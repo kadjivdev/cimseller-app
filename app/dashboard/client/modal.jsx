@@ -28,7 +28,7 @@ export default function UpdateClientModal({ open, onOpenChange, client, setReloa
 
   useEffect(() => {
     if (!client) return
-    setData({ zoneId: client.zoneId, statutId: client.statutId, raison_sociale: client.raison_sociale, profil: '', phone: client.phone, email: client.email, adresse: client.adresse })
+    setData({ zoneId: client.zoneId || '', statutId: client.statutId ||'', raison_sociale: client.raison_sociale || '', profil: '', phone: client.phone || '', email: client.email || '', adresse: client.adresse || '' })
   }, [client])
 
 

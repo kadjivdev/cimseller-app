@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/table"
 
 export default function index() {
+    const [compteBancaires, setCompteBancaires] = useState([])
     const [banques, setBanques] = useState([])
     const [reload, setReload] = useState(false)
 
@@ -36,16 +37,48 @@ export default function index() {
         }
     }
 
+     // get compte bancaires
+    const retriveCompteBancaires = async () => {
+        try {
+            const response = await axiosInstance.get(apiRoutes.allCompteBancaire)
+            return response.data
+        } catch (error) {
+            console.log("error lors de la recuperation des comptes bancaires :", error)
+        }
+    }
+
+
     useEffect(() => {
         console.log("Reload state :", reload)
         // traitement...
+        // chargement des banques
         toast.promise(
             retriveBanques(),
             {
                 loading: `Chargment des banques ...`,
                 success: function (data) {
-                    console.log("Data obtenu après request :", data)
+                    console.log("Les banques obtenues :", data)
                     setBanques(data)
+                    return (
+                        <>
+                            <span className="">Chargement des banques réussi!  </span>
+                        </>
+                    )
+                },
+                error: function (err) {
+                    return err?.message || "Erreur de chargement des representants"
+                },
+            }
+        )
+
+        // chargement des comptes bancaires
+        toast.promise(
+            retriveCompteBancaires(),
+            {
+                loading: `Chargment des comptes bancaires ...`,
+                success: function (data) {
+                    console.log("Les comptes bancaires :", data)
+                    setCompteBancaires(data)
                     return (
                         <>
                             <span className="">Chargement réussi!  </span>
@@ -53,21 +86,22 @@ export default function index() {
                     )
                 },
                 error: function (err) {
-                    return err?.response?.data?.message || "Erreur de chargement des baqnues"
+                    return err?.message || "Erreur de chargement des utilisateurs"
                 },
             }
         )
     }, [reload])
 
     return <>
-        <DashboardLayourt title="Liste des banques" icon={<List/>}>
-            {/* listes des banques */}
+        <DashboardLayourt title="Liste des comptes bancaires" icon={<List/>}>
+            {/* listes des comptes bancaires */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
                         <DataTable
-                            data={banques}
-                            setReload={setReload} />
+                            data={compteBancaires}
+                            setReload={setReload} 
+                            banques={banques}/>
                     </div>
                 </div>
             </div>
