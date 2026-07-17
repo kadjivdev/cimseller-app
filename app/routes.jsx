@@ -6,6 +6,7 @@ const routes = {
   bonCommande: {
     list: "/dashboard/bon-commande",
     create: "/dashboard/bon-commande/create",
+    recu: "/dashboard/bon-commande/recus",
   },
   programmation: {
     list: "/dashboard/programmation",

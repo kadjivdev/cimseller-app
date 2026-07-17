@@ -1,4 +1,4 @@
-import { Accessibility, BaggageClaim, BanknoteArrowDown, BanknoteArrowUp, CalendarCheck2, ChevronRightIcon, CircleArrowOutUpRight, Download, FileIcon, FolderIcon, FolderPlus, HandCoins, HatGlasses, KeyRound, Landmark, LayoutDashboardIcon, ListTree, Lock, MapPinHouse, PackageSearch, PencilLine, ShoppingCart, SquareMenu, Tally4, TruckElectric, Users, Van } from "lucide-react"
+import { Accessibility, BaggageClaim, BanknoteArrowDown, BanknoteArrowUp, CalendarCheck2, ChevronRightIcon, CircleArrowOutUpRight, Download, FileIcon, FolderIcon, FolderPlus, HandCoins, HatGlasses, KeyRound, Landmark, LayoutDashboardIcon, ListTree, Lock, MapPinHouse, PackageSearch, PencilLine, ReceiptText, ShoppingCart, SquareMenu, Tally4, TruckElectric, Users, Van } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -24,7 +24,7 @@ export function Menu() {
   useEffect(() => {
     localStorage.setItem("menu-open", JSON.stringify(openItems));
   }, [openItems]);
-  
+
   const fileTree: FileTreeItem[] = [
     // dashboard
     {
@@ -61,6 +61,11 @@ export function Menu() {
               name: "Liste",
               url: routes.bonCommande.list,
               icon: <ListTree />,
+            },
+            {
+              name: "Reçus",
+              url: routes.bonCommande.recu,
+              icon: <ReceiptText />,
             }
           ]
         },

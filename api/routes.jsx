@@ -30,11 +30,15 @@ const apiRoutes = {
 
   // commande's routes
   allCommande: `commandes`,
-  allDetailRecuTypes: `commandes/detail-recus/types`,
   createCommande: `commandes`,
   updateCommande: (id) => (`commandes/${id}`),
+  retrieveCommande: (id) => (`commandes/${id}`),
+  validateCommande: (id) => (`commandes/${id}`),
   deleteCommande: (id) => (`commandes/${id}`),
+  allCommandeTypes: `commandes-types`,
+  allCommandeStatus: `commandes-status`,
 
+  
   // commande's routes
   allCommande: `commandes`,
   createCommande: `commandes`,
@@ -44,6 +48,7 @@ const apiRoutes = {
   // commande recu's routes
   allCommandeRecu: `commande-recus`,
   createCommandeRecu: `commande-recus`,
+  retrieveCommandeRecu: (id) => (`commande-recus/${id}`),
   updateCommandeRecu: (id) => (`commande-recus/${id}`),
   deleteCommandeRecu: (id) => (`commande-recus/${id}`),
 
@@ -58,6 +63,7 @@ const apiRoutes = {
   createCommandeRecuAccuse: `commande-recu-accuses`,
   updateCommandeRecuAccuse: (id) => (`commande-recu-accuses/${id}`),
   deleteCommandeRecuAccuse: (id) => (`commande-recu-accuses/${id}`),
+  allDocumentTypes: `documents/types`,
 
   // programmation's routes
   allProgrammation: `programmations`,
