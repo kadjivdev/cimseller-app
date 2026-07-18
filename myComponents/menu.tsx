@@ -1,4 +1,4 @@
-import { Accessibility, BaggageClaim, BanknoteArrowDown, BanknoteArrowUp, CalendarCheck2, ChevronRightIcon, CircleArrowOutUpRight, Download, FileIcon, FolderIcon, FolderPlus, HandCoins, HatGlasses, KeyRound, Landmark, LayoutDashboardIcon, ListTree, Lock, MapPinHouse, PackageSearch, PencilLine, ReceiptText, ShoppingCart, SquareMenu, Tally4, TruckElectric, Users, Van } from "lucide-react"
+import { Accessibility, BaggageClaim, BanknoteArrowDown, BanknoteArrowUp, CalendarCheck2, ChevronRightIcon, CircleArrowOutUpRight, Download, FileIcon, FileText, FolderIcon, FolderPlus, HandCoins, HatGlasses, KeyRound, Landmark, LayoutDashboardIcon, ListTree, Lock, MapPinHouse, PackageSearch, PencilLine, ReceiptText, ShoppingCart, SquareMenu, Tally4, TruckElectric, Users, Van } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -66,6 +66,11 @@ export function Menu() {
               name: "Reçus",
               url: routes.bonCommande.recu,
               icon: <ReceiptText />,
+            },
+            {
+              name: "Accuses",
+              url: routes.bonCommande.accuse,
+              icon: <FileText />,
             }
           ]
         },

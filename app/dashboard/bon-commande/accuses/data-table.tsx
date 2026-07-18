@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useColumns, Recu } from "./columns"
+import { useColumns, Accuse } from "./columns"
 import { TableActions } from "./tableActions"
 import { Card } from "@/components/ui/card"
 import {
@@ -29,7 +29,6 @@ import {
 import { Settings2 } from "lucide-react"
 
 // modals
-import VersementRecuBonModal from "./versements-modal"
 import { DatePickerRange } from "@/myComponents/DatePickerRange"
 
 const exportColumns = [
@@ -47,19 +46,19 @@ const exportColumns = [
 export function DataTable({ data, setReload, date, setDate, totalAmount }) {
 
     const [open, setOpen] = useState(false)
-    const [selectedRecu, setSelectedRecu] = useState<Recu | null>(null)
+    const [selectedAccuse, setSelectedAccuse] = useState<Accuse | null>(null)
 
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // ✅ Nouveau
 
     // 
-    const handleVersement = (recu: Recu) => {
-        setSelectedRecu(recu)
+    const handleVersement = (accuse: Accuse) => {
+        setSelectedAccuse(accuse)
         setOpen(true)
     }
 
-    const columns = useColumns(handleVersement) // 👈 passe les callbacks
+    const columns = useColumns() // 👈 passe les callbacks
 
     const table = useReactTable({
         data,
@@ -125,7 +124,7 @@ export function DataTable({ data, setReload, date, setDate, totalAmount }) {
                             <TableActions
                                 data={data}
                                 columns={exportColumns}
-                                filename="versements"
+                                filename="accuses"
                             />
                         </div>
                     </div>
@@ -158,7 +157,7 @@ export function DataTable({ data, setReload, date, setDate, totalAmount }) {
                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                                            Aucun bon trouvé.
+                                            Aucun accusé trouvé.
                                         </TableCell>
                                     </TableRow>
                                 )}
@@ -182,13 +181,6 @@ export function DataTable({ data, setReload, date, setDate, totalAmount }) {
                     </div>
                 </div>
             </Card>
-
-            <VersementRecuBonModal
-                open={open}
-                onOpenChange={setOpen}
-                recu={selectedRecu}
-                setReload={setReload}
-            />
         </>
     )
 }

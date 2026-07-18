@@ -64,6 +64,7 @@ const apiRoutes = {
   updateCommandeRecuAccuse: (id) => (`commande-recu-accuses/${id}`),
   deleteCommandeRecuAccuse: (id) => (`commande-recu-accuses/${id}`),
   allDocumentTypes: `documents/types`,
+  allDetailRecuTypes: `commandes/detail-recus/types`,
 
   // programmation's routes
   allProgrammation: `programmations`,
