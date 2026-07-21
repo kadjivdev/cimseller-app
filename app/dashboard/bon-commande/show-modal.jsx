@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-import { Eye, SquareArrowRightEnter, X } from "lucide-react";
+import { Eye, X } from "lucide-react";
 
 export default function ShowBonModal({ open, onOpenChange, bon }) {
 

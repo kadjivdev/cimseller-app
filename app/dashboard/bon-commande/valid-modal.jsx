@@ -16,6 +16,7 @@ import { useEffect} from "react"
 export default function ValidBonModal({ open, onOpenChange, bon, setReload }) {
     const router = useRouter()
 
+    if (!bon) return
     // submission
     const submitValidForm = (e) => {
         e.preventDefault()
@@ -26,7 +27,7 @@ export default function ValidBonModal({ open, onOpenChange, bon, setReload }) {
                 success: (res) => {
                     console.log("Response de validation :", res.data)
 
-                    router.push(routes.bon?.list)
+                    router.push(routes.bonCommande?.list)
                     router.refresh() // 👈 recharge les données server-side sans full reload
                     setReload(true)
 
@@ -35,8 +36,8 @@ export default function ValidBonModal({ open, onOpenChange, bon, setReload }) {
                     return 'Bon validé avec succès!'
                 },
                 error: (err) =>{
-                    console.log("Erreure de validation du bon :", err)
-                    return err || err?.error || err?.data?.error
+                    console.log("Erreure de validation du bon :", err.response?.data?.error)
+                    return err.response?.data?.error
                 },
             }
         )

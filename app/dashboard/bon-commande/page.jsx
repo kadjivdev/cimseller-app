@@ -8,18 +8,7 @@ import apiRoutes from "@/api/routes";
 import { List } from 'lucide-react';
 import { startOfMonth, endOfMonth, isWithinInterval, startOfDay, endOfDay } from "date-fns"
 
-import { columns } from "./columns"
 import { DataTable } from "./data-table"
-
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
 
 export default function index() {
 

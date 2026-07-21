@@ -79,11 +79,11 @@ export function Menu() {
           url: routes.programmation.list,
           icon: <Van />,
           items: [
-            {
-              name: "Create",
-              icon: <FolderPlus />,
-              url: routes.programmation.create,
-            },
+            // {
+            //   name: "Create",
+            //   icon: <FolderPlus />,
+            //   url: routes.programmation.create,
+            // },
             {
               name: "Liste",
               icon: <ListTree />,

@@ -25,6 +25,7 @@ export default function AccuseBonModal({ open, onOpenChange, bon, setReload }) {
   const [data, setData] = useState({ commandeId: "", accuses: [{ reference: '', libelle: "", date: '', typeDocumentId: 1, montant: 1, preuve: '' }] })
   const [errors, setErrors] = useState({ commandeId: '', accuses: '' })
 
+  
   // initialisation des erreurs
   useEffect(() => {
     if (!open) return
@@ -187,7 +188,8 @@ export default function AccuseBonModal({ open, onOpenChange, bon, setReload }) {
                 <h5>Les accusés</h5>
                 <button
                   className="px-3 py-1 text-sm bg-neutral-900 text-white rounded shadow-sm hover:bg-neutral-800"
-                  onClick={(e) => addLigne(e)}>
+                  onClick={(e) => addLigne(e)}
+                  disabled={bon?.validatedBy}>
                   ➕ Ajouter
                 </button>
               </div>
@@ -337,7 +339,7 @@ export default function AccuseBonModal({ open, onOpenChange, bon, setReload }) {
 
           <DialogFooter>
             <Button className="shadow-sm rounded" variant="outline" onClick={(e) => { e.preventDefault(), onOpenChange(false) }}><X /> Annuler</Button>
-            <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
+            <Button type="submit" disabled={bon?.validatedBy} className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -13,21 +13,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Textarea } from "@/components/ui/textarea"
-import Link from "next/link"
-
-export type Bon = {
+export type Programmation = {
   id: number
-  fournisseur: {
-    id: Number,
-    raison_sociale: String,
-  }
   statut: {
     id: Number,
     name: String,
   }
-  type: {
+  zone: {
     id: Number,
     name: String,
+  }
+  camion: {
+    id: Number,
+    immatriculation: String,
+    libelle: String,
+  }
+  chauffeur: {
+    id: Number,
+    fullname: String,
+  }
+  avaliseur: {
+    id: Number,
+    fullname: String,
   }
   validatedBy: {
     id: Number,
@@ -38,25 +45,23 @@ export type Bon = {
     fullname: String,
   }
   code: string
-  reference: string
-  qteCommander: string
-  qteProgrammer: string
-  qteVendu: string
-  montant: Number
-  stock: Number
+  dateSortie: string
+  dateProgrammation: string
+  qteProgrammer: Number
+  qteLivre: Number
+  qteVendue: Number
+  bl: string
+  observation: String
   date: Number
   createdAt: string
   validatedAt: string
 }
 
 export function useColumns(
-  onEdit: (bon: Bon) => void,
-  onShow: (bon: Bon) => void,
-  onDelete: (bon: Bon) => void,
-  onValid: (bon: Bon) => void,
-  handleRecu: (bon: Bon) => void,
-  handleAccuse: (bon: Bon) => void)
-  : ColumnDef<Bon>[] {
+  onEdit: (programmation: Programmation) => void,
+  onDelete: (programmation: Programmation) => void,
+  onValid: (programmation: Programmation) => void,)
+  : ColumnDef<Programmation>[] {
   // verifier si le user a cette permission
   // const isUserPermitted = (name:String) => {
   //   return (rolePermissions).some(per => per.name == name);
@@ -89,41 +94,50 @@ export function useColumns(
       accessorKey: "reference",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Reference <ArrowUpDown className="ml-2 h-4 w-4" />
+          Date sortie <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border text-dark">{row.getValue("reference") || "—"}</span>,
+      cell: ({ row }) => {
+        const date = row.original?.dateSortie
+        return date
+          ? new Date(date).toLocaleDateString("fr-FR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+          : "--"
+      }
     },
     {
-      accessorKey: "fournisseur",
+      accessorKey: "camion",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Fournisseur <ArrowUpDown className="ml-2 h-4 w-4" />
+          Camion <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border text-dark">{row.original?.fournisseur?.raison_sociale || "—"}</span>,
+      cell: ({ row }) => <span className="badge border text-dark">{`${row.original?.camion?.immatriculation}-${row.original?.camion?.libelle}` || "—"}</span>,
     },
     {
-      accessorKey: "qtecommander",
+      accessorKey: "chauffeur",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Quantité Commandée <ArrowUpDown className="ml-2 h-4 w-4" />
+          Chauffeur <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.qteCommander ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge border text-dark">{`${row.original?.chauffeur?.fullname}` || "—"}</span>,
     },
     {
-      accessorKey: "montant",
+      accessorKey: "avaliseur",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Montant <ArrowUpDown className="ml-2 h-4 w-4" />
+          Avaliseur <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.montant ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge border text-dark">{`${row.original?.avaliseur?.fullname}` || "—"}</span>,
     },
     {
       accessorKey: "qteprogrammer",
@@ -136,53 +150,34 @@ export function useColumns(
       cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.qteProgrammer ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
-      accessorKey: "qtevendu",
+      accessorKey: "qteVendue",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Quantité Vendue <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.qteVendu ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.qteVendue ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
-      accessorKey: "stock",
+      accessorKey: "zone",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Stock <ArrowUpDown className="ml-2 h-4 w-4" />
+          Zone <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-danger border text-white"> {(row.original.stock ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge border text-dark">{`${row.original?.zone?.name}` || "—"}</span>,
     },
     {
-      accessorKey: "date",
+      accessorKey: "bl",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Date <ArrowUpDown className="ml-2 h-4 w-4" />
+          Bl <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => {
-        const date = row.getValue("date") as string
-        return date
-          ? new Date(date).toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-          : "—"
-      },
-    },
-    {
-      accessorKey: "type",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Type commande <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light text-dark bordezr rounded">{row.original.type?.name || "—"}</span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {row.original?.bl || "—"} </span>,
     },
     {
       accessorKey: "statut",
@@ -193,31 +188,53 @@ export function useColumns(
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => {
-        let statut = row.original.statut
+        let statut = row.original?.statut
         let classText = ''
+        let statutText = null
         let icon;
         switch (statut?.id) {
           case 1:
-            classText = 'bg-white text-dark'//programmé
-            icon = <Van />
+            classText = 'bg-success text-white'//validée
+            statutText = row.original?.statut?.name
+            icon = <CircleCheckBig />
             break;
           case 2:
-            classText = 'bg-success text-white'//livrée
-            icon = <ShoppingCart />
+            classText = 'bg-danger text-white'//annulée
+            statutText = row.original?.statut?.name
+            icon = <CircleX />
             break;
           case 3:
-            classText = 'bg-dark text-white'//validée
+            classText = 'bg-info text-white'//livrée
+            statutText = row.original?.statut?.name
+            icon = <Van />
+            break;
+             case 4:
+            classText = 'bg-success text-white'//validée
+            statutText = row.original?.statut?.name
             icon = <CircleCheckBig />
             break;
           default:
+            classText = 'bg-dark text-white'//validée
+            statutText = 'En Cours'
+            icon = <CircleCheckBig />
             break;
         }
         return <>
           <span className={`flex items-center gap-1 whitespace-nowrap badge border ${classText}`}>
-            <span className="[&>svg]:size-3">{icon}</span> {row.original.statut?.name || "—"}
+            <span className="[&>svg]:size-3">{icon}</span> {statutText || "—"}
           </span>
         </>
       }
+    },
+    {
+      accessorKey: "observation",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Observation <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <Textarea placeholder={row.getValue("observation")} />,
     },
     {
       accessorKey: "validatedAt",
@@ -284,8 +301,9 @@ export function useColumns(
         </Button>
       ),
       cell: ({ row }) => {
-        const bon = row.original
+        const programmation = row.original
         return (
+          !programmation.validatedBy?
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
@@ -299,63 +317,27 @@ export function useColumns(
               <DropdownMenuSeparator />
 
               {/* modifier */}
-              {!bon.validatedBy &&
+              {!programmation.validatedBy &&
                 <DropdownMenuItem
                   style={{ cursor: "pointer" }}
                   className="text-warning"
                   onSelect={(e) => {
                     e.preventDefault()
-                    onEdit(bon) // 👈 remonte juste du bon
+                    onEdit(programmation) // 👈 remonte juste du bon
                   }}
                 >
                   <PencilLine /> Modifier
                 </DropdownMenuItem>
               }
 
-              {/* show */}
-              <DropdownMenuItem
-                style={{ cursor: "pointer" }}
-                className="text-info"
-                onSelect={(e) => {
-                  e.preventDefault()
-                  onShow(bon) // 👈 remonte juste du bon
-                }}
-              >
-                <Eye /> Voir
-              </DropdownMenuItem>
-
-              {/* Reçus */}
-              <DropdownMenuItem
-                style={{ cursor: "pointer" }}
-                className="text-dark"
-                onSelect={(e) => {
-                  e.preventDefault()
-                  handleRecu(bon) // 👈 remonte juste du bon
-                }}
-              >
-                <ReceiptText /> Reçus
-              </DropdownMenuItem>
-
-              {/* Accusés */}
-              <DropdownMenuItem
-                style={{ cursor: "pointer" }}
-                className="text-dark"
-                onSelect={(e) => {
-                  e.preventDefault()
-                  handleAccuse(bon) // 👈 remonte juste du bon
-                }}
-              >
-                <FolderPlus /> Accusés
-              </DropdownMenuItem>
-
               {/* valider */}
-              {!bon.validatedBy &&
+              {!programmation.validatedBy &&
                 <DropdownMenuItem
                   style={{ cursor: "pointer" }}
                   className="text-success"
                   onSelect={(e) => {
                     e.preventDefault()
-                    onValid(bon) // 👈 remonte juste de l'approvisionnement
+                    onValid(programmation) // 👈 remonte juste la programmation
                   }}
                 >
                   <CircleCheckBig /> Valider
@@ -363,19 +345,19 @@ export function useColumns(
               }
 
               {/* suppression */}
-              {!bon.validatedBy &&
+              {!programmation.validatedBy &&
                 <DropdownMenuItem
                   style={{ cursor: "pointer" }}
                   className="text-danger"
                   onSelect={(e) => {
                     e.preventDefault()
-                    onDelete(bon) // 👈 remonte juste de l'approvisionnement
+                    onDelete(programmation) // 👈 remonte juste de la programmation
                   }}>
                   <Eraser /> Supprimer
                 </DropdownMenuItem>
               }
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu>:'---'
         )
       },
     },

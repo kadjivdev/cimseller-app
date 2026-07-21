@@ -30,6 +30,7 @@ const apiRoutes = {
 
   // commande's routes
   allCommande: `commandes`,
+  allValidatedCommande: `commandes/validated`,
   createCommande: `commandes`,
   updateCommande: (id) => (`commandes/${id}`),
   retrieveCommande: (id) => (`commandes/${id}`),

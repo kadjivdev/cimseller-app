@@ -12,31 +12,32 @@ import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
 import routes from "@/app/routes"
 
-export default function DeleteBonModal({ open, onOpenChange, bon, setReload }) {
+export default function ValidProgrammationModal({ open, onOpenChange, programmation, handleBonSelect }) {
     const router = useRouter()
 
-    if (!bon) return 
-
+    if (!programmation || !open) return
     // submission
-    const submitDeleteForm = (e) => {
+    const submitValidForm = (e) => {
         e.preventDefault()
         toast.promise(
-            () => axiosInstance.delete(apiRoutes.deleteCommande(bon.id)),
+            () => axiosInstance.post(apiRoutes.validateProgrammation(programmation.id)),
             {
-                loading: `Suppression en cours du bon ${bon?.code}...`,
+                loading: `Validation de la programmation ${programmation?.code}  en cours ...`,
                 success: (res) => {
-                    console.log("Response de suppression :", res.data)
-                    
-                    router.push(routes.allCommande?.list)
+                    console.log("Response de validation :", res.data)
+
+                    router.push(routes.programmation?.list)
                     router.refresh() // 👈 recharge les données server-side sans full reload
-                    setReload(true)
-                    
+                    handleBonSelect(programmation?.commandeId)
                     // fermeture du modal
                     onOpenChange(false)
-                    // 
-                    return 'Bon supprimé avec succès!'
+
+                    return 'Programmation validée avec succès!'
                 },
-                error: (err) => err?.message || 'Erreur de chargement',
+                error: (err) => {
+                    console.log("Erreure de validation de la programmation :", err.response?.data?.error)
+                    return err.response?.data?.error
+                },
             }
         )
     }
@@ -49,14 +50,14 @@ export default function DeleteBonModal({ open, onOpenChange, bon, setReload }) {
                         <DialogTitle>Êtes-vous sûre?</DialogTitle>
                         <DialogDescription>
                             Cette action est irréversible.
-                            Ce bon <span className="badge bg-light border rounded text-dark"> {bon?.code}</span> sera supprimé définitivement.
+                            Cette programmation <span className="badge bg-light border rounded text-dark"> {programmation?.code}</span> sera validée définitivement.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="d-flex justify-content-center">
                         <DialogClose asChild>
                             <Button className="shadow-sm rounded" variant="outline" onClick={() => onOpenChange(false)}><X /> Annuler</Button>
                         </DialogClose>
-                        <Button type="submit" className="bg-danger text-white shadow-sm rounded" onClick={(e) => submitDeleteForm(e)}><SquareArrowRightEnter />Supprimer</Button>
+                        <Button type="submit" className="bg-success text-white shadow-sm rounded" onClick={(e) => submitValidForm(e)}><SquareArrowRightEnter />Valider</Button>
                     </DialogFooter>
                 </DialogContent>
             </form>

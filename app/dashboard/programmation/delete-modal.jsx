@@ -12,31 +12,31 @@ import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
 import routes from "@/app/routes"
 
-export default function DeleteBonModal({ open, onOpenChange, bon, setReload }) {
+export default function DeleteProgrammationModal({ open, onOpenChange, programmation, setReload }) {
     const router = useRouter()
 
-    if (!bon) return 
+    if (programmation) return 
 
     // submission
     const submitDeleteForm = (e) => {
         e.preventDefault()
         toast.promise(
-            () => axiosInstance.delete(apiRoutes.deleteCommande(bon.id)),
+            () => axiosInstance.delete(apiRoutes.deleteProgrammation(programmation.id)),
             {
-                loading: `Suppression en cours du bon ${bon?.code}...`,
+                loading: `Suppression en cours de la progreammation ${programmation?.code}...`,
                 success: (res) => {
                     console.log("Response de suppression :", res.data)
                     
-                    router.push(routes.allCommande?.list)
+                    router.push(apiRoutes.allProgrammation?.list)
                     router.refresh() // 👈 recharge les données server-side sans full reload
                     setReload(true)
                     
                     // fermeture du modal
                     onOpenChange(false)
                     // 
-                    return 'Bon supprimé avec succès!'
+                    return 'Programmation supprimée avec succès!'
                 },
-                error: (err) => err?.message || 'Erreur de chargement',
+                error: (err) => err?.response?.message || 'Erreur de chargement',
             }
         )
     }
@@ -49,7 +49,7 @@ export default function DeleteBonModal({ open, onOpenChange, bon, setReload }) {
                         <DialogTitle>Êtes-vous sûre?</DialogTitle>
                         <DialogDescription>
                             Cette action est irréversible.
-                            Ce bon <span className="badge bg-light border rounded text-dark"> {bon?.code}</span> sera supprimé définitivement.
+                            Cette programmation <span className="badge bg-light border rounded text-dark"> {programmation?.code}</span> sera supprimée définitivement.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="d-flex justify-content-center">

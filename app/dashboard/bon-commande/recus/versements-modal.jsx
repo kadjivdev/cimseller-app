@@ -189,7 +189,7 @@ export default function VersementRecuBonModal({ open, onOpenChange, recu,setRelo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:max-w-[900px] sm:max-w-[480px] overflow-y-auto max-h-[90vh]">
+      <DialogContent className="md:max-w-[1000px] sm:max-w-[480px] overflow-y-auto max-h-[90vh]">
         <DialogHeader className="bg-light p-1">
           <DialogTitle>
             <PencilLine /> Liste des versements du reçu

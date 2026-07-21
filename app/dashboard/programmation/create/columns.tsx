@@ -2,7 +2,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Eye, HandCoins, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, CircleCheckBig, CircleX, Eraser, Eye, FolderPlus, HandCoins, MoreHorizontal, PencilLine, ReceiptText, ShoppingCart, Van } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 
-export type Recu = {
+export type Accuse = {
   id: number
   commande: {
     id: Number,
@@ -27,16 +27,14 @@ export type Recu = {
   code: string
   reference: string
   libelle: string
-  tonnage: string
   montant: Number
   date: Number
   preuve: String
   createdAt: string
 }
 
-export function useColumns(
-  handleVersement: (recu: Recu) => void)
-  : ColumnDef<Recu>[] {
+export function useColumns()
+  : ColumnDef<Accuse>[] {
   // verifier si le user a cette permission
   // const isUserPermitted = (name:String) => {
   //   return (rolePermissions).some(per => per.name == name);
@@ -96,16 +94,6 @@ export function useColumns(
       cell: ({ row }) => <span className="badge border text-dark">{row.getValue("libelle") || "—"}</span>,
     },
     {
-      accessorKey: "tonnage",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Tonnage <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.tonnage ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
-    },
-    {
       accessorKey: "montant",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
@@ -160,55 +148,6 @@ export function useColumns(
           year: "numeric",
         })
       },
-    },
-    {
-      accessorKey: "createdBy",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Crée par <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border rounded text-dark"> {row.original.createdBy?.fullname || "—"} </span>,
-    },
-    // 
-    {
-      id: "actions",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Actions <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const recu = row.original
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-
-              {/* modifier */}
-              <DropdownMenuItem
-                style={{ cursor: "pointer" }}
-                className="text-success"
-                onSelect={(e) => {
-                  e.preventDefault()
-                  handleVersement(recu) // 👈 remonte juste du recu
-                }}
-              >
-                <HandCoins /> Versements
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )
-      },
-    },
+    }
   ]
 }

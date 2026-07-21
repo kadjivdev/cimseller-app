@@ -116,14 +116,14 @@ export default function UpdateBonModal({ open, onOpenChange, bon, setReload }) {
   }, [open])
 
   useEffect(() => {
-    if (!bon) return
+
     setData((prev) => (
       {
         ...prev,
-        reference: bon.reference,
-        typeId: bon.typeId,
-        fournisseurId: bon.fournisseurId,
-        date: bon.date?.split("T")?.[0],
+        reference: bon?.reference,
+        typeId: bon?.typeId,
+        fournisseurId: bon?.fournisseurId,
+        date: bon?.date?.split("T")?.[0],
       }))
   }, [bon])
 
@@ -176,7 +176,7 @@ export default function UpdateBonModal({ open, onOpenChange, bon, setReload }) {
 
     try {
       await toast.promise(
-        axiosInstance.put(apiRoutes.updateCommande(bon.id), data),
+        axiosInstance.put(apiRoutes.updateCommande(bon?.id), data),
         {
           loading: `Mise à jour en cours du bon ${bon?.code} ...`,
           success: async (res) => {
