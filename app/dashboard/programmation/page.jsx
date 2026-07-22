@@ -5,13 +5,14 @@ import { useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import apiRoutes from "@/api/routes";
-import { List } from 'lucide-react';
+import { List, Printer } from 'lucide-react';
 import { startOfMonth, endOfMonth, isWithinInterval, startOfDay, endOfDay } from "date-fns"
 import { FilterSelect } from "@/myComponents/FilterSelect";
 import { Label } from "@/components/ui/label"
 
 import { DataTable } from "./data-table"
 import AddProgrammationModal from "./add-modal"
+import ImprimerProgrammationModal from "./imprimer/modal"
 
 
 export default function index() {
@@ -20,6 +21,7 @@ export default function index() {
 
     const [bons, setBons] = useState([])
     const [openAdd, setOpenAdd] = useState(false)
+    const [openPrint, setOpenPrint] = useState(false)
     const [selectedBon, setSelectedBon] = useState(null)
     const [programmations, setProgrammations] = useState([])
 
@@ -91,6 +93,13 @@ export default function index() {
         setOpenAdd(true)
     }
 
+    // printProgrammation
+    const printProgrammation = (e) => {
+        console.log("Debut d'impression des programmations")
+        e.preventDefault()
+        setOpenPrint(true)
+    }
+
     useEffect(() => {
         console.log("bon  :", selectedBon)
         setProgrammations(selectedBon?.programmations || [])
@@ -106,22 +115,32 @@ export default function index() {
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-8 mb-2 text-center bg-light border rounded shadow-sm p-2">
-                        <Label htmlFor="bon_id">Choisissez un bon <span className="text-danger">*</span>  </Label>
-                        <FilterSelect
-                            options={bons?.map((bn) => ({ id: bn.id, label: `${bn.code} | Commandée: ${bn.qteCommander}` }))}
-                            handleSelect={handleBonSelect}
-                            selected={selectedBon?.id}
-                        />
-                        {selectedBon && (
-                            <>
-                                <p className="text-center bg-dark text-white my-3">Bon choisi : {`${selectedBon.code} | Commandée: ${selectedBon.qteCommander} | Programmée:${selectedBon.qteProgrammer} | Stock:${selectedBon.stock}`} </p>
-                                <button
-                                    className="btn btn-sm bg-dark text-white"
-                                    disabled={selectedBon?.stock == 0}
-                                    onClick={addProgrammation}
-                                >➕ Programmer ce bon</button>
-                            </>
-                        )}
+                        <div className="mt-2 d-flex justify-content-center">
+                            <button
+                                className="btn btn-sm bg-dark text-warning text-center  d-flex align-items-center justify-content-center gap-1"
+                                onClick={printProgrammation}
+                            >
+                                <Printer size={16} /> Imprimer une liste de programmation
+                            </button>
+                        </div>
+                        <div className="mt-3 border rounded p-1">
+                            <Label htmlFor="bon_id">Choisissez un bon <span className="text-danger">*</span>  </Label>
+                            <FilterSelect
+                                options={bons?.map((bn) => ({ id: bn.id, label: `${bn.code} | Commandée: ${bn.qteCommander}` }))}
+                                handleSelect={handleBonSelect}
+                                selected={selectedBon?.id}
+                            />
+                            {selectedBon && (
+                                <>
+                                    <p className="text-center bg-dark text-white my-3">Bon choisi : {`${selectedBon.code} | Commandée: ${selectedBon.qteCommander} | Programmée:${selectedBon.qteProgrammer} | Stock:${selectedBon.stock}`} </p>
+                                    <button
+                                        className="btn btn-sm bg-dark text-white"
+                                        disabled={selectedBon?.stock == 0}
+                                        onClick={addProgrammation}
+                                    >➕ Programmer ce bon</button>
+                                </>
+                            )}
+                        </div>
                     </div>
 
                 </div>
@@ -145,6 +164,12 @@ export default function index() {
             onOpenChange={setOpenAdd}
             bon={selectedBon}
             handleBonSelect={handleBonSelect}
+        />
+
+        {/* imprimession de programmtion */}
+        <ImprimerProgrammationModal
+            open={openPrint}
+            onOpenChange={setOpenPrint}
         />
     </>
 }

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useColumns, Accuse } from "./columns"
+import { useColumns, Programmation } from "./columns"
 import { TableActions } from "./tableActions"
 import { Card } from "@/components/ui/card"
 import {
@@ -30,6 +30,7 @@ import { Settings2 } from "lucide-react"
 
 // modals
 import { DatePickerRange } from "@/myComponents/DatePickerRange"
+import { Label } from "@/components/ui/label"
 
 const exportColumns = [
     { label: "Code ", key: "code" as const },
@@ -43,20 +44,11 @@ const exportColumns = [
     { label: "Crée par", key: "createdBy" as const },
 ]
 
-export function DataTable({ data, setReload, date, setDate, totalAmount }) {
-
-    const [open, setOpen] = useState(false)
-    const [selectedAccuse, setSelectedAccuse] = useState<Accuse | null>(null)
+export function DataTable({ data, date, setDate }) {
 
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // ✅ Nouveau
-
-    // 
-    const handleVersement = (accuse: Accuse) => {
-        setSelectedAccuse(accuse)
-        setOpen(true)
-    }
 
     const columns = useColumns() // 👈 passe les callbacks
 
@@ -73,19 +65,21 @@ export function DataTable({ data, setReload, date, setDate, totalAmount }) {
         getPaginationRowModel: getPaginationRowModel(),
     })
 
+
     return (
         <>
             <Card className="p-2">
                 <div className="space-y-4">
+                    <div className="row d-flex justify-content-center">
+                        <div className="col-md-4">
+                            {/* Filtre par période */}
+                            <DatePickerRange
+                                date={date}
+                                setDate={setDate}
+                            />
+                        </div>
+                    </div>
 
-                    {/* Filtre par période */}
-                    <DatePickerRange
-                        date={date}
-                        setDate={setDate}
-                    />
-
-                    {/* Total amount */}
-                    <h3 className="">Montant total: <span className="badge bg-dark border text-light rounded">$ {totalAmount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} </span></h3>
                     {/* ── HEADER ── */}
                     <div className="flex items-center justify-between gap-4 no-print bg-dark p-2 rounded">
                         <Input
@@ -124,7 +118,7 @@ export function DataTable({ data, setReload, date, setDate, totalAmount }) {
                             <TableActions
                                 data={data}
                                 columns={exportColumns}
-                                filename="accuses"
+                                filename="programmations"
                             />
                         </div>
                     </div>
@@ -157,7 +151,7 @@ export function DataTable({ data, setReload, date, setDate, totalAmount }) {
                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                                            Aucun accusé trouvé.
+                                            Aucune programmation.
                                         </TableCell>
                                     </TableRow>
                                 )}

@@ -10,7 +10,6 @@ import { SquareArrowRightEnter, X } from "lucide-react"
 
 import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
-import routes from "@/app/routes"
 
 export default function DeleteProgrammationModal({ open, onOpenChange, programmation, setReload }) {
     const router = useRouter()

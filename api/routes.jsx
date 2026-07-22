@@ -69,7 +69,9 @@ const apiRoutes = {
 
   // programmation's routes
   allProgrammation: `programmations`,
+  allValidatedProgrammation: `programmations/validate`,
   createProgrammation: `programmations`,
+  printProgrammation: `programmations/print`,
   updateProgrammation: (id) => (`programmations/${id}`),
   validateProgrammation: (id) => (`programmations/${id}`),
   deleteProgrammation: (id) => (`programmations/${id}`),
