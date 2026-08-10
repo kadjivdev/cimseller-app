@@ -11,8 +11,6 @@ import { FilterSelect } from "@/myComponents/FilterSelect";
 import { Label } from "@/components/ui/label"
 
 import { DataTable } from "./data-table"
-import AddProgrammationModal from "./add-modal"
-import ImprimerProgrammationModal from "./imprimer/modal"
 
 
 export default function index() {
@@ -77,20 +75,13 @@ export default function index() {
                 success: (res) => {
                     console.log("Le bon :", res.data)
                     setSelectedBon(res.data)
-                    setProgrammations(res.data?.programmations || [])
+                    // seules les programmes imprimée & validée
+                    setProgrammations(res.data?.programmations.filter((pr)=>pr.imprimer && pr.validatedById)  || [])
                     return 'Bon chargé avec succès!'
                 },
                 error: (err) => err?.response?.message || 'Erreur de chargement',
             }
         )
-    }
-
-    // addProgrammation
-    const addProgrammation = (e) => {
-        console.log("selectedBon :", selectedBon)
-        if (!selectedBon) return
-        e.preventDefault()
-        setOpenAdd(true)
     }
 
     // printProgrammation
@@ -101,28 +92,15 @@ export default function index() {
     }
 
     useEffect(() => {
-        console.log("bon  :", selectedBon)
-        setProgrammations(selectedBon?.programmations || [])
-    }, [selectedBon])
-
-    useEffect(() => {
         console.log("programmations :", programmations)
     }, [programmations])
 
     return <>
-        <DashboardLayourt title="Liste des programmations de bons" icon={<List />}>
+        <DashboardLayourt title="Panel du suivi des bons" icon={<List />}>
             {/* listes des programmations de commande */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-8 mb-2 text-center bg-light border rounded shadow-sm p-2">
-                        <div className="mt-2 d-flex justify-content-center">
-                            <button
-                                className="btn btn-sm bg-dark text-warning text-center  d-flex align-items-center justify-content-center gap-1"
-                                onClick={printProgrammation}
-                            >
-                                <Printer size={16} /> Imprimer une liste de programmation
-                            </button>
-                        </div>
                         <div className="mt-3 border rounded p-1">
                             <Label htmlFor="bon_id">Choisissez un bon pour afficher ses programmations <span className="text-danger">*</span>  </Label>
                             <FilterSelect
@@ -133,11 +111,7 @@ export default function index() {
                             {selectedBon && (
                                 <>
                                     <p className="text-center bg-dark text-white my-3">Bon choisi : {`${selectedBon.code} | Commandée: ${selectedBon.qteCommander} | Programmée:${selectedBon.qteProgrammer} | Stock:${selectedBon.stock}`} </p>
-                                    <button
-                                        className="btn btn-sm bg-dark text-white"
-                                        disabled={selectedBon?.stock == 0}
-                                        onClick={addProgrammation}
-                                    >➕ Programmer ce bon</button>
+                                    <p className="text-center bg-info text-dark"> {`Fournisseur: ${selectedBon.fournisseur?.sigle}-${selectedBon.fournisseur?.raison_sociale} | Produit: ${selectedBon.commandeDetails?.[0]?.product?.name}`} </p>
                                 </>
                             )}
                         </div>
@@ -157,19 +131,5 @@ export default function index() {
                 </div>
             </div>
         </DashboardLayourt>
-
-        {/* ajout de programmtion */}
-        <AddProgrammationModal
-            open={openAdd}
-            onOpenChange={setOpenAdd}
-            bon={selectedBon}
-            handleBonSelect={handleBonSelect}
-        />
-
-        {/* imprimession de programmtion */}
-        <ImprimerProgrammationModal
-            open={openPrint}
-            onOpenChange={setOpenPrint}
-        />
     </>
 }

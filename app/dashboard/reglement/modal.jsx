@@ -29,6 +29,8 @@ export default function UpdateReglementModal({ open, onOpenChange, reglement, se
   const [ventes, setVentes] = useState([])
   const [clients, setClients] = useState([])
   const [compteBancaires, setCompteBancaires] = useState([])
+  const [selectedClient, setSelectedClient] = useState(null)
+  const [selectedVente, setSelectedVente] = useState(null)
 
   const [data, setData] = useState({ typeDetailRecuId: '', venteId: '', clientId: '', compteBancaireId: '', reference: '', montant: '', deblocDette: false, date: '', preuve: '', comment: '' })
   const [errors, setErrors] = useState({ typeDetailRecuId: '', venteId: '', clientId: '', compteBancaireId: '', reference: '', montant: '', deblocDette: '', date: '', preuve: '', comment: '' })
@@ -116,16 +118,35 @@ export default function UpdateReglementModal({ open, onOpenChange, reglement, se
 
   // handle change
   const handleChange = (e) => {
-    const { name, value, files, type } = e.target;
+    const { name, value, files, type, checked } = e.target;
+
+    if (name == "montant") {
+      if (selectedVente?.montant < value) {
+        toast.warning(`Le montant saisi ne doit pas dépasser le montant de la vente ${selectedVente?.montant?.toLocaleString({ minimumFractionDigits: 2 })}`)
+        return
+      }
+
+      if (selectedClient?.solde < value) {
+        toast.warning(`Le montant saisi ne doit pas dépasser le solde du client ${selectedClient?.solde?.toLocaleString({ minimumFractionDigits: 2 })}`)
+        return
+      }
+    }
+
     setData((prev) => ({
       ...prev,
-      [name]: type === "file" ? files?.[0] ?? null : value,
+      [name]: type === "file"
+        ? files?.[0] ?? null
+        : type === "checkbox"
+          ? checked
+          : value,
     }));
   };
 
   // handle vente selection
   const handleVenteSelect = (venteId) => {
     console.log("La vente selectionnée :", venteId)
+
+    setSelectedVente(ventes.find((vt) => vt.id == venteId))
     setData((prev) => ({ ...prev, venteId: venteId }))
   }
 
@@ -138,6 +159,7 @@ export default function UpdateReglementModal({ open, onOpenChange, reglement, se
   // handle client selection
   const handleClientSelect = (clientId) => {
     console.log("Le clientId selectionné :", clientId)
+    setSelectedClient(clients.find((cl) => cl.id == clientId))
     setData((prev) => ({ ...prev, clientId: clientId }))
   }
 
@@ -208,6 +230,14 @@ export default function UpdateReglementModal({ open, onOpenChange, reglement, se
   }
 
   useEffect(() => {
+    console.log("La vente :", selectedVente)
+  }, [selectedVente])
+
+  useEffect(() => {
+    console.log("Le client :", selectedClient)
+  }, [selectedClient])
+
+  useEffect(() => {
     console.log("Data to submit :", data)
   }, [data])
 
@@ -241,10 +271,29 @@ export default function UpdateReglementModal({ open, onOpenChange, reglement, se
             {errors.reference && <span className="text-danger">{errors.reference}</span>}
           </div>
           <div className="col-md-12 mb-2">
-            <Label htmlFor="montant">Montant <span className="text-danger">*</span> </Label>
+            <Label htmlFor="venteId">Vente <span className="text-danger">*</span>  </Label>
+            <FilterSelect
+              options={ventes?.map((v) => ({ id: v.id, label: `${v.code} - ${v.montant?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || 0.00}` }))}
+              handleSelect={handleVenteSelect}
+              selected={data?.venteId}
+            />
+            {errors.venteId && <span className="text-danger">{errors.venteId}</span>}
+          </div>
+          <div className="col-md-12 mb-2">
+            <Label htmlFor="clientId">Client <span className="text-danger">*</span>  </Label>
+            <FilterSelect
+              options={clients?.map((clt) => ({ id: clt.id, label: `${clt.raison_sociale} - ${clt.solde?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || 0.00}` }))}
+              handleSelect={handleClientSelect}
+              selected={data?.clientId}
+            />
+            {errors.clientId && <span className="text-danger">{errors.clientId}</span>}
+          </div>
+          <div className="col-md-12 mb-2">
+            <Label htmlFor="montant">Montant <span className="text-danger">*</span></Label>
             <Input id="montant"
               type="number"
               name="montant"
+              placeholder="Ex: 999.999.999"
               required
               value={data.montant}
               onChange={handleChange} />
@@ -260,24 +309,7 @@ export default function UpdateReglementModal({ open, onOpenChange, reglement, se
               onChange={handleChange} />
             {errors.date && <span className="text-danger">{errors.date}</span>}
           </div>
-          <div className="col-md-12 mb-2">
-            <Label htmlFor="venteId">Vente <span className="text-danger">*</span>  </Label>
-            <FilterSelect
-              options={ventes?.map((v) => ({ id: v.id, label: v.code }))}
-              handleSelect={handleVenteSelect}
-              selected={data?.venteId}
-            />
-            {errors.venteId && <span className="text-danger">{errors.venteId}</span>}
-          </div>
-          <div className="col-md-12 mb-2">
-            <Label htmlFor="clientId">Client <span className="text-danger">*</span>  </Label>
-            <FilterSelect
-              options={clients?.map((clt) => ({ id: clt.id, label: clt.raison_sociale }))}
-              handleSelect={handleClientSelect}
-              selected={data?.clientId}
-            />
-            {errors.clientId && <span className="text-danger">{errors.clientId}</span>}
-          </div>
+
           <div className="col-md-12 mb-2">
             <Label htmlFor="clientId">Compte bancaire <span className="text-danger">*</span>  </Label>
             <FilterSelect

@@ -33,6 +33,12 @@ export type Bon = {
     id: Number,
     fullname: String,
   }
+  commandeDetails:
+  {
+    id: number,
+    qteCommande: number
+  }[]
+
   createdBy: {
     id: Number,
     fullname: String,
@@ -198,11 +204,11 @@ export function useColumns(
         let icon;
         switch (statut?.id) {
           case 1:
-            classText = 'bg-white text-dark'//programmé
+            classText = 'bg-white text-dark'//non programmé
             icon = <Van />
             break;
           case 2:
-            classText = 'bg-success text-white'//livrée
+            classText = 'bg-warning text-white'//en cours de programmation
             icon = <ShoppingCart />
             break;
           case 3:
@@ -214,7 +220,7 @@ export function useColumns(
         }
         return <>
           <span className={`flex items-center gap-1 whitespace-nowrap badge border ${classText}`}>
-            <span className="[&>svg]:size-3">{icon}</span> {row.original.statut?.name || "—"}
+            <span className="[&>svg]:size-3">{icon}</span> {row.original.statut?.name || <small className="text-dark"> Non programmée </small>}
           </span>
         </>
       }
@@ -312,67 +318,73 @@ export function useColumns(
                 </DropdownMenuItem>
               }
 
-              {/* show */}
-              <DropdownMenuItem
-                style={{ cursor: "pointer" }}
-                className="text-info"
-                onSelect={(e) => {
-                  e.preventDefault()
-                  onShow(bon) // 👈 remonte juste du bon
-                }}
-              >
-                <Eye /> Voir
-              </DropdownMenuItem>
+              {bon?.commandeDetails?.[0]?.qteCommande > 0 && (
 
-              {/* Reçus */}
-              <DropdownMenuItem
-                style={{ cursor: "pointer" }}
-                className="text-dark"
-                onSelect={(e) => {
-                  e.preventDefault()
-                  handleRecu(bon) // 👈 remonte juste du bon
-                }}
-              >
-                <ReceiptText /> Reçus
-              </DropdownMenuItem>
+                <>
+                  {/* show */}
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-info"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      onShow(bon) // 👈 remonte juste du bon
+                    }}
+                  >
+                    <Eye /> Voir
+                  </DropdownMenuItem>
 
-              {/* Accusés */}
-              <DropdownMenuItem
-                style={{ cursor: "pointer" }}
-                className="text-dark"
-                onSelect={(e) => {
-                  e.preventDefault()
-                  handleAccuse(bon) // 👈 remonte juste du bon
-                }}
-              >
-                <FolderPlus /> Accusés
-              </DropdownMenuItem>
+                  {/* Reçus */}
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-dark"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      handleRecu(bon) // 👈 remonte juste du bon
+                    }}
+                  >
+                    <ReceiptText /> Reçus
+                  </DropdownMenuItem>
 
-              {/* valider */}
-              {!bon.validatedBy &&
-                <DropdownMenuItem
-                  style={{ cursor: "pointer" }}
-                  className="text-success"
-                  onSelect={(e) => {
-                    e.preventDefault()
-                    onValid(bon) // 👈 remonte juste de l'approvisionnement
-                  }}
-                >
-                  <CircleCheckBig /> Valider
-                </DropdownMenuItem>
-              }
+                  {/* Accusés */}
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-dark"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      handleAccuse(bon) // 👈 remonte juste du bon
+                    }}
+                  >
+                    <FolderPlus /> Accusés
+                  </DropdownMenuItem>
 
-              {/* suppression */}
-              {!bon.validatedBy &&
-                <DropdownMenuItem
-                  style={{ cursor: "pointer" }}
-                  className="text-danger"
-                  onSelect={(e) => {
-                    e.preventDefault()
-                    onDelete(bon) // 👈 remonte juste de l'approvisionnement
-                  }}>
-                  <Eraser /> Supprimer
-                </DropdownMenuItem>
+                  {/* valider */}
+                  {!bon.validatedBy &&
+                    <DropdownMenuItem
+                      style={{ cursor: "pointer" }}
+                      className="text-success"
+                      onSelect={(e) => {
+                        e.preventDefault()
+                        onValid(bon) // 👈 remonte juste de l'approvisionnement
+                      }}
+                    >
+                      <CircleCheckBig /> Valider
+                    </DropdownMenuItem>
+                  }
+
+                  {/* suppression */}
+                  {!bon.validatedBy &&
+                    <DropdownMenuItem
+                      style={{ cursor: "pointer" }}
+                      className="text-danger"
+                      onSelect={(e) => {
+                        e.preventDefault()
+                        onDelete(bon) // 👈 remonte juste de l'approvisionnement
+                      }}>
+                      <Eraser /> Supprimer
+                    </DropdownMenuItem>
+                  }
+                </>
+              )
               }
             </DropdownMenuContent>
           </DropdownMenu>

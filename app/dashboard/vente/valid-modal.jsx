@@ -12,29 +12,31 @@ import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
 import routes from "@/app/routes"
 
-export default function ValidBonModal({ open, onOpenChange, bon, setReload }) {
+export default function ValidVenteModal({ open, onOpenChange, vente, handleProgrammationSelect }) {
     const router = useRouter()
 
-    if (!bon) return
+    if (!vente || !open) return
+    
     // submission
     const submitValidForm = (e) => {
         e.preventDefault()
         toast.promise(
-            () => axiosInstance.post(apiRoutes.validateCommande(bon.id)),
+            () => axiosInstance.post(apiRoutes.validateVente(vente?.id)),
             {
-                loading: `Validation du bon ${bon?.code}  en cours ...`,
+                loading: `Validation de la vente ${vente?.code}  en cours ...`,
                 success: (res) => {
                     console.log("Response de validation :", res.data)
 
-                    setReload(true)
-                    router.push(routes.bonCommande?.list)
+                    router.push(routes.vente?.list)
                     router.refresh() // 👈 recharge les données server-side sans full reload
+                    handleProgrammationSelect(vente?.programmationId)
+                    // fermeture du modal
                     onOpenChange(false)
 
-                    return 'Bon validé avec succès!'
+                    return 'Vente validée avec succès!'
                 },
-                error: (err) =>{
-                    console.log("Erreure de validation du bon :", err.response?.data?.error)
+                error: (err) => {
+                    console.log("Erreure de validation de la vente :", err.response?.data?.error)
                     return err.response?.data?.error
                 },
             }
@@ -49,7 +51,7 @@ export default function ValidBonModal({ open, onOpenChange, bon, setReload }) {
                         <DialogTitle>Êtes-vous sûre?</DialogTitle>
                         <DialogDescription>
                             Cette action est irréversible.
-                            Ce bon <span className="badge bg-light border rounded text-dark"> {bon?.code}</span> sera validé définitivement.
+                            Cette vente <span className="badge bg-light border rounded text-dark"> {vente?.code}</span> sera validée définitivement.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="d-flex justify-content-center">

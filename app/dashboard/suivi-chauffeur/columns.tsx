@@ -19,6 +19,24 @@ export type Programmation = {
     id: Number,
     name: String,
   }
+  commande: {
+    id: Number,
+    code: String,
+    fournisseur: {
+      id: Number,
+      sigle: String,
+      raison_sociale: String
+    }
+    commandeDetails: [
+      {
+        id: Number,
+        product: {
+          id: Number,
+          name: String,
+        }
+      }
+    ]
+  }
   zone: {
     id: Number,
     name: String,
@@ -44,6 +62,25 @@ export type Programmation = {
     id: Number,
     fullname: String,
   }
+  ventes: [
+    {
+      id: Number,
+      code: String
+      date: String
+      montant: Number
+      commandeClient: {
+        id: Number,
+        client: {
+          id: Number
+          raison_sociale: String
+        }
+      }
+      client: {
+        id: Number
+        raison_sociale: String
+      }
+    }
+  ]
   code: string
   dateSortie: string
   dateProgrammation: string
@@ -53,15 +90,13 @@ export type Programmation = {
   bl: string
   imprimer: Boolean
   observation: String
-  date: Number
+  date: String
   createdAt: string
   validatedAt: string
+  validatedById:Number
 }
 
-export function useColumns(
-  onEdit: (programmation: Programmation) => void,
-  onDelete: (programmation: Programmation) => void,
-  onValid: (programmation: Programmation) => void,)
+export function useColumns()
   : ColumnDef<Programmation>[] {
   // verifier si le user a cette permission
   // const isUserPermitted = (name:String) => {
@@ -89,10 +124,10 @@ export function useColumns(
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border text-dark">{row.getValue("code") || "—"}</span>,
+      cell: ({ row }) => <span className="badge bg-light shadow-sm border text-dark">{row.getValue("code") || "—"}</span>,
     },
     {
-      accessorKey: "reference",
+      accessorKey: "datesortie",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Date sortie <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -102,13 +137,52 @@ export function useColumns(
       cell: ({ row }) => {
         const date = row.original?.dateSortie
         return date
-          ? new Date(date).toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
+          ? <span className="badge shadow-sm text-dark border">
+            {new Date(date).toLocaleDateString("fr-FR", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            })}
+          </span>
           : "--"
       }
+    },
+    {
+      accessorKey: "commande",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Bon de commande <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="bg-dark shadow-sm badge border text-white">{`${row.original?.commande?.code}` || "—"}</span>,
+    },
+    {
+      id: "fournisseur", // requis quand on n'a pas d'accessorKey
+      accessorFn: (row) => row.commande?.fournisseur?.sigle || "",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Fournisseur <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const fournisseur = row.original?.commande?.fournisseur
+        const label = fournisseur ? `${fournisseur.sigle}-${fournisseur.raison_sociale}` : "—"
+        return <span className="badge border text-dark">{label}</span>
+      },
+    },
+    {
+      id: "product", // requis quand on n'a pas d'accessorKey
+      accessorFn: (row) => row.commande?.fournisseur?.sigle || "",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Produit <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const detail = row.original?.commande?.commandeDetails?.[0]
+        return <span className="badge border text-dark">{detail.product?.name}</span>
+      },
     },
     {
       accessorKey: "camion",
@@ -187,6 +261,7 @@ export function useColumns(
           Statut <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+
       // ✅ Ajouter cell
       cell: ({ row }) => {
         let statut = row.original?.statut
@@ -194,7 +269,7 @@ export function useColumns(
         let statutText = null
         let icon;
         switch (statut?.id) {
-          case 1:
+          case 1 || row.original?.validatedById:
             classText = 'bg-success text-white'//validée
             statutText = row.original?.statut?.name
             icon = <CircleCheckBig />
@@ -235,7 +310,7 @@ export function useColumns(
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className={`[&>svg]:size-3 btn btn-sm ${row.original?.imprimer?'bg-dark text-white':'bg-danger text-white'}`}>{row.original?.imprimer?<CheckCircle/>:<X />}</span>
+      cell: ({ row }) => <span className={`[&>svg]:size-3 btn btn-sm ${row.original?.imprimer ? 'bg-dark text-white' : 'bg-danger text-white'}`}>{row.original?.imprimer ? <CheckCircle /> : <X />}</span>
     },
     {
       accessorKey: "observation",
@@ -248,129 +323,15 @@ export function useColumns(
       cell: ({ row }) => <Textarea placeholder={row.getValue("observation")} />,
     },
     {
-      accessorKey: "validatedAt",
+      accessorKey: "vente",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Validé le <ArrowUpDown className="ml-2 h-4 w-4" />
+          Client - Destination <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => {
-        const date = row.getValue("validatedAt") as string
-        return date
-          ? new Date(date).toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-          : "—"
-      },
-    },
-    {
-      accessorKey: "validatedBy",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Validé par <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border rounded text-dark"> {row.original.validatedBy?.fullname || "—"} </span>,
-    },
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Formater la date
-      cell: ({ row }) => {
-        const date = row.getValue("createdAt") as string
-        return new Date(date).toLocaleDateString("fr-FR", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        })
-      },
-    },
-    {
-      accessorKey: "createdBy",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Crée par <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border rounded text-dark"> {row.original.createdBy?.fullname || "—"} </span>,
-    },
-    // 
-    {
-      id: "actions",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Actions <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const programmation = row.original
-        return (
-          !programmation.validatedBy ?
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-
-                {/* modifier */}
-                {!programmation.validatedBy &&
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-warning"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onEdit(programmation) // 👈 remonte juste du bon
-                    }}
-                  >
-                    <PencilLine /> Modifier
-                  </DropdownMenuItem>
-                }
-
-                {/* valider */}
-                {!programmation.validatedBy &&
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-success"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onValid(programmation) // 👈 remonte juste la programmation
-                    }}
-                  >
-                    <CircleCheckBig /> Valider
-                  </DropdownMenuItem>
-                }
-
-                {/* suppression */}
-                {!programmation.validatedBy &&
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-danger"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onDelete(programmation) // 👈 remonte juste de la programmation
-                    }}>
-                    <Eraser /> Supprimer
-                  </DropdownMenuItem>
-                }
-              </DropdownMenuContent>
-            </DropdownMenu> : '---'
-        )
-      },
+      cell: ({ row }) => <Textarea
+        placeholder='--' />,
     },
   ]
 }

@@ -35,8 +35,9 @@ export default function index() {
 
     const [detailRecuTypes, setDetailRecuTypes] = useState([])
     const [ventes, setVentes] = useState([])
-    const [clients, setClients] = useState([])
     const [compteBancaires, setCompteBancaires] = useState([])
+    const [selectedClient, setSelectedClient] = useState(null)
+    const [selectedVente, setSelectedVente] = useState(null)
 
     const [data, setData] = useState({ typeDetailRecuId: '', venteId: '', deblocDette: false, clientId: '', compteBancaireId: '', reference: '', montant: '', date: '', preuve: '', comment: '' })
     const [errors, setErrors] = useState({ typeDetailRecuId: '', venteId: '', deblocDette: '', clientId: '', compteBancaireId: '', reference: '', montant: '', date: '', preuve: '', comment: '' })
@@ -65,24 +66,11 @@ export default function index() {
                 loading: 'Chargement des ventes validées ...',
                 success: (res) => {
                     console.log("Les ventes :", res.data)
-                    setVentes(res.data || [])
+                    // on filtre just eles ventes non totalement validées
+                    setVentes(res.data?.filter((v) => v.reste > 0) || [])
                     return 'Ventes chargées!'
                 },
                 error: (err) => err?.data?.error || 'Erreur de chargement',
-            }
-        )
-
-        // Charge tous les clients actifs
-        toast.promise(
-            () => axiosInstance.get(apiRoutes.allActifClient),
-            {
-                loading: 'Chargement des clients ...',
-                success: (res) => {
-                    console.log("Les clients :", res.data)
-                    setClients(res.data || [])
-                    return 'Clients chargés!'
-                },
-                error: (err) => err?.message || 'Erreur de chargement',
             }
         )
 
@@ -104,19 +92,69 @@ export default function index() {
     // handle change
     const handleChange = (e) => {
         const { name, value, files, type, checked } = e.target;
+
+        if (name == "montant") {
+            if (selectedVente?.reste < value) {
+                toast.warning(`Le montant saisi ${value} ne doit pas dépasser le montant restant de la vente ${selectedVente?.reste?.toLocaleString({ minimumFractionDigits: 2 })}`)
+                return
+            }
+
+            if (selectedClient?.solde < value) {
+                toast.warning(`Le montant saisi ${value} ne doit pas dépasser le solde du client ${selectedClient?.solde?.toLocaleString({ minimumFractionDigits: 2 })}`)
+                return
+            }
+        }
+
         setData((prev) => ({
             ...prev,
             [name]: type === "file"
                 ? files?.[0] ?? null
                 : type === "checkbox"
-                ? checked
-                : value,
+                    ? checked
+                    : value,
         }));
     };
 
     // handle vente selection
     const handleVenteSelect = (venteId) => {
-        console.log("La vente selectionnée :", venteId)
+        console.log("La venteId selectionnée :", venteId)
+
+        let vente = ventes.find((v) => v.id == venteId)
+        if (!vente) {
+            toast.warning("Cette vente est introuvable!")
+            return
+        }
+
+        console.log("La vente selectionnée :", vente)
+
+        // Chargement du client
+        toast.promise(
+            () => axiosInstance.get(apiRoutes.retrieveClient(vente.clientId)),
+            {
+                loading: 'Chargement du client  ...',
+                success: (res) => {
+                    console.log("Le client :", res.data)
+                    if (vente?.montant > res.data?.solde) {
+                        toast.warning(`Le montant ${vente?.montant?.toLocaleString({ minimumFractionDigits: 2 })} de la vente dépasse le solde ${res.data?.solde?.toLocaleString({ minimumFractionDigits: 2 })} du client`)
+
+                        // redirection
+                        router.push(routes.reglement.list)
+                        router.refresh()
+                        return
+                    }
+
+                    setSelectedClient(res.data || [])
+                    setData((prev) => ({ ...prev, clientId: res.data?.id, montant: vente?.reste }))
+                    return 'Client chargé!'
+                },
+                error: (err) => {
+                    console.log("Erreure de chargement du client :", err?.response)
+                    return err?.message || 'Erreure de chargement de la vente'
+                },
+            }
+        )
+
+        setSelectedVente(vente)
         setData((prev) => ({ ...prev, venteId: venteId }))
     }
 
@@ -124,12 +162,6 @@ export default function index() {
     const handleTypeDetailRecuSelect = (typeDetailRecuId) => {
         console.log("Le type de détail reçu selectionné :", typeDetailRecuId)
         setData((prev) => ({ ...prev, typeDetailRecuId: typeDetailRecuId }))
-    }
-
-    // handle client selection
-    const handleClientSelect = (clientId) => {
-        console.log("Le clientId selectionné :", clientId)
-        setData((prev) => ({ ...prev, clientId: clientId }))
     }
 
     // handle compte bancaire selection
@@ -172,7 +204,7 @@ export default function index() {
 
                         if (err?.response?.status === 402) {
                             const validationErrors = err.response.data?.errors
-                            const { typeDetailRecuId, clientId,venteId, deblocDette, compteBancaireId, reference, montant, date, preuve, comment } = validationErrors
+                            const { typeDetailRecuId, clientId, venteId, deblocDette, compteBancaireId, reference, montant, date, preuve, comment } = validationErrors
                             setErrors({
                                 typeDetailRecuId: typeDetailRecuId?._errors?.[0],
                                 venteId: venteId?._errors?.[0],
@@ -197,6 +229,14 @@ export default function index() {
         }
     }
 
+    useEffect(() => {
+        console.log("La vente :", selectedVente)
+    }, [selectedVente])
+
+    useEffect(() => {
+        console.log("Le client :", selectedClient)
+    }, [selectedClient])
+
     // gestion des consoles
     useEffect(() => {
         console.log("Data to submit :", data)
@@ -206,7 +246,6 @@ export default function index() {
         console.log("Les erreures :", errors)
     }, [errors])
 
-
     return <>
         <DashboardLayourt title="➕ Ajouter un règlement">
             {/* ajouter des reglements */}
@@ -215,6 +254,15 @@ export default function index() {
                     <div className="col-md-10">
                         <form onSubmit={submitForm} className="shadow-sm border rounded p-2 ">
                             <div className="row">
+                                <div className="col-md-12 mb-2">
+                                    <Label htmlFor="venteId">Vente <span className="text-danger">*</span>  </Label>
+                                    <FilterSelect
+                                        options={ventes?.map((v) => ({ id: v.id, label: `${v.code} - Reste : ${v.reste?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || 0.00}` }))}
+                                        handleSelect={handleVenteSelect}
+                                        selected={data?.venteId}
+                                    />
+                                    {errors.venteId && <span className="text-danger">{errors.venteId}</span>}
+                                </div>
                                 <div className="col-md-12 mb-2">
                                     <Label htmlFor="reference">Reference  <span className="text-danger">*</span></Label>
                                     <Input id="reference"
@@ -227,6 +275,13 @@ export default function index() {
                                         onChange={handleChange} />
                                     {errors.reference && <span className="text-danger">{errors.reference}</span>}
                                 </div>
+                                {selectedClient &&
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="clientId">Client <span className="text-danger">*</span>  </Label>
+                                        <p className=""><span className="badge bg-light text-dark border shadow-sm"> {`${selectedClient?.raison_sociale} - ${selectedClient?.solde?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || 0.00}`}</span></p>
+                                        {errors.clientId && <span className="text-danger">{errors.clientId}</span>}
+                                    </div>
+                                }
                                 <div className="col-md-12 mb-2">
                                     <Label htmlFor="montant">Montant <span className="text-danger">*</span></Label>
                                     <Input id="montant"
@@ -234,6 +289,8 @@ export default function index() {
                                         name="montant"
                                         placeholder="Ex: 999.999.999"
                                         required
+                                        min={0}
+                                        max={selectedVente?.reste}
                                         value={data.montant}
                                         onChange={handleChange} />
                                     {errors.montant && <span className="text-danger">{errors.montant}</span>}
@@ -248,24 +305,7 @@ export default function index() {
                                         onChange={handleChange} />
                                     {errors.date && <span className="text-danger">{errors.date}</span>}
                                 </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="venteId">Vente <span className="text-danger">*</span>  </Label>
-                                    <FilterSelect
-                                        options={ventes?.map((v) => ({ id: v.id, label: v.code }))}
-                                        handleSelect={handleVenteSelect}
-                                        selected={data?.venteId}
-                                    />
-                                    {errors.venteId && <span className="text-danger">{errors.venteId}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="clientId">Client <span className="text-danger">*</span>  </Label>
-                                    <FilterSelect
-                                        options={clients?.map((clt) => ({ id: clt.id, label: clt.raison_sociale }))}
-                                        handleSelect={handleClientSelect}
-                                        selected={data?.clientId}
-                                    />
-                                    {errors.clientId && <span className="text-danger">{errors.clientId}</span>}
-                                </div>
+
                                 <div className="col-md-12 mb-2">
                                     <Label htmlFor="clientId">Compte bancaire <span className="text-danger">*</span>  </Label>
                                     <FilterSelect

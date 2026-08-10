@@ -49,7 +49,7 @@ function DashboardContent({ title, children, icon = null }) {
                         <div className="py-4 md:gap-6 md:py-6 items-center justify-between">
                             {title && (
                                 <>
-                                    <h3 className="text-center"> {icon??''} {title}</h3>
+                                    <h3 className="justify-content-center flex items-center gap-1 whitespace-nowrap"> {icon??''} {title}</h3>
                                     <Separator />
                                 </>
                             )}

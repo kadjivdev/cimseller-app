@@ -58,7 +58,7 @@ export default function ImprimerProgrammationModal({ open, onOpenChange }) {
       {
         loading: 'Chargement des fournisseurs de bon ...',
         success: (res) => {
-          console.log("Les fournisseurs imprimer:", res.data)
+          console.log("Les fournisseurs ", res.data)
           // juste les programmations imprimées 
           setFournisseurs(res.data || [])//
           return 'Fournisseurs chargées!'
@@ -74,8 +74,8 @@ export default function ImprimerProgrammationModal({ open, onOpenChange }) {
         loading: 'Chargement des programmations de bon ...',
         success: (res) => {
           console.log("Les programmations imprimer:", res.data)
-          // juste les programmations imprimées 
-          setProgrammations(res.data.filter((pr) => !pr.imprimer) || [])//
+          // juste les programmations nom imprimées && validées
+          setProgrammations(res.data.filter((pr) => !pr.imprimer && pr.validatedById) || [])//
           return 'Programmations chargées!'
         },
         error: (err) => err?.response?.message || 'Erreur de chargement des programmations',
@@ -174,7 +174,6 @@ export default function ImprimerProgrammationModal({ open, onOpenChange }) {
           <DialogTitle className="d-flex align-items-center g-2"><PrinterCheck />Impression des programmations</DialogTitle>
           <DialogDescription >
             Cette action est irréversible.
-            {showLink && <Button onClick={openPdf} className="btn btn-sm btn-dark g-2 border rounded shado-sm d-flex align-items-center w-50"><PrinterCheck /> Télecharger les programmations imprimées</Button>}
           </DialogDescription>
         </DialogHeader>
         <Card className="p-2">
@@ -191,6 +190,9 @@ export default function ImprimerProgrammationModal({ open, onOpenChange }) {
             </div>
 
             <br />
+            <div className="flex justify-content-center">
+            {showLink && <Button onClick={openPdf} className="btn my-3 btn-sm bg-dark text-white g-2 border rounded shadow-sm d-flex align-items-center"><PrinterCheck /> Télecharger les programmations imprimées</Button>}
+            </div>
             <DataTable
               data={filteredProgrammations}
               date={date}

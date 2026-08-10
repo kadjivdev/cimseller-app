@@ -72,17 +72,29 @@ const apiRoutes = {
   allValidatedProgrammation: `programmations/validate`,
   createProgrammation: `programmations`,
   printProgrammation: `programmations/print`,
+  actualiseProgrammation: `programmations/actualise`,
+  transfertProgrammation: `programmations/transfert`,
+  livraisonProgrammation: `programmations/livraison`,
   updateProgrammation: (id) => (`programmations/${id}`),
   validateProgrammation: (id) => (`programmations/${id}`),
+  retrieveProgrammation: (id) => (`programmations/${id}`),
   deleteProgrammation: (id) => (`programmations/${id}`),
 
   // vente's routes
   allVente: `ventes`,
   allValidatedVente: `ventes/validated`,
+  allDallyVente: `ventes/dally`,
+  allComptabilizedVente: `ventes/comptabilized`,
+  allNoComptabilizedVente: `ventes/no-comptabilized`,
+  allTraitedVente: `ventes/no-traited`,
   createVente: `ventes`,
   updateVente: (id) => (`ventes/${id}`),
   validateVente: (id) => (`ventes/${id}`),
+  retrieveVente: (id) => (`ventes/${id}`),
   deleteVente: (id) => (`ventes/${id}`),
+  typeVente: `ventes/types`,
+  typeFactureVente: `ventes/types-facture`,
+
 
   // approvisionnement's routes
   allApprovisionnement: `approvisionnements`,
@@ -193,6 +205,7 @@ const apiRoutes = {
   allBefClient: `client-filters/befs`,
   createClient: `clients`,
   importClient: `clients`,
+  retrieveClient: (id) => (`clients/${id}`),
   updateClient: (id) => (`clients/${id}`),
   deleteClient: (id) => (`clients/${id}`),
   allClientStatus: `clients/status`,

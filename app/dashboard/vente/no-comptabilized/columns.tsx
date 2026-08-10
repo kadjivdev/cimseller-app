@@ -2,24 +2,50 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, CheckCircle, CircleCheckBig, CircleX, Eraser, Eye, FolderPlus, MoreHorizontal, PencilLine, ReceiptText, ShoppingCart, Van, X } from "lucide-react"
+import { ArrowUpDown, CircleCheckBig, Eye, MoreHorizontal, PencilLine, ReceiptText, ShoppingCart, Van, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenu,
 } from "@/components/ui/dropdown-menu"
 import { Textarea } from "@/components/ui/textarea"
-export type Programmation = {
+import Link from "next/link"
+
+export type Vente = {
   id: number
+  produit: {
+    id: Number,
+    name: String,
+  }
+  programmation: {
+    id: Number,
+    code: String,
+  }
+  commandeClient: {
+    id: Number,
+    code: String,
+    client:{
+      id: Number,
+      raison_sociale: String,
+    }
+  }
+  client: {
+    id: Number,
+    raison_sociale: String,
+  }
+  type: {
+    id: Number,
+    name: String,
+  }
   statut: {
     id: Number,
     name: String,
   }
-  zone: {
+  typeFactureVente: {
     id: Number,
     name: String,
   }
@@ -27,14 +53,6 @@ export type Programmation = {
     id: Number,
     immatriculation: String,
     libelle: String,
-  }
-  chauffeur: {
-    id: Number,
-    fullname: String,
-  }
-  avaliseur: {
-    id: Number,
-    fullname: String,
   }
   validatedBy: {
     id: Number,
@@ -44,29 +62,34 @@ export type Programmation = {
     id: Number,
     fullname: String,
   }
-  code: string
-  dateSortie: string
-  dateProgrammation: string
-  qteProgrammer: Number
-  qteLivre: Number
-  qteVendue: Number
-  bl: string
-  imprimer: Boolean
-  observation: String
-  date: Number
+
+  code :         string   
+  date:          string
+  montant  :     number
+  unitePrice:    number
+  qteTotal :     number
+  remise   :     number
+  transport :    number
+  destination  : String
+  observation  : String
+  preuve   :string
+  
+  reglemented: Boolean
   createdAt: string
   validatedAt: string
 }
 
-export function useColumns(
-  onEdit: (programmation: Programmation) => void,
-  onDelete: (programmation: Programmation) => void,
-  onValid: (programmation: Programmation) => void,)
-  : ColumnDef<Programmation>[] {
+export function useColumns(setOpen:any,setSelectedVente:any)
+  : ColumnDef<Vente>[] {
   // verifier si le user a cette permission
   // const isUserPermitted = (name:String) => {
   //   return (rolePermissions).some(per => per.name == name);
   // }
+
+  const onEdit = (vente:any)=>{
+    setOpen(true)
+    setSelectedVente(vente)
+  }
 
   return [
     {
@@ -92,15 +115,45 @@ export function useColumns(
       cell: ({ row }) => <span className="badge border text-dark">{row.getValue("code") || "—"}</span>,
     },
     {
-      accessorKey: "reference",
+      accessorKey: "produit",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Date sortie <ArrowUpDown className="ml-2 h-4 w-4" />
+          Produit <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge border text-dark">{`${row.original?.produit?.name}` || "—"}</span>,
+    },
+    {
+      accessorKey: "commande",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+         Code Commande <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge border text-dark">{row.original?.commandeClient?.code || "—"}</span>,
+    },
+    {
+      accessorKey: "commande_client",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Commande Client <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge border text-dark">{row.original?.commandeClient?.client?.raison_sociale || "—"}</span>,
+    },
+    {
+      accessorKey: "date",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Date <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => {
-        const date = row.original?.dateSortie
+        const date = row.original?.date
         return date
           ? new Date(date).toLocaleDateString("fr-FR", {
             day: "2-digit",
@@ -111,74 +164,84 @@ export function useColumns(
       }
     },
     {
-      accessorKey: "camion",
+      accessorKey: "client",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Camion <ArrowUpDown className="ml-2 h-4 w-4" />
+          Client Payeur <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border text-dark">{`${row.original?.camion?.immatriculation}-${row.original?.camion?.libelle}` || "—"}</span>,
+      cell: ({ row }) => <span className="badge border text-dark">{`${row.original?.client?.raison_sociale}` || "—"}</span>,
     },
     {
-      accessorKey: "chauffeur",
+      accessorKey: "unitePrice",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Chauffeur <ArrowUpDown className="ml-2 h-4 w-4" />
+          Prix unitaire <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border text-dark">{`${row.original?.chauffeur?.fullname}` || "—"}</span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.unitePrice ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
-      accessorKey: "avaliseur",
+      accessorKey: "qteTotal",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Avaliseur <ArrowUpDown className="ml-2 h-4 w-4" />
+         Quantité totale<ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border text-dark">{`${row.original?.avaliseur?.fullname}` || "—"}</span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.qteTotal ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
-      accessorKey: "qteprogrammer",
+      accessorKey: "remise",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Quantité Programmée <ArrowUpDown className="ml-2 h-4 w-4" />
+         Remise <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.qteProgrammer ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.remise ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
-      accessorKey: "qteVendue",
+      accessorKey: "transport",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Quantité Vendue <ArrowUpDown className="ml-2 h-4 w-4" />
+         Transport <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.qteVendue ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.transport ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
-      accessorKey: "zone",
+      accessorKey: "montant",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Zone <ArrowUpDown className="ml-2 h-4 w-4" />
+          Montant <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border text-dark">{`${row.original?.zone?.name}` || "—"}</span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.montant ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
-      accessorKey: "bl",
+      accessorKey: "type",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Bl <ArrowUpDown className="ml-2 h-4 w-4" />
+          Type <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {row.original?.bl || "—"} </span>,
+      cell: ({ row }) => <span className="badge border text-dark">{`${row.original?.type?.name}` || "—"}</span>,
+    },
+    {
+      accessorKey: "type_facture",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Type facture <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge border text-dark">{`${row.original?.typeFactureVente?.name}` || "—"}</span>,
     },
     {
       accessorKey: "statut",
@@ -195,22 +258,27 @@ export function useColumns(
         let icon;
         switch (statut?.id) {
           case 1:
-            classText = 'bg-success text-white'//validée
+            classText = 'bg-info text-white'//en préparation
             statutText = row.original?.statut?.name
             icon = <CircleCheckBig />
             break;
           case 2:
-            classText = 'bg-danger text-white'//annulée
+            classText = 'bg-success text-white'//validée
             statutText = row.original?.statut?.name
-            icon = <CircleX />
+            icon = <CircleCheckBig />
             break;
           case 3:
-            classText = 'bg-info text-white'//livrée
+            classText = 'bg-success text-white'//livrée
             statutText = row.original?.statut?.name
             icon = <Van />
             break;
           case 4:
-            classText = 'bg-success text-white'//validée
+            classText = 'bg-warning text-white'//validée
+            statutText = row.original?.statut?.name
+            icon = <CircleCheckBig />
+            break;
+          case 4:
+            classText = 'bg-dark text-white'//controlée
             statutText = row.original?.statut?.name
             icon = <CircleCheckBig />
             break;
@@ -228,16 +296,26 @@ export function useColumns(
       }
     },
     {
-      accessorKey: "imprimer",
+      accessorKey: "preuve",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Imprimée <ArrowUpDown className="ml-2 h-4 w-4" />
+          Preuve <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className={`[&>svg]:size-3 btn btn-sm ${row.original?.imprimer?'bg-dark text-white':'bg-danger text-white'}`}>{row.original?.imprimer?<CheckCircle/>:<X />}</span>
+      cell: ({ row }) => row.original?.preuve? <Link href={row.original?.preuve} className={`[&>svg]:size-3 btn btn-sm bg-dark text-white'}`}><Eye/></Link>:'---'
     },
     {
+      accessorKey: "destination",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Destination <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <Textarea placeholder={row.getValue("destination")} />,
+    },
+     {
       accessorKey: "observation",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
@@ -312,9 +390,9 @@ export function useColumns(
         </Button>
       ),
       cell: ({ row }) => {
-        const programmation = row.original
+        const vente = row.original
         return (
-          !programmation.validatedBy ?
+         
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
@@ -328,47 +406,18 @@ export function useColumns(
                 <DropdownMenuSeparator />
 
                 {/* modifier */}
-                {!programmation.validatedBy &&
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-warning"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onEdit(programmation) // 👈 remonte juste du bon
-                    }}
-                  >
-                    <PencilLine /> Modifier
-                  </DropdownMenuItem>
-                }
-
-                {/* valider */}
-                {!programmation.validatedBy &&
                   <DropdownMenuItem
                     style={{ cursor: "pointer" }}
                     className="text-success"
                     onSelect={(e) => {
                       e.preventDefault()
-                      onValid(programmation) // 👈 remonte juste la programmation
+                      onEdit(vente) // 👈 remonte juste de la vente
                     }}
                   >
-                    <CircleCheckBig /> Valider
+                    <PencilLine /> Envoyer à la comptabilité
                   </DropdownMenuItem>
-                }
-
-                {/* suppression */}
-                {!programmation.validatedBy &&
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-danger"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onDelete(programmation) // 👈 remonte juste de la programmation
-                    }}>
-                    <Eraser /> Supprimer
-                  </DropdownMenuItem>
-                }
               </DropdownMenuContent>
-            </DropdownMenu> : '---'
+            </DropdownMenu> 
         )
       },
     },

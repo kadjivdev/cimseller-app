@@ -10,33 +10,36 @@ import { SquareArrowRightEnter, X } from "lucide-react"
 
 import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
+import { useEffect } from "react"
 import routes from "@/app/routes"
 
-export default function ValidBonModal({ open, onOpenChange, bon, setReload }) {
+export default function DeleteProgrammationModal({ open, onOpenChange, vente, handleProgrammationSelect }) {
     const router = useRouter()
 
-    if (!bon) return
+    useEffect(()=>{
+        if (!vente) return 
+    },[])
+
     // submission
-    const submitValidForm = (e) => {
+    const submitDeleteForm = (e) => {
         e.preventDefault()
         toast.promise(
-            () => axiosInstance.post(apiRoutes.validateCommande(bon.id)),
+            () => axiosInstance.delete(apiRoutes.deleteVente(vente.id)),
             {
-                loading: `Validation du bon ${bon?.code}  en cours ...`,
+                loading: `Suppression en cours de la vente ${vente?.code}...`,
                 success: (res) => {
-                    console.log("Response de validation :", res.data)
-
-                    setReload(true)
-                    router.push(routes.bonCommande?.list)
+                    console.log("Response de suppression :", res.data)
+                    
+                    router.push(routes.vente?.list)
                     router.refresh() // 👈 recharge les données server-side sans full reload
+                    setReload(true)
+                    handleProgrammationSelect(vente?.programmationId)
+                    // fermeture du modal
                     onOpenChange(false)
-
-                    return 'Bon validé avec succès!'
+                    // 
+                    return 'Vente supprimée avec succès!'
                 },
-                error: (err) =>{
-                    console.log("Erreure de validation du bon :", err.response?.data?.error)
-                    return err.response?.data?.error
-                },
+                error: (err) => err?.response?.data?.error || 'Erreur de chargement',
             }
         )
     }
@@ -49,14 +52,14 @@ export default function ValidBonModal({ open, onOpenChange, bon, setReload }) {
                         <DialogTitle>Êtes-vous sûre?</DialogTitle>
                         <DialogDescription>
                             Cette action est irréversible.
-                            Ce bon <span className="badge bg-light border rounded text-dark"> {bon?.code}</span> sera validé définitivement.
+                            Cette vente <span className="badge bg-light border rounded text-dark"> {vente?.code}</span> sera supprimée définitivement.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="d-flex justify-content-center">
                         <DialogClose asChild>
                             <Button className="shadow-sm rounded" variant="outline" onClick={() => onOpenChange(false)}><X /> Annuler</Button>
                         </DialogClose>
-                        <Button type="submit" className="bg-success text-white shadow-sm rounded" onClick={(e) => submitValidForm(e)}><SquareArrowRightEnter />Valider</Button>
+                        <Button type="submit" className="bg-danger text-white shadow-sm rounded" onClick={(e) => submitDeleteForm(e)}><SquareArrowRightEnter />Supprimer</Button>
                     </DialogFooter>
                 </DialogContent>
             </form>

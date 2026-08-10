@@ -192,12 +192,13 @@ export default function RecuBonModal({ open, onOpenChange, bon, setReload }) {
                             required
                             value={dt.reference}
                             onChange={(e) => {
-                              const value = String(e.target.value)
+                              const value = e.target.value
+                              console.log("Value :",value)
                               setData((prev) => ({
                                 ...prev,
                                 recus: prev.recus.map((recu, idx) =>
                                   idx === index
-                                    ? { ...recu, reference: isNaN(value) ? '' : value }
+                                    ? { ...recu, reference: value }
                                     : recu
                                 ),
                               }))

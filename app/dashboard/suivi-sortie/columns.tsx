@@ -59,9 +59,7 @@ export type Programmation = {
 }
 
 export function useColumns(
-  onEdit: (programmation: Programmation) => void,
-  onDelete: (programmation: Programmation) => void,
-  onValid: (programmation: Programmation) => void,)
+  onEdit: (programmation: Programmation) => void)
   : ColumnDef<Programmation>[] {
   // verifier si le user a cette permission
   // const isUserPermitted = (name:String) => {
@@ -235,7 +233,7 @@ export function useColumns(
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className={`[&>svg]:size-3 btn btn-sm ${row.original?.imprimer?'bg-dark text-white':'bg-danger text-white'}`}>{row.original?.imprimer?<CheckCircle/>:<X />}</span>
+      cell: ({ row }) => <span className={`[&>svg]:size-3 btn btn-sm ${row.original?.imprimer ? 'bg-dark text-white' : 'bg-danger text-white'}`}>{row.original?.imprimer ? <CheckCircle /> : <X />}</span>
     },
     {
       accessorKey: "observation",
@@ -246,62 +244,6 @@ export function useColumns(
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => <Textarea placeholder={row.getValue("observation")} />,
-    },
-    {
-      accessorKey: "validatedAt",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Validé le <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => {
-        const date = row.getValue("validatedAt") as string
-        return date
-          ? new Date(date).toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-          : "—"
-      },
-    },
-    {
-      accessorKey: "validatedBy",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Validé par <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border rounded text-dark"> {row.original.validatedBy?.fullname || "—"} </span>,
-    },
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Formater la date
-      cell: ({ row }) => {
-        const date = row.getValue("createdAt") as string
-        return new Date(date).toLocaleDateString("fr-FR", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        })
-      },
-    },
-    {
-      accessorKey: "createdBy",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Crée par <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border rounded text-dark"> {row.original.createdBy?.fullname || "—"} </span>,
     },
     // 
     {
@@ -314,61 +256,31 @@ export function useColumns(
       cell: ({ row }) => {
         const programmation = row.original
         return (
-          !programmation.validatedBy ?
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuSeparator />
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
 
-                {/* modifier */}
-                {!programmation.validatedBy &&
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-warning"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onEdit(programmation) // 👈 remonte juste du bon
-                    }}
-                  >
-                    <PencilLine /> Modifier
-                  </DropdownMenuItem>
-                }
-
-                {/* valider */}
-                {!programmation.validatedBy &&
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-success"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onValid(programmation) // 👈 remonte juste la programmation
-                    }}
-                  >
-                    <CircleCheckBig /> Valider
-                  </DropdownMenuItem>
-                }
-
-                {/* suppression */}
-                {!programmation.validatedBy &&
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-danger"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onDelete(programmation) // 👈 remonte juste de la programmation
-                    }}>
-                    <Eraser /> Supprimer
-                  </DropdownMenuItem>
-                }
-              </DropdownMenuContent>
-            </DropdownMenu> : '---'
+              {/* actualiser */}
+              <DropdownMenuItem
+                style={{ cursor: "pointer" }}
+                className="text-dark"
+                onSelect={(e) => {
+                  e.preventDefault()
+                  onEdit(programmation) // 👈 remonte juste du bon
+                }}
+              >
+                <PencilLine /> Actualiser le bon
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )
       },
     },

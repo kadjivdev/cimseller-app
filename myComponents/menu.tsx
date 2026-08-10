@@ -79,11 +79,6 @@ export function Menu() {
           url: routes.programmation.list,
           icon: <Van />,
           items: [
-            // {
-            //   name: "Create",
-            //   icon: <FolderPlus />,
-            //   url: routes.programmation.create,
-            // },
             {
               name: "Liste",
               icon: <ListTree />,
@@ -98,23 +93,6 @@ export function Menu() {
     {
       name: "SORTIES",
       items: [
-        {
-          name: "Livraisons",
-          url: routes.livraison.list,
-          icon: <TruckElectric />,
-          items: [
-            {
-              name: "Create",
-              icon: <FolderPlus />,
-              url: routes.livraison.create,
-            },
-            {
-              name: "Liste",
-              icon: <ListTree />,
-              url: routes.livraison.list,
-            }
-          ]
-        },
         {
           name: "Suivi sorties",
           url: routes.suiviSortie.list,
@@ -138,7 +116,19 @@ export function Menu() {
               url: routes.suiviChauffeur.list,
             }
           ]
-        }
+        },
+        {
+          name: "Livraisons",
+          url: routes.livraison.list,
+          icon: <TruckElectric />,
+          items: [
+            {
+              name: "Liste",
+              icon: <ListTree />,
+              url: routes.livraison.list,
+            }
+          ]
+        },
       ],
     },
 
@@ -152,11 +142,6 @@ export function Menu() {
           icon: <ShoppingCart />,
           items: [
             {
-              name: "Create",
-              url: routes.vente.create,
-              icon: <FolderPlus />,
-            },
-            {
               name: "Liste",
               url: routes.vente.list,
               icon: <ListTree />,
@@ -165,11 +150,6 @@ export function Menu() {
               name: "Journalières",
               url: routes.vente.journalier,
               icon: <CalendarCheck2 />,
-            },
-            {
-              name: "A modifier",
-              url: routes.vente.aModifier,
-              icon: <PencilLine />,
             },
             {
               name: "A comptabiliser",

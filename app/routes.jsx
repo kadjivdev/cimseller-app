@@ -15,7 +15,7 @@ const routes = {
   },
   livraison: {
     list: "/dashboard/livraison",
-    create: "/dashboard/livraison/create",
+    // create: "/dashboard/livraison/create",
   },
   suiviSortie: {
     list: "/dashboard/suivi-sortie",
@@ -25,14 +25,12 @@ const routes = {
   },
   vente: {
     list: "/dashboard/vente",
-    create: "/dashboard/vente/create",
-    journalier: "/dashboard/vente/journalier",
-    aModifier: "/dashboard/vente/a-modifier",
-    aComptabiliser: "/dashboard/vente/a-comptabiliser",
+    journalier: "/dashboard/vente/dally",
+    aComptabiliser: "/dashboard/vente/no-comptabilized",
   },
   comptabilite: {
-    list: "/dashboard/comptabilite",
-    aTraiter: "/dashboard/comptabilite/a-traiter",
+    list: "/dashboard/vente/comptabilized",
+    aTraiter: "/dashboard/vente/a-traiter",
     exporter: "/dashboard/comptabilite/create",
   },
   approvisionnement: {

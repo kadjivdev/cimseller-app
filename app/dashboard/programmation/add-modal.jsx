@@ -305,16 +305,6 @@ export default function AddProgrammationModal({ open, onOpenChange, bon, handleB
                 {errors?.zoneId && <span className="text-danger">{errors?.zoneId}</span>}
               </div>
             </div>
-
-            <div className="col-md-12">
-              <div className="mb-2">
-                <Textarea
-                  name="observation"
-                  onChange={handleChange}
-                  placeholder="Laissez un commantaire" />
-                {errors?.observation && <span className="text-danger">{errors?.observation}</span>}
-              </div>
-            </div>
           </div>
 
           <DialogFooter>

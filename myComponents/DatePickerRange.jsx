@@ -1,5 +1,5 @@
 "use client"
-import { format } from "date-fns"
+import { format, endOfDay } from "date-fns"
 import { fr } from "date-fns/locale"
 import { CalendarIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -12,6 +12,17 @@ import {
 } from "@/components/ui/popover"
 
 export function DatePickerRange({ date, setDate }) {
+
+    const handleSelect = (range) => {
+        if (range?.to) {
+            setDate({
+                ...range,
+                to: endOfDay(range.to),
+            })
+        } else {
+            setDate(range)
+        }
+    }
 
     return (
         <Field className="mx-auto w-100 text-center bg-light p-3 rounded">
@@ -43,7 +54,7 @@ export function DatePickerRange({ date, setDate }) {
                         mode="range"
                         defaultMonth={date?.from}
                         selected={date}
-                        onSelect={setDate}
+                        onSelect={handleSelect}
                         numberOfMonths={2}
                     />
                 </PopoverContent>

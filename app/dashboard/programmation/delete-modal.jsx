@@ -10,11 +10,14 @@ import { SquareArrowRightEnter, X } from "lucide-react"
 
 import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
+import { useEffect } from "react"
 
 export default function DeleteProgrammationModal({ open, onOpenChange, programmation, setReload }) {
     const router = useRouter()
 
-    if (programmation) return 
+    useEffect(()=>{
+        if (!programmation) return 
+    },[])
 
     // submission
     const submitDeleteForm = (e) => {
