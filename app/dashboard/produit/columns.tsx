@@ -2,7 +2,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Eraser, MoreHorizontal, PencilLine } from "lucide-react"
+import { ArrowUpDown, Eraser, Eye, MoreHorizontal, PencilLine } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -86,7 +86,7 @@ export function useColumns(onEdit: (produit: Produit) => void, onDelete: (produi
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.original?.image? <Link href={row.original?.image}/>:'--',
+      cell: ({ row }) => row.original?.image? <div className="d-flex justify-content-center"> <Link className="text-dark" target="_blank" href={row.original?.image}><Eye/></Link></div>:'--',
     },
     {
       accessorKey: "description",

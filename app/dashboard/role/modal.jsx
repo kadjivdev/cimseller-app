@@ -103,7 +103,7 @@ export default function UpdateRoleModal({ open, onOpenChange, role, setReload })
   }, [rolePermissions])
 
   useEffect(() => {
-    console.log("Updated data :", data)
+    console.log("Updated modal data  :", data)
   }, [data])
 
 
@@ -118,9 +118,9 @@ export default function UpdateRoleModal({ open, onOpenChange, role, setReload })
           console.log("Response de mise à jour :", res.data)
           // router.push(routes.role?.list)//redirection sur la page des roles
 
-          router.push(routes.role?.list)
-          router.refresh() // 👈 recharge les données server-side sans full reload
-          setReload(true)
+          // router.push(routes.role?.list)
+          // router.refresh() // 👈 recharge les données server-side sans full reload
+          setReload((prev)=>prev+1)
 
           // fermeture du modal
           onOpenChange(false)

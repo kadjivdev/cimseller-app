@@ -28,7 +28,9 @@ export default function UpdateZoneModal({ open, onOpenChange, zone, setReload, r
 
   useEffect(() => {
     if (!zone) return
-    setData({ name: zone.name, description: zone.description || '' })
+    console.log("La zone à modifier :", zone)
+
+    setData({ name: zone.name, description: zone.description || '', representantId: zone.representantId || null })
   }, [zone])
 
   const handleChange = (e) => {
@@ -55,9 +57,7 @@ export default function UpdateZoneModal({ open, onOpenChange, zone, setReload, r
             console.log("Response de mise à jour à succès:", res.data)
 
             // redirection
-            setReload(true)
-            router.push(routes.zone?.list)
-            router.refresh()
+            setReload((prev) => prev + 1)
             onOpenChange(false)
             return 'Zone modifié.e avec succès!'
           },
@@ -66,15 +66,15 @@ export default function UpdateZoneModal({ open, onOpenChange, zone, setReload, r
 
             if (err?.response?.status === 402) {
               const validationErrors = err.response.data?.errors
-              const { name, description } = validationErrors
+              const { name, description,representantId } = validationErrors
               setErrors({
                 name: name?._errors[0],
                 description: description?._errors[0],
+                representantId: representantId?._errors[0],
               })
-              return err.response.data?.message || 'Erreurs de validation, vérifiez le formulaire.'
+              return err.response.data?.error || 'Erreurs de validation, vérifiez le formulaire.'
             }
-
-            return err?.response?.data?.message || err?.message || "Erreur de mise à jour de l'utilisateur"
+            return err?.response?.data?.error || err?.message || "Erreur de mise à jour de l'utilisateur"
           },
         }
       )

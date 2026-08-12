@@ -24,11 +24,8 @@ export default function DeleteBanqueModal({ open, onOpenChange, banque, setReloa
                 loading: `Suppression en cours de la banque ${banque?.name}...`,
                 success: (res) => {
                     console.log("Response de suppression :", res.data)
-                   
-                    router.push(routes.banque?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
-                    setReload(true)
-                    // fermeture du modal
+
+                    setReload((prev) => prev + 1)
                     onOpenChange(false)
                     return 'Banque modifiée avec succès!'
                 },
@@ -45,7 +42,7 @@ export default function DeleteBanqueModal({ open, onOpenChange, banque, setReloa
                         <DialogTitle>Êtes-vous sûre?</DialogTitle>
                         <DialogDescription>
                             Cette action est irréversible.
-                            La zone <span className="badge bg-light border rounded text-dark"> {banque?.name}</span> sera supprimée définitivement.
+                            La zone <span className="badge bg-light border rounded bg-dark text-white"> {banque?.name}</span> sera supprimée définitivement.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="d-flex justify-content-center">

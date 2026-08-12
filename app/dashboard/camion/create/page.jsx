@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { Logs, SquareArrowRightEnter, X } from "lucide-react";
+import { List, Logs, MessageSquarePlus, SquareArrowRightEnter, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox"
 
 import { useApp } from "@/app/AppContext"
@@ -29,6 +29,7 @@ import axios from "axios";
 import apiRoutes from "@/api/routes";
 import routes from "@/app/routes"
 import { FilterSelect } from "@/myComponents/FilterSelect";
+import Link from "next/link";
 
 
 export default function index() {
@@ -98,8 +99,7 @@ export default function index() {
 
                         // redirection
                         router.push(routes.camion.list)
-                        router.refresh()
-                        return 'Camion ajouté.e avec succès!'
+                        return 'Camion ajouté avec succès!'
                     },
                     error: (err) => {
                         console.log("Erreur complète :", err.response)
@@ -139,15 +139,18 @@ export default function index() {
 
 
     return <>
-        <DashboardLayourt title="➕ Ajouter un camion" icon={<Logs className="w-5 h-5" />}>
+        <DashboardLayourt title="Ajouter un camion" icon={<MessageSquarePlus className="w-5 h-5" />}>
             {/* listes des camions */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 ">
+                        <div className="flex justify-content-center">
+                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.camion.list}><List className="mx-1" /> Liste des camions</Link>
+                        </div>
+                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
                             <div className="row">
                                 <div className="col-md-12">
-                                    <Label htmlFor="marqueId">Choisissez une marque</Label>
+                                    <Label htmlFor="marqueId">Choisissez une marque <span className="text-danger">*</span> </Label>
                                     <FilterSelect
                                         options={marques?.map((marque) => ({ id: marque.id, label: marque.name }))}
                                         handleSelect={handleSelect}

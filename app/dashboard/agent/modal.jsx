@@ -47,9 +47,7 @@ export default function UpdateAgentModal({ open, onOpenChange, agent, setReload 
             console.log("Response de mise à jour à succès:", res.data)
 
             // redirection
-            setReload(true)
-            router.push(routes.agent?.list)
-            router.refresh()
+            setReload((prev)=>prev+1)
             onOpenChange(false)
             return 'Agent modifié.e avec succès!'
           },
@@ -58,9 +56,10 @@ export default function UpdateAgentModal({ open, onOpenChange, agent, setReload 
 
             if (err?.response?.status === 402) {
               const validationErrors = err.response.data?.errors
-              const { name, description } = validationErrors
+              const { name, description,phone } = validationErrors
               setErrors({
                 name: name?._errors[0],
+                phone: phone?._errors[0],
                 description: description?._errors[0],
               })
               return err.response.data?.message || 'Erreurs de validation, vérifiez le formulaire.'
@@ -90,7 +89,7 @@ export default function UpdateAgentModal({ open, onOpenChange, agent, setReload 
         <DialogHeader>
           <DialogTitle>
             <PencilLine /> Modifier l'agent
-            <span className="badge bg-light rounded border text-dark">{agent?.nom}</span>
+            <span className="mx-1 badge bg-light rounded border bg-dark text-white">{agent?.nom}</span>
           </DialogTitle>
           <DialogDescription>
             Remplissez les informations pour modifier cet agent.

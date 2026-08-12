@@ -47,11 +47,9 @@ export default function UpdateFournisseurModal({ open, onOpenChange, fournisseur
             console.log("Response de mise à jour à succès:", data)
 
             // redirection
-            setReload(true)
-            router.push(routes.fournisseur?.list)
-            router.refresh()
+            setReload((prev) => prev + 1)
             onOpenChange(false)
-            return 'Fournisseur modifié.e avec succès!'
+            return 'Fournisseur modifié avec succès!'
           },
           error: (err) => {
             console.log("Erreur complète :", err.response)
@@ -93,7 +91,7 @@ export default function UpdateFournisseurModal({ open, onOpenChange, fournisseur
         <DialogHeader>
           <DialogTitle>
             <PencilLine /> Modifier le fournisseur <span className="badge bg-light rounded border text-dark">{fournisseur?.raison_sociale}</span>
-            <span className="badge bg-light rounded border text-dark">{fournisseur?.fullname}</span>
+            <span className="mx-1 badge bg-dark rounded border text-white">{fournisseur?.fullname}</span>
           </DialogTitle>
           <DialogDescription>
             Remplissez les informations pour modifier ce fournisseur.

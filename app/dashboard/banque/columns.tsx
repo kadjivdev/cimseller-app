@@ -32,7 +32,7 @@ export function useColumns(onEdit: (banque: Banque) => void, onDelete: (banque: 
     {
       accessorKey: "id",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           N° <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -42,7 +42,7 @@ export function useColumns(onEdit: (banque: Banque) => void, onDelete: (banque: 
     {
       accessorKey: "name",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Nom <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -52,7 +52,7 @@ export function useColumns(onEdit: (banque: Banque) => void, onDelete: (banque: 
     {
       accessorKey: "description",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Description <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -62,7 +62,7 @@ export function useColumns(onEdit: (banque: Banque) => void, onDelete: (banque: 
     {
       accessorKey: "createdAt",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),

@@ -43,8 +43,7 @@ const exportColumns = [
     { label: "Crée le", key: "createdAt" as const },
 ]
 
-export function DataTable({ data, setReload }) {
-    const [expanded, setExpanded] = useState({})
+export function DataTable({ data, setReload }:any) {
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
     const [openImport, setOpenImport] = useState(false)
@@ -165,7 +164,7 @@ export function DataTable({ data, setReload }) {
                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                                            Aucun rôle trouvé.
+                                            Aucun untilisateur trouvé.
                                         </TableCell>
                                     </TableRow>
                                 )}

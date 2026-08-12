@@ -24,11 +24,8 @@ export default function DeleteUserModal({ open, onOpenChange, user, setReload })
                 loading: `Suppression en cours du compte ${user?.fullname}...`,
                 success: (res) => {
                     console.log("Response de suppression :", res.data)
-                    // router.push(routes.role?.list)//redirection sur la page des roles
-                    router.push(routes.user?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
-                    setReload(true)
-                    
+                  
+                    setReload((prev) => prev + 1)
                     // fermeture du modal
                     onOpenChange(false)
                     // 

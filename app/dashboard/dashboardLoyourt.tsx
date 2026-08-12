@@ -11,7 +11,7 @@ import { Spinner } from "@/components/ui/spinner"
 import routes from "@/app/routes"
 
 // Composant interne qui a accès au contexte
-function DashboardContent({ title, children, icon = null }) {
+function DashboardContent({ title, children, icon = null }:any) {
     const router = useRouter()
     const { isAuthenticated, loading, initialized } = useApp()
     const newDate = new Date()
@@ -46,13 +46,15 @@ function DashboardContent({ title, children, icon = null }) {
                 <SiteHeader />
                 <div className="flex flex-1 flex-col">
                     <div className="@container/main">
-                        <div className="py-4 md:gap-6 md:py-6 items-center justify-between">
+                        <div className="py-4 md:gap-6 md:py-6 items-center justify-between  bg-dark">
                             {title && (
                                 <>
-                                    <h3 className="justify-content-center flex items-center gap-1 whitespace-nowrap"> {icon??''} {title}</h3>
+                                    <h3 className="justify-content-center flex items-center gap-1 whitespace-nowrap text-light"> <span className="badge bg-light text-warning"> {icon??''}</span> {title}</h3>
                                     <Separator />
                                 </>
                             )}
+                        </div>
+                        <div className="bg-light">
                             {children}
                         </div>
                     </div>
@@ -69,7 +71,7 @@ function DashboardContent({ title, children, icon = null }) {
 }
 
 // Wrapper qui fournit le contexte
-export default function DashboardLayourt({ title, children,icon = null }) {
+export default function DashboardLayourt({ title, children,icon = null }:any) {
     return (
         <AppProvider>
             <DashboardContent title={title} icon={icon}>

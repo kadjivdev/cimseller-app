@@ -5,15 +5,12 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { useRouter } from "next/navigation"
 import { SquareArrowRightEnter, X } from "lucide-react"
 
 import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
-import routes from "@/app/routes"
 
 export default function DeleteZoneModal({ open, onOpenChange, zone, setReload }) {
-    const router = useRouter()
 
     // submission
     const submitDeleteForm = (e) => {
@@ -24,14 +21,11 @@ export default function DeleteZoneModal({ open, onOpenChange, zone, setReload })
                 loading: `Suppression en cours de la zone ${zone?.name}...`,
                 success: (res) => {
                     console.log("Response de suppression :", res.data)
-                    router.push(routes.zone?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
-                    setReload(true)
-                    
-                    // fermeture du modal
+
+                    setReload((prev) => prev + 1)
                     onOpenChange(false)
                     // 
-                    return 'Zone modifiée avec succès!'
+                    return 'Zone supprimée avec succès!'
                 },
                 error: (err) => err?.message || 'Erreur de chargement',
             }

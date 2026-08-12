@@ -24,11 +24,8 @@ export default function DeleteRepresentantModal({ open, onOpenChange, representa
                 loading: `Suppression en cours du representant ${representant?.nom} ${representant?.prenom}...`,
                 success: (res) => {
                     console.log("Response de suppression :", res.data)
-                    router.push(routes.representant?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
-                    setReload(true)
-                    
-                    // fermeture du modal
+                   
+                    setReload((prev)=>prev+1)
                     onOpenChange(false)
                     // 
                     return 'Representant modifié avec succès!'

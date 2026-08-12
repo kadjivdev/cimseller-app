@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import axios from "axios";
 import apiRoutes from "@/api/routes";
-import { List } from 'lucide-react';
+import { List, UserKey } from 'lucide-react';
 
 import { columns, Payment } from "./columns"
 import { DataTable } from "./data-table"
@@ -60,7 +60,7 @@ export default function index() {
     }, [])
 
     return <>
-        <DashboardLayourt title="Listes des permissions">
+        <DashboardLayourt title="Listes des permissions" icon={<UserKey />}>
             {/* listes de spermissions */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">

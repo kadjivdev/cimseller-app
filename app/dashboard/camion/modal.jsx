@@ -16,7 +16,6 @@ import apiRoutes from "@/api/routes"
 import { useRouter } from "next/navigation"
 import routes from "@/app/routes"
 import { PencilLine, SquareArrowRightEnter, X } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea"
 import { FilterSelect } from "@/myComponents/FilterSelect"
 import { Separator } from "@/components/ui/separator"
 
@@ -89,11 +88,9 @@ export default function UpdateCamionModal({ open, onOpenChange, camion, setReloa
             console.log("Response de mise à jour à succès:", res.data)
 
             // redirection
-            setReload(true)
-            router.push(routes.camion?.list)
-            router.refresh()
+            setReload((prev) => prev + 1)
             onOpenChange(false)
-            return 'Camion modifié.e avec succès!'
+            return 'Camion modifié avec succès!'
           },
           error: (err) => {
             console.log("Erreur complète :", err.response)
@@ -133,7 +130,7 @@ export default function UpdateCamionModal({ open, onOpenChange, camion, setReloa
         <DialogHeader>
           <DialogTitle>
             <PencilLine /> Modifier le camion
-            <span className="badge bg-light rounded border text-dark">{camion?.immatriculation}</span>
+            <span className="mx-1 badge bg-dark rounded border text-white">{camion?.immatriculation}</span>
           </DialogTitle>
           <DialogDescription>
             Remplissez les informations pour modifier ce camion.

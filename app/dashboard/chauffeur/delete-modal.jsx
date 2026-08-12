@@ -25,9 +25,7 @@ export default function DeleteChauffeurModal({ open, onOpenChange, chauffeur, se
                 success: (res) => {
                     console.log("Response de suppression :", res.data)
 
-                    router.push(routes.chauffeur?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
-                    setReload(true)
+                    setReload((prev) => prev + 1)
                     // fermeture du modal
                     onOpenChange(false)
                     return 'Chauffeur supprimé avec succès!'
@@ -45,7 +43,7 @@ export default function DeleteChauffeurModal({ open, onOpenChange, chauffeur, se
                         <DialogTitle>Êtes-vous sûre?</DialogTitle>
                         <DialogDescription>
                             Cette action est irréversible.
-                            Le Chauffeur <span className="badge bg-light border rounded text-dark"> {chauffeur?.fullname}</span> sera supprimé définitivement.
+                            Le Chauffeur <span className="mx-1 badge bg-light border rounded bg-dark text-white"> {chauffeur?.fullname}</span> sera supprimé définitivement.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="d-flex justify-content-center">

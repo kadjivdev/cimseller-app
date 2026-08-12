@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { SquareArrowRightEnter, X } from "lucide-react";
+import { List, MessageSquarePlus, SquareArrowRightEnter, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox"
 
 
@@ -28,6 +28,7 @@ import {
     FieldGroup,
     FieldLabel,
 } from "@/components/ui/field"
+import Link from "next/link";
 
 export default function index() {
     const { loading, setLoading } = useApp()
@@ -37,6 +38,8 @@ export default function index() {
     const [rolePermissions, setRolePermissions] = useState([])
 
     const [data, setData] = useState({ name: '', description: '', permissionIds: [] })
+    const [errors, setErrors] = useState({ name: '', description: '', permissionIds: '' })
+
     const [search, setSearch] = useState('')
 
     // Charge toutes les permissions
@@ -84,7 +87,6 @@ export default function index() {
         console.log("Updated data :", data)
     }, [data])
 
-
     // submition
     const submitForm = (e) => {
         // console.log("apiRoutes : ",apiRoutes)
@@ -97,23 +99,40 @@ export default function index() {
                     console.log("Response de creation :", res.data)
 
                     router.push(routes.role?.list)//redirection vers la list
-                    router.refresh() // 👈 recharge les données server-side sans full reload
+                    // router.refresh() // 👈 recharge les données server-side sans full reload
 
                     return 'Rôle crée avec succès!'
                 },
-                error: (err) => err?.message || 'Erreur de creation',
+                error: (err) => {
+                    console.log("Erreure complète :", err.response)
+
+                    if (err?.response?.status === 402) {
+                        const validationErrors = err.response.data?.errors
+                        const { name, description,permissionIds } = validationErrors
+                        setErrors({
+                            name: name?._errors[0],
+                            description: description?._errors[0],
+                            permissionIds: permissionIds?._errors[0],
+                        })
+                        return err.response.data?.error || 'Erreurs de validation, vérifiez le formulaire.'
+                    }
+
+                    return err?.response?.data?.error || err?.message || "Erreur de mise à jour de l'utilisateur"
+                },
             }
         )
     }
 
-
     return <>
-        <DashboardLayourt title="Creation des rôles">
+        <DashboardLayourt title="Création des rôles" icon={<MessageSquarePlus />}>
             {/* listes des roles */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 ">
+                        <div className="flex justify-content-center">
+                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.role.list}><List className="mx-1" /> Liste des rôles</Link>
+                        </div>
+                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
                             <div className="row">
                                 <div className="col-md-12 mb-2">
                                     <Label htmlFor="name">Nom <span className="text-danger">*</span></Label>
@@ -124,6 +143,7 @@ export default function index() {
                                         required
                                         value={data.name}
                                         onChange={handleChange} />
+                                    {errors.name && <span className="text-danger">{errors.name}</span>}
                                 </div>
                                 <div className="col-md-12 mb-2">
                                     <Label htmlFor="description">Description <span className="text-danger">*</span> </Label>
@@ -133,6 +153,7 @@ export default function index() {
                                         value={data.description}
                                         placeholder="Rôle des suveurs de commande"
                                         onChange={handleChange} />
+                                    {errors.description && <span className="text-danger">{errors.description}</span>}
                                 </div>
                             </div>
 
@@ -142,6 +163,7 @@ export default function index() {
                             <div className="row">
                                 <div className="col-12">
                                     <h6 className="text-center my-2">Toutes les permissions</h6>
+                                    {errors.permissions && <span className="text-danger">{errors.permissions}</span>}
                                     <div className="m-3">
                                         <Input
                                             type="search"

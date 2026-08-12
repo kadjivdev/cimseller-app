@@ -25,10 +25,7 @@ export default function DeleteFournisseurModal({ open, onOpenChange, fournisseur
                 success: (data) => {
                     console.log("Response de suppression :", data)
                    
-                    setReload(true)
-                    router.push(routes.fournisseur?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
-                    // fermeture du modal
+                    setReload((prev)=>prev+1)
                     onOpenChange(false)
                     return 'Fournisseur supprimé avec succès!'
                 },
@@ -45,7 +42,7 @@ export default function DeleteFournisseurModal({ open, onOpenChange, fournisseur
                         <DialogTitle>Êtes-vous sûre?</DialogTitle>
                         <DialogDescription>
                             Cette action est irréversible.
-                            Le fournisseur <span className="badge bg-light border rounded text-dark"> {fournisseur?.raison_sociale}</span> sera supprimé définitivement.
+                            Le fournisseur <span className="mx-1 badge bg-dark border rounded text-white"> {fournisseur?.raison_sociale}</span> sera supprimé définitivement.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="d-flex justify-content-center">

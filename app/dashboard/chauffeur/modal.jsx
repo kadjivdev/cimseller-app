@@ -60,9 +60,7 @@ export default function UpdateChauffeurModal({ open, onOpenChange, chauffeur, se
             console.log("Response de mise à jour à succès:", res.data)
 
             // redirection
-            setReload(true)
-            router.push(routes.chauffeur?.list)
-            router.refresh()
+            setReload((prev) => prev + 1)
             onOpenChange(false)
             return 'Chauffeur modifié.e avec succès!'
           },
@@ -104,7 +102,7 @@ export default function UpdateChauffeurModal({ open, onOpenChange, chauffeur, se
         <DialogHeader>
           <DialogTitle>
             <PencilLine /> Modifier le chauffeur
-            <span className="badge bg-light rounded border text-dark">{chauffeur?.fullname}</span>
+            <span className="mx-1 badge bg-light rounded border bg-dark text-white">{chauffeur?.fullname}</span>
           </DialogTitle>
           <DialogDescription>
             Remplissez les informations pour modifier ce chauffeur.

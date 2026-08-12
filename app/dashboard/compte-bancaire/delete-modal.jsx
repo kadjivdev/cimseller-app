@@ -24,10 +24,8 @@ export default function DeleteZoneModal({ open, onOpenChange, compteBancaire, se
                 loading: `Suppression en cours du compte ${compteBancaire?.intitule}...`,
                 success: (res) => {
                     console.log("Response de suppression :", res.data)
-                    router.push(routes.compteBancaire?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
-                    setReload(true)
                     
+                    setReload((prev) => prev + 1)
                     // fermeture du modal
                     onOpenChange(false)
                     // 

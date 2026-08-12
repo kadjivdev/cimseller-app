@@ -24,15 +24,11 @@ export default function DeleteRoleModal({ open, onOpenChange, role, setReload })
                 loading: `Suppression en cours du rôle ${role?.name}...`,
                 success: (res) => {
                     console.log("Response de suppression :", res.data)
-                    // router.push(routes.role?.list)//redirection sur la page des roles
-                    router.push(routes.role?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
-                    setReload(true)
                     
-                    // fermeture du modal
+                    setReload((prev)=>prev+1)
                     onOpenChange(false)
-                    // 
-                    return 'Rôle modifié avec succès!'
+                    
+                    return 'Rôle supprimé avec succès!'
                 },
                 error: (err) => err?.message || 'Erreur de chargement',
             }
@@ -41,23 +37,21 @@ export default function DeleteRoleModal({ open, onOpenChange, role, setReload })
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <form>
-                <DialogContent className="sm:max-w-sm text-center">
-                    <DialogHeader>
-                        <DialogTitle>Êtes-vous sûre?</DialogTitle>
-                        <DialogDescription>
-                            Cette action est irréversible.
-                            Le rôle <span className="badge bg-light border rounded text-dark"> {role?.name}</span> sera supprimé définitivement.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter className="d-flex justify-content-center">
-                        <DialogClose asChild>
-                            <Button className="shadow-sm rounded" variant="outline" onClick={() => onOpenChange(false)}><X /> Annuler</Button>
-                        </DialogClose>
-                        <Button type="submit" className="bg-danger text-white shadow-sm rounded" onClick={(e) => submitDeleteForm(e)}><SquareArrowRightEnter />Supprimer</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </form>
+            <DialogContent className="sm:max-w-sm text-center">
+                <DialogHeader>
+                    <DialogTitle>Êtes-vous sûre?</DialogTitle>
+                    <DialogDescription>
+                        Cette action est irréversible.
+                        Le rôle <span className="badge bg-light border rounded text-dark"> {role?.name}</span> sera supprimé définitivement.
+                    </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="d-flex justify-content-center">
+                    <DialogClose asChild>
+                        <Button type="button" className="shadow-sm rounded" variant="outline" onClick={() => onOpenChange(false)}><X /> Annuler</Button>
+                    </DialogClose>
+                    <Button type="submit" className="bg-danger text-white shadow-sm rounded" onClick={(e) => submitDeleteForm(e)}><SquareArrowRightEnter />Supprimer</Button>
+                </DialogFooter>
+            </DialogContent>
         </Dialog>
     )
 }

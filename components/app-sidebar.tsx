@@ -50,12 +50,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarHeader>
 
         <SidebarContent>
-          {/* {data.navs.map((nav, key) => (
-            <div key={key}>
-              <NavMain label={nav.title} items={nav.menus} />
-              <Separator />
-            </div>
-          ))} */}
           <Menu />
         </SidebarContent>
 

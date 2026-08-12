@@ -27,7 +27,8 @@ import axios from "axios";
 import apiRoutes from "@/api/routes";
 import routes from "@/app/routes"
 import { FilterSelect } from "@/myComponents/FilterSelect";
-import { SquareArrowRightEnter, X } from "lucide-react";
+import { FolderPlus, List, SquareArrowRightEnter, X } from "lucide-react";
+import Link from "next/link";
 
 
 export default function index() {
@@ -88,7 +89,11 @@ export default function index() {
 
         try {
             await toast.promise(
-                axiosInstance.post(apiRoutes.createProduit, formData),
+                axiosInstance.post(apiRoutes.createProduit, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }),
                 {
                     loading: `Création du produit en cours ...`,
                     success: async (res) => {
@@ -105,9 +110,11 @@ export default function index() {
 
                         if (err?.response?.status === 402) {
                             const validationErrors = err.response.data?.errors
-                            const { name, description } = validationErrors
+                            const { name, fournisseurPrice, typeId, description } = validationErrors
                             setErrors({
                                 name: name?._errors[0],
+                                fournisseurPrice: fournisseurPrice?._errors[0],
+                                typeId: typeId?._errors[0],
                                 description: description?._errors[0],
                             })
                             return err.response.data?.message || 'Erreurs de validation, vérifiez le formulaire.'
@@ -133,12 +140,15 @@ export default function index() {
 
 
     return <>
-        <DashboardLayourt title="➕ Ajouter un produit">
+        <DashboardLayourt title="Ajouter un produit" icon={<FolderPlus />}>
             {/* ajouter des roles */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 ">
+                        <div className="flex justify-content-center">
+                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.produit.list}><List className="mx-1" /> Liste des produits</Link>
+                        </div>
+                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
                             <div className="row">
                                 <div className="col-md-12 mb-2">
                                     <Label htmlFor="fullname">Nom  <span className="text-danger">*</span></Label>
@@ -171,7 +181,7 @@ export default function index() {
                                         selected={data?.typeId}
                                     />
                                     {errors.typeId && <span className="text-danger">{errors.typeId}</span>}
-                                    
+
                                 </div>
                                 <div className="col-md-12 mb-2">
                                     <Field>

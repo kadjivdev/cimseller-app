@@ -25,10 +25,7 @@ export default function DeleteAvaliseurModal({ open, onOpenChange, avaliseur, se
                 success: (data) => {
                     console.log("Response de suppression :", data)
                    
-                    setReload(true)
-                    router.push(routes.avaliseur?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
-                    // fermeture du modal
+                    setReload((prev)=>prev+1)
                     onOpenChange(false)
                     return 'Avaliseur supprimé avec succès!'
                 },
@@ -45,7 +42,7 @@ export default function DeleteAvaliseurModal({ open, onOpenChange, avaliseur, se
                         <DialogTitle>Êtes-vous sûre?</DialogTitle>
                         <DialogDescription>
                             Cette action est irréversible.
-                            Le camion <span className="badge bg-light border rounded text-dark"> {avaliseur?.fullname}</span> sera supprimée définitivement.
+                            Le camion <span className="mx-1 badge bg-dark border rounded text-white"> {avaliseur?.fullname}</span> sera supprimée définitivement.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="d-flex justify-content-center">

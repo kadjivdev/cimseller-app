@@ -90,7 +90,7 @@ export default function UpdateUserModal({ open, onOpenChange, user, setReload })
             }
 
             // redirection
-            setReload(true)
+            setReload((prev) => prev + 1)
             onOpenChange(false)
             return 'Utilisateur modifié.e avec succès!'
           },
@@ -114,11 +114,6 @@ export default function UpdateUserModal({ open, onOpenChange, user, setReload })
           },
         }
       )
-
-      // redirection
-      router.push(routes.user?.list)
-      setReload(true)
-      onOpenChange(false)
 
     } catch (error) {
       console.log("Erreur catchée :", error)

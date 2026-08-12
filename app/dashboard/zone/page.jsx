@@ -7,7 +7,8 @@ import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import axios from "axios";
 import apiRoutes from "@/api/routes";
-import { List } from 'lucide-react';
+import routes from "@/app/routes";
+import { List, MapPin, MessageSquarePlus } from 'lucide-react';
 
 import { columns, Payment } from "./columns"
 import { DataTable } from "./data-table"
@@ -21,11 +22,12 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import Link from "next/link";
 
 export default function index() {
     const [zones, setZones] = useState([])
     const [representants, setRepresentants] = useState([])
-    const [reload, setReload] = useState(false)
+    const [reload, setReload] = useState(0)
 
     // get zones
     const retriveZones = async () => {
@@ -91,15 +93,18 @@ export default function index() {
     }, [reload])
 
     return <>
-        <DashboardLayourt title="Liste des zones">
+        <DashboardLayourt title="Liste des zones" icon={<MapPin />}>
             {/* listes des zones */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
+                        <div className="flex justify-content-center">
+                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.zone.create}><MessageSquarePlus className="mx-1" /> Ajouter une zone</Link>
+                        </div>
                         <DataTable
                             data={zones}
-                            setReload={setReload} 
-                            representants={representants}/>
+                            setReload={setReload}
+                            representants={representants} />
                     </div>
                 </div>
             </div>

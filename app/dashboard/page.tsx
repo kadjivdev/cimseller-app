@@ -6,6 +6,7 @@ import { SectionCards } from "@/components/section-cards"
 import data from "./data.json"
 import DashboardLayourt from "./dashboardLoyourt"
 import { AppProvider, useApp } from "../AppContext"
+import { LayoutDashboard } from "lucide-react"
 
 
 export default function Page() {
@@ -13,7 +14,7 @@ export default function Page() {
   console.log("user called from dashboard page :", user)
   return (
     <AppProvider>
-      <DashboardLayourt title={"Tableau de bord"}>
+      <DashboardLayourt title={"Tableau de bord"} icon={<LayoutDashboard />}>
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">

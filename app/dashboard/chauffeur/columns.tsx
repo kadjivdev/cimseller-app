@@ -33,7 +33,7 @@ export function useColumns(onEdit: (chauffeur: Chauffeur) => void, onDelete: (ch
     {
       accessorKey: "id",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           N° <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -43,7 +43,7 @@ export function useColumns(onEdit: (chauffeur: Chauffeur) => void, onDelete: (ch
     {
       accessorKey: "fullname",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Nom complet <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -53,7 +53,7 @@ export function useColumns(onEdit: (chauffeur: Chauffeur) => void, onDelete: (ch
     {
       accessorKey: "phone",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Téléphone <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -63,7 +63,7 @@ export function useColumns(onEdit: (chauffeur: Chauffeur) => void, onDelete: (ch
     {
       accessorKey: "permis",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Permis <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -73,7 +73,7 @@ export function useColumns(onEdit: (chauffeur: Chauffeur) => void, onDelete: (ch
     {
       accessorKey: "createdAt",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -100,7 +100,7 @@ export function useColumns(onEdit: (chauffeur: Chauffeur) => void, onDelete: (ch
     {
       id: "actions",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Actions <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),

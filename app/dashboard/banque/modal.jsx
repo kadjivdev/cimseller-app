@@ -48,9 +48,7 @@ export default function UpdateBanqueModal({ open, onOpenChange, banque, setReloa
             console.log("Response de mise à jour à succès:", res.data)
 
             // redirection
-            setReload(true)
-            router.push(routes.banque?.list)
-            router.refresh()
+            setReload((prev)=>prev+1)
             onOpenChange(false)
             return 'Banque modifié.e avec succès!'
           },
@@ -91,7 +89,7 @@ export default function UpdateBanqueModal({ open, onOpenChange, banque, setReloa
         <DialogHeader>
           <DialogTitle>
             <PencilLine /> Modifier la banque
-            <span className="badge bg-light rounded border text-dark">{banque?.name}</span>
+            <span className="mx-1 badge bg-light rounded border bg-dark text-white">{banque?.name}</span>
           </DialogTitle>
           <DialogDescription>
             Remplissez les informations pour modifier cette banque.

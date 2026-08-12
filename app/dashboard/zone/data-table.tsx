@@ -38,7 +38,7 @@ const exportColumns = [
     { label: "Crée le", key: "createdAt" as const },
 ]
 
-export function DataTable({ data, setReload,representants }) {
+export function DataTable({ data, setReload,representants }:any) {
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
     const [selectedZone, setSelectedZone] = useState<Zone | null>(null)
@@ -115,7 +115,7 @@ export function DataTable({ data, setReload,representants }) {
                             <TableActions
                                 data={data}
                                 columns={exportColumns}
-                                filename="utilisateurs"
+                                filename="zones"
                             />
                         </div>
                     </div>

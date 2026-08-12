@@ -36,7 +36,7 @@ export function useColumns(onEdit: (camion: Camion) => void, onDelete: (camion: 
     {
       accessorKey: "id",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           N° <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -46,7 +46,7 @@ export function useColumns(onEdit: (camion: Camion) => void, onDelete: (camion: 
     {
       accessorKey: "marqueId",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Marque <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -56,7 +56,7 @@ export function useColumns(onEdit: (camion: Camion) => void, onDelete: (camion: 
     {
       accessorKey: "immatriculation",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Immatriculation <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -66,7 +66,7 @@ export function useColumns(onEdit: (camion: Camion) => void, onDelete: (camion: 
     {
       accessorKey: "libelle",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Libelle <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -76,7 +76,7 @@ export function useColumns(onEdit: (camion: Camion) => void, onDelete: (camion: 
     {
       accessorKey: "createdAt",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),

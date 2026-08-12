@@ -45,7 +45,7 @@ const exportColumns = [
     { label: "Crée par", key: "createdBy" as const },
 ]
 
-export function DataTable({ data, date, setDate,setSelectedVente ,setOpen}:any) {
+export function DataTable({ data, setSelectedVente ,setOpen}:any) {
 
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])
@@ -70,12 +70,6 @@ export function DataTable({ data, date, setDate,setSelectedVente ,setOpen}:any) 
         <>
             <Card className="p-2">
                 <div className="space-y-4">
-
-                    {/* Filtre par période */}
-                    <DatePickerRange
-                        date={date}
-                        setDate={setDate}
-                    />
 
                     {/* ── HEADER ── */}
                     <div className="flex items-center justify-between gap-4 no-print bg-dark p-2 rounded">

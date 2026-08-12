@@ -519,7 +519,7 @@ export function Menu() {
             <Button
               variant="ghost"
               size="sm"
-              className="group w-full justify-start transition-none hover:bg-accent hover:text-accent-foreground"
+              className="group rounded w-full justify-start transition-none hover:bg-accent hover:text-accent-foreground"
             >
               <ChevronRightIcon className="transition-transform group-data-[state=open]:rotate-90" />
               <FolderIcon />

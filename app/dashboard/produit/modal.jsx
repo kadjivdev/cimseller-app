@@ -89,16 +89,17 @@ export default function UpdateProduitModal({ open, onOpenChange, produit, setRel
 
     try {
       await toast.promise(
-        axiosInstance.put(apiRoutes.updateProduit(produit.id), formData),
+        axiosInstance.put(apiRoutes.updateProduit(produit.id), formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }),
         {
           loading: `Mise à jour en cours du produit ${produit?.name}...`,
           success: async (res) => {
             console.log("Response de mise à jour à succès:", res.data)
 
-            // redirection
-            setReload(true)
-            router.push(routes.produit?.list)
-            router.refresh()
+            setReload((prev)=>prev+1)
             onOpenChange(false)
             return 'Produit modifié.e avec succès!'
           },
@@ -141,7 +142,7 @@ export default function UpdateProduitModal({ open, onOpenChange, produit, setRel
         <DialogHeader>
           <DialogTitle>
             <PencilLine /> Modifier le produit
-            <span className="badge bg-light rounded border text-dark">{produit?.name}</span>
+            <span className="mx-2 badge bg-light rounded border bg-dark text-white">{produit?.name}</span>
           </DialogTitle>
           <DialogDescription>
             Remplissez les informations pour modifier ce produit.

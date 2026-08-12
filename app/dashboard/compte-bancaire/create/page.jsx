@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { Logs, SquareArrowRightEnter, X } from "lucide-react";
+import { List, Logs, MessageSquarePlus, SquareArrowRightEnter, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox"
 
 
@@ -30,6 +30,7 @@ import axios from "axios";
 import apiRoutes from "@/api/routes";
 import routes from "@/app/routes"
 import { FilterSelect } from "@/myComponents/FilterSelect";
+import Link from "next/link";
 
 
 export default function index() {
@@ -137,12 +138,15 @@ export default function index() {
 
 
     return <>
-        <DashboardLayourt title="➕ Ajouter un compte bancaire">
-            {/* listes des zones */}
+        <DashboardLayourt title="Ajouter un compte bancaire" icon={<MessageSquarePlus className="mx-1" />}>
+            {/* listes des comptes */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 ">
+                        <div className="flex justify-content-center">
+                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.compteBancaire.list}><List className="mx-1" /> Liste des comptes bancaires</Link>
+                        </div>
+                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
                             <div className="row">
                                 <div className="col-md-12 mb-2">
                                     <Label htmlFor="intitule">Intitulé  <span className="text-danger">*</span></Label>

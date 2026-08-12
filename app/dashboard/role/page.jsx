@@ -7,7 +7,8 @@ import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import axios from "axios";
 import apiRoutes from "@/api/routes";
-import { List } from 'lucide-react';
+import routes from "@/app/routes";
+import { List, MessageSquarePlus, UserKey } from 'lucide-react';
 
 import { columns, Payment } from "./columns"
 import { DataTable } from "./data-table"
@@ -21,10 +22,11 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import Link from "next/link";
 
 export default function index() {
     const [roles, setRoles] = useState({})
-    const [reload, setReload] = useState(false)
+    const [reload, setReload] = useState(0)
 
     // get roles
     const retriveRoles = async () => {
@@ -42,7 +44,7 @@ export default function index() {
         toast.promise(
             retriveRoles(),
             {
-                loading: `Chargment des roles ...`,
+                loading: `Chargement des roles ...`,
                 success: function (data) {
                     console.log("Data obtenu après request :", data)
                     setRoles(data)
@@ -60,11 +62,14 @@ export default function index() {
     }, [reload])
 
     return <>
-        <DashboardLayourt title="Listes des rôles">
+        <DashboardLayourt title="Listes des rôles" icon={<UserKey />}>
             {/* listes des roles */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
+                        <div className="flex justify-content-center">
+                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.role.create}><MessageSquarePlus className="mx-1" /> Ajouter un rôle</Link>
+                        </div>
                         <DataTable data={roles} setReload={setReload} />
                     </div>
                 </div>

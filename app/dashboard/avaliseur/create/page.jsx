@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { Logs, SquareArrowRightEnter, X } from "lucide-react";
+import { List, Logs, MessageSquarePlus, SquareArrowRightEnter, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox"
 
 import { useApp } from "@/app/AppContext"
@@ -29,6 +29,7 @@ import axios from "axios";
 import apiRoutes from "@/api/routes";
 import routes from "@/app/routes"
 import { FilterSelect } from "@/myComponents/FilterSelect";
+import Link from "next/link";
 
 
 export default function index() {
@@ -60,7 +61,6 @@ export default function index() {
 
                         // redirection
                         router.push(routes.avaliseur.list)
-                        router.refresh()
                         return 'Avaliseur ajouté.e avec succès!'
                     },
                     error: (err) => {
@@ -97,12 +97,15 @@ export default function index() {
 
 
     return <>
-        <DashboardLayourt title="➕ Ajouter un avaliseur" icon={<Logs className="w-5 h-5" />}>
+        <DashboardLayourt title="Ajouter un avaliseur" icon={<MessageSquarePlus />}>
         
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 ">
+                        <div className="flex justify-content-center">
+                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.avaliseur.create}><List className="mx-1" /> Liste des avaliseurs</Link>
+                        </div>
+                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
                             <div className="row">
                                 <div className="col-md-12 mb-2">
                                     <Label htmlFor="immatriculation">Nom complet  <span className="text-danger">*</span></Label>

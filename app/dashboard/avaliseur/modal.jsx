@@ -48,11 +48,9 @@ export default function UpdateAvaliseurModal({ open, onOpenChange, avaliseur, se
             console.log("Response de mise à jour à succès:", data)
 
             // redirection
-            setReload(true)
-            router.push(routes.avaliseur?.list)
-            router.refresh()
+            setReload((prev)=>prev+1)
             onOpenChange(false)
-            return 'Avaliseur modifié.e avec succès!'
+            return 'Avaliseur modifié avec succès!'
           },
           error: (err) => {
             console.log("Erreur complète :", err.response)
@@ -92,7 +90,7 @@ export default function UpdateAvaliseurModal({ open, onOpenChange, avaliseur, se
         <DialogHeader>
           <DialogTitle>
             <PencilLine /> Modifier l'avaliseur
-            <span className="badge bg-light rounded border text-dark">{avaliseur?.fullname}</span>
+            <span className="mx-1 badge bg-dark rounded border text-white">{avaliseur?.fullname}</span>
           </DialogTitle>
           <DialogDescription>
             Remplissez les informations pour modifier ce camion.

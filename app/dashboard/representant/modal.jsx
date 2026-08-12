@@ -21,12 +21,12 @@ import { PencilLine, SquareArrowRightEnter, X } from "lucide-react";
 export default function UpdateRepresentantModal({ open, onOpenChange, representant, setReload }) {
   const router = useRouter()
 
-  const [data, setData] = useState({ nom: '', prenom: '',phone:'',email:'' })
-  const [errors, setErrors] = useState({ nom: '', prenom: '',phone:'',email:'' })
+  const [data, setData] = useState({ nom: '', prenom: '', phone: '', email: '' })
+  const [errors, setErrors] = useState({ nom: '', prenom: '', phone: '', email: '' })
 
   useEffect(() => {
     if (!representant) return
-    setData({ nom:representant.nom, prenom:representant.prenom,phone:representant.phone,email:representant.email })
+    setData({ nom: representant.nom, prenom: representant.prenom, phone: representant.phone, email: representant.email })
   }, [representant])
 
   const handleChange = (e) => {
@@ -46,10 +46,7 @@ export default function UpdateRepresentantModal({ open, onOpenChange, representa
           success: async (res) => {
             console.log("Response de mise à jour à succès:", res.data)
 
-            // redirection
-            setReload(true)
-            // router.push(routes.representant?.list)
-            router.refresh()
+            setReload((prev) => prev + 1)
             onOpenChange(false)
             return 'Representant modifié.e avec succès!'
           },
@@ -58,7 +55,7 @@ export default function UpdateRepresentantModal({ open, onOpenChange, representa
 
             if (err?.response?.status === 402) {
               const validationErrors = err.response.data?.errors
-              const { nom, prenom,phone,email} = validationErrors
+              const { nom, prenom, phone, email } = validationErrors
               setErrors({
                 nom: nom?._errors[0],
                 prenom: prenom?._errors[0],
@@ -110,7 +107,7 @@ export default function UpdateRepresentantModal({ open, onOpenChange, representa
               onChange={handleChange} />
             {errors.nom && <span className="text-danger">{errors.nom}</span>}
           </div>
-          
+
           <div className="col-md-12 mb-2">
             <Label htmlFor="fullname">Prénom  <span className="text-danger">*</span></Label>
             <Input id="prenom"

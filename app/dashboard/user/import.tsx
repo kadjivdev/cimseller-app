@@ -17,16 +17,15 @@ import { useRouter } from "next/navigation"
 import routes from "@/app/routes"
 import { Import, SquareArrowRightEnter, X } from "lucide-react";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
-import { ChevronRight, ChevronDown } from "lucide-react"
 
-export default function ImportUserModal({ open, onOpenChange, setReload }) {
+export default function ImportUserModal({ open, onOpenChange, setReload }:{open:boolean,onOpenChange:boolean,setReload:any}) {
 
   const router = useRouter()
 
   const [data, setData] = useState({ users: '' })
   const [errors, setErrors] = useState({ users: '' })
 
-  const handleChange = (e) => {
+  const handleChange = (e:any) => {
     e.preventDefault()
     console.log("Fichier uploaded :", e.target.files?.[0])
 
@@ -34,7 +33,7 @@ export default function ImportUserModal({ open, onOpenChange, setReload }) {
   }
 
   // submission
-  const submitImportForm = async (e) => {
+  const submitImportForm = async (e:any) => {
     e.preventDefault()
 
     // ✅ construit un vrai FormData pour multer
@@ -51,10 +50,8 @@ export default function ImportUserModal({ open, onOpenChange, setReload }) {
           success: async (res) => {
             console.log("Response de l'importation à succès:", res.data)
             await new Promise((resolve) => setTimeout(resolve, 2000))
-            router.push(routes.user?.list)
-            router.refresh() // 👈 recharge les données server-side sans full reload
-            setReload(true)
-            onOpenChange(false)
+            
+            setReload((prev:any) => prev + 1)
             return 'Importation effectué.e avec succès!'
           },
           error: (err) => {

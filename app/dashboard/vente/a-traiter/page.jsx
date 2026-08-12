@@ -27,21 +27,6 @@ export default function index() {
         to: endOfMonth(new Date()),
     })
 
-    // Ventes filtrés par période (recalculé automatiquement)
-    const filteredVentes = useMemo(() => {
-        if (!date?.from) return ventes
-
-        const from = startOfDay(date.from)
-        const to = date.to ? endOfDay(date.to) : endOfDay(date.from)
-
-        let vs = ventes.filter((v) => {
-            const createdAt = new Date(v.createdAt)
-            return isWithinInterval(createdAt, { start: from, end: to })
-        })
-
-        return vs;
-    }, [ventes, date])
-
     //Initialization des données
     useEffect(() => {
         // Charge des ventes
@@ -72,9 +57,7 @@ export default function index() {
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
                         <DataTable
-                            data={filteredVentes}
-                            date={date}
-                            setDate={setDate}
+                            data={ventes}
                             setSelectedVente={setSelectedVente}
                             setOpen={setOpen}
                         />

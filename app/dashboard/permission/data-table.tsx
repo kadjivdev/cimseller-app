@@ -34,7 +34,7 @@ const exportColumns = [
     { label: "Crée le", key: "created_at" as const },
 ]
 
-export function DataTable({ data }) {
+export function DataTable({ data }:any) {
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // ✅ Nouveau
@@ -93,7 +93,7 @@ export function DataTable({ data }) {
                         <TableActions
                             data={data}
                             columns={exportColumns}
-                            filename="utilisateurs"
+                            filename="permissions"
                         />
                     </div>
                 </div>

@@ -24,15 +24,12 @@ export default function DeleteCamionModal({ open, onOpenChange, camion, setReloa
                 loading: `Suppression en cours du camion ${camion?.immatriculation}...`,
                 success: (res) => {
                     console.log("Response de suppression :", res.data)
-                   
-                    setReload(true)
-                    router.push(routes.camion?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
-                    // fermeture du modal
+
+                    setReload((prev) => prev + 1)
                     onOpenChange(false)
                     return 'Camion supprimé avec succès!'
                 },
-                error: (err) => err.response?.data?.message || 'Erreur de chargement',
+                error: (err) => err.response?.data?.error || 'Erreur de chargement',
             }
         )
     }
@@ -45,7 +42,7 @@ export default function DeleteCamionModal({ open, onOpenChange, camion, setReloa
                         <DialogTitle>Êtes-vous sûre?</DialogTitle>
                         <DialogDescription>
                             Cette action est irréversible.
-                            Le camion <span className="badge bg-light border rounded text-dark"> {camion?.immatriculation}</span> sera supprimée définitivement.
+                            Le camion <span className="mx-1 badge bg-dark border rounded text-white"> {camion?.immatriculation}</span> sera supprimée définitivement.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="d-flex justify-content-center">

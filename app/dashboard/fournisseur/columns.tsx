@@ -35,7 +35,7 @@ export function useColumns(onEdit: (fournisseur: Fournisseur) => void, onDelete:
     {
       accessorKey: "id",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           N° <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -45,7 +45,7 @@ export function useColumns(onEdit: (fournisseur: Fournisseur) => void, onDelete:
     {
       accessorKey: "sigle",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Sigle <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -55,7 +55,7 @@ export function useColumns(onEdit: (fournisseur: Fournisseur) => void, onDelete:
     {
       accessorKey: "raison_sociale",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Raison sociale <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -65,7 +65,7 @@ export function useColumns(onEdit: (fournisseur: Fournisseur) => void, onDelete:
     {
       accessorKey: "email",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Email <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -75,7 +75,7 @@ export function useColumns(onEdit: (fournisseur: Fournisseur) => void, onDelete:
     {
       accessorKey: "phone",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Téléphone <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -85,7 +85,7 @@ export function useColumns(onEdit: (fournisseur: Fournisseur) => void, onDelete:
     {
       accessorKey: "createdAt",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -111,7 +111,7 @@ export function useColumns(onEdit: (fournisseur: Fournisseur) => void, onDelete:
     {
       id: "actions",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Actions <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),

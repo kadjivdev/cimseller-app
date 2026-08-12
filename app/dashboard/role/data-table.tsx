@@ -35,10 +35,10 @@ import DeleteRoleModal from "./delete-modal"
 const exportColumns = [
     { label: "Nom", key: "name" as const },
     { label: "Description", key: "description" as const },
-    { label: "Crée le", key: "created_at" as const },
+    { label: "Crée le", key: "createdAt" as const },
 ]
 
-export function DataTable({ data, setReload }) {
+export function DataTable({ data, setReload }:any) {
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
     const [selectedRole, setSelectedRole] = useState<Role | null>(null)
@@ -115,7 +115,7 @@ export function DataTable({ data, setReload }) {
                             <TableActions
                                 data={data}
                                 columns={exportColumns}
-                                filename="utilisateurs"
+                                filename="roles"
                             />
                         </div>
                     </div>

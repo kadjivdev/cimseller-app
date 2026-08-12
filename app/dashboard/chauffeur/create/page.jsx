@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { Logs, SquareArrowRightEnter, X } from "lucide-react";
+import { List, Logs, SquareArrowRightEnter, Users, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox"
 
 
@@ -29,6 +29,7 @@ import axios from "axios";
 import apiRoutes from "@/api/routes";
 import routes from "@/app/routes"
 import { FilterSelect } from "@/myComponents/FilterSelect";
+import Link from "next/link";
 
 
 export default function index() {
@@ -61,7 +62,11 @@ export default function index() {
 
         try {
             await toast.promise(
-                axiosInstance.post(apiRoutes.createChauffeur, formData),
+                axiosInstance.post(apiRoutes.createChauffeur, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }),
                 {
                     loading: `Création du chauffeur en cours ...`,
                     success: async (res) => {
@@ -107,12 +112,15 @@ export default function index() {
 
 
     return <>
-        <DashboardLayourt title="➕ Ajouter un chauffeur">
+        <DashboardLayourt title="Ajouter un chauffeur" icon={<Users />}>
             {/* listes des agents */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 ">
+                        <div className="flex justify-content-center">
+                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.chauffeur.list}><List className="mx-1" /> Liste des agents</Link>
+                        </div>
+                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
                             <div className="row">
                                 <div className="col-md-12 mb-2">
                                     <Label htmlFor="fullname">Nom Complet  <span className="text-danger">*</span></Label>

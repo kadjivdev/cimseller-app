@@ -7,7 +7,8 @@ import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import axios from "axios";
 import apiRoutes from "@/api/routes";
-import { List } from 'lucide-react';
+import routes from "@/app/routes";
+import { List, MessageSquarePlus, Users } from 'lucide-react';
 
 import { columns, Fournisseur } from "./columns"
 import { DataTable } from "./data-table"
@@ -21,10 +22,11 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import Link from "next/link";
 
 export default function index() {
     const [fournisseurs, setFournisseurs] = useState([])
-    const [reload, setReload] = useState(false)
+    const [reload, setReload] = useState(0)
 
     // get fournisseurs
     const retriveFournisseurs = async () => {
@@ -60,11 +62,14 @@ export default function index() {
     }, [reload])
 
     return <>
-        <DashboardLayourt title="Liste des fournisseurs" icon={<List className="w-5 h-5" />}>
+        <DashboardLayourt title="Liste des fournisseurs" icon={<Users className="w-5 h-5" />}>
             {/* listes des fournisseurs */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
+                        <div className="flex justify-content-center">
+                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.fournisseur.create}><MessageSquarePlus className="mx-1" /> Ajouter un fournisseur</Link>
+                        </div>
                         <DataTable
                             data={fournisseurs}
                             setReload={setReload} />

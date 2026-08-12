@@ -54,9 +54,7 @@ export default function UpdateCompteBancaireModal({ open, onOpenChange, compteBa
             console.log("Response de mise à jour à succès:", res.data)
 
             // redirection
-            setReload(true)
-            router.push(routes.compteBancaire?.list)
-            router.refresh()
+            setReload((prev)=>prev+1)
             onOpenChange(false)
             return 'Compte bancaire modifié avec succès!'
           },
@@ -79,12 +77,6 @@ export default function UpdateCompteBancaireModal({ open, onOpenChange, compteBa
         }
       )
 
-      // redirection
-      // router.push(routes.compteBancaire?.list)
-      router.refresh()
-      setReload(true)
-      onOpenChange(false)
-
     } catch (error) {
       console.log("Erreur catchée :", error)
     }
@@ -105,7 +97,7 @@ export default function UpdateCompteBancaireModal({ open, onOpenChange, compteBa
         <DialogHeader>
           <DialogTitle>
             <PencilLine /> Modifier le compte bancaire
-            <span className="badge bg-light rounded border text-dark">{compteBancaire?.intitule}</span>
+            <span className="mx-1 badge bg-light rounded border bg-dark text-white">{compteBancaire?.intitule}</span>
           </DialogTitle>
           <DialogDescription>
             Remplissez les informations pour modifier ce compte.

@@ -25,9 +25,7 @@ export default function DeleteAgentModal({ open, onOpenChange, agent, setReload 
                 success: (res) => {
                     console.log("Response de suppression :", res.data)
                    
-                    router.push(routes.agent?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
-                    setReload(true)
+                    setReload((prev)=>prev+1)
                     // fermeture du modal
                     onOpenChange(false)
                     return 'Agent supprimé avec succès!'
