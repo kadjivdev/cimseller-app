@@ -24,11 +24,8 @@ export default function DeleteReglementModal({ open, onOpenChange, reglement, se
                 loading: `Suppression en cours du reglement ${reglement?.code}...`,
                 success: (res) => {
                     console.log("Response de suppression :", res.data)
-                    
-                    router.push(routes.reglement?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
-                    setReload(true)
-                    
+
+                    setReload((prev) => prev + 1)
                     // fermeture du modal
                     onOpenChange(false)
                     // 
@@ -47,7 +44,7 @@ export default function DeleteReglementModal({ open, onOpenChange, reglement, se
                         <DialogTitle>Êtes-vous sûre?</DialogTitle>
                         <DialogDescription>
                             Cette action est irréversible.
-                            Cet reglement <span className="badge bg-light border rounded text-dark"> {reglement?.code}</span> sera supprimé définitivement.
+                            Cet reglement <span className="mx-1 bg-dark badge border rounded text-white"> {reglement?.code}</span> sera supprimé définitivement.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="d-flex justify-content-center">

@@ -20,20 +20,30 @@ import { FilterSelect } from "@/myComponents/FilterSelect"
 import { Field, FieldLabel } from "@/components/ui/field"
 
 
-export default function UpdateClientModal({ open, onOpenChange, client, setReload,zones,status }) {
+export default function UpdateClientModal({ open, onOpenChange, client, setReload, zones, status }) {
   const router = useRouter()
 
-  const [data, setData] = useState({ zoneId: '', statutId: '', raison_sociale: '', profil: '', phone: '', email: '', adresse: '' })
-  const [errors, setErrors] = useState({ zoneId: '', statutId: '', raison_sociale: '', profil: '', phone: '', email: '', adresse: '' })
+  const [data, setData] = useState({ zoneId: '', statutId: '', raison_sociale: '', profil: '', phone: '', email: '', adresse: '', solved: 0, seuil: 0 })
+  const [errors, setErrors] = useState({ zoneId: '', statutId: '', raison_sociale: '', profil: '', phone: '', email: '', adresse: '', solved: '', seuil: '' })
 
   useEffect(() => {
     if (!client) return
-    setData({ zoneId: client.zoneId || '', statutId: client.statutId ||'', raison_sociale: client.raison_sociale || '', profil: '', phone: client.phone || '', email: client.email || '', adresse: client.adresse || '' })
+    console.log("Le client choisi:", client)
+    setData({ zoneId: client.zoneId || '', statutId: client.statutId || '', raison_sociale: client.raison_sociale || '', profil: '', phone: client.phone || '', email: client.email || '', adresse: client.adresse || '', solved: client.oldDette?.solved, seuil: client.seuil || 0 })
   }, [client])
 
 
   const handleChange = (e) => {
     const { name, value, files, type } = e.target;
+
+    if (name == 'solved' && value > client?.oldDette?.dette) {
+      toast.warning(`Le montant reglé ne doit pas depasser la dette ${client?.oldDette?.dette} du client`)
+      setData((prev) => ({
+        ...prev,
+        solved: client?.oldDette?.dette
+      }))
+      return
+    }
     setData((prev) => ({
       ...prev,
       [name]: type === "file" ? files?.[0] ?? null : value,
@@ -66,6 +76,8 @@ export default function UpdateClientModal({ open, onOpenChange, client, setReloa
     formData.append('email', data.email)
     formData.append('raison_sociale', data.raison_sociale)
     formData.append('adresse', data.adresse)
+    formData.append('solved', data.solved)
+    formData.append('seuil', data.seuil)
 
     if (data.image instanceof File) {
       formData.append("profil", data.profil);
@@ -75,16 +87,18 @@ export default function UpdateClientModal({ open, onOpenChange, client, setReloa
 
     try {
       await toast.promise(
-        axiosInstance.put(apiRoutes.updateClient(client.id), data),
+        axiosInstance.put(apiRoutes.updateClient(client.id), data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          }
+        }),
         {
-          loading: `Mise à jour en cours du produit ${client?.raison_sociale}...`,
+          loading: `Mise à jour en cours du client ${client?.raison_sociale}...`,
           success: async (data) => {
             console.log("Response de mise à jour à succès:", data)
 
             // redirection
-            setReload(true)
-            // router.push(routes.client?.list)
-            router.refresh()
+            setReload((prev) => prev + 1)
             onOpenChange(false)
             return 'Client modifié.e avec succès!'
           },
@@ -93,8 +107,8 @@ export default function UpdateClientModal({ open, onOpenChange, client, setReloa
 
             if (err?.response?.status === 402) {
               const validationErrors = err.response.data?.errors
-              const { zoneId, statutId, raison_sociale, phone, profil, email } = validationErrors
-              
+              const { zoneId, statutId, raison_sociale, phone, profil, email, solved, seuil } = validationErrors
+
               setErrors({
                 zoneId: zoneId?._errors?.[0],
                 statutId: statutId?._errors?.[0],
@@ -103,6 +117,8 @@ export default function UpdateClientModal({ open, onOpenChange, client, setReloa
                 profil: profil?._errors?.[0],
                 email: email?._errors[0],
                 adresse: adresse?._errors?.[0],
+                solved: solved?._errors?.[0],
+                seuil: seuil?._errors?.[0],
               })
               return err.response.data?.message || 'Erreurs de validation, vérifiez le formulaire.'
             }
@@ -130,7 +146,7 @@ export default function UpdateClientModal({ open, onOpenChange, client, setReloa
         <DialogHeader>
           <DialogTitle>
             <PencilLine /> Modifier le client
-            <span className="badge bg-light rounded border text-dark">{client?.raison_sociale}</span>
+            <span className="mx-1 badge bg-light rounded border bg-dark text-white">{client?.raison_sociale}</span>
           </DialogTitle>
           <DialogDescription>
             Remplissez les informations pour modifier ce client.
@@ -193,6 +209,38 @@ export default function UpdateClientModal({ open, onOpenChange, client, setReloa
               selected={data?.statutId}
             />
             {errors.statutId && <span className="text-danger">{errors.statutId}</span>}
+          </div>
+          <div className="col-md-12 mb-2">
+            <Label htmlFor="seuil">Seuil de crédit </Label>
+            <Input id="seuil"
+              type="number"
+              name="seuil"
+              placeholder="Ex: 1500000"
+              min={0}
+              value={data.seuil}
+              onChange={handleChange} />
+            {errors.seuil && <span className="text-danger">{errors.seuil}</span>}
+          </div>
+          <div className="col-md-12 mb-2">
+            <Label htmlFor="dette">Dette ancienne </Label>
+            <Input id="dette"
+              type="number"
+              name="dette"
+              readOnly
+              value={client?.oldDette?.dette}
+              onChange={handleChange} />
+          </div>
+          <div className="col-md-12 mb-2">
+            <Label htmlFor="solved">Dette soldée </Label>
+            <Input id="solved"
+              type="number"
+              name="solved"
+              placeholder="Ex: 1500000"
+              min={0}
+              max={client?.oldDette?.solved}
+              value={data.solved}
+              onChange={handleChange} />
+            {errors.solved && <span className="text-danger">{errors.solved}</span>}
           </div>
           <div className="col-md-12 mb-2">
             <Field>

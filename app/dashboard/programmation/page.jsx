@@ -5,7 +5,8 @@ import { useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import apiRoutes from "@/api/routes";
-import { List, Printer } from 'lucide-react';
+import routes from "@/app/routes";
+import { List, MessageSquarePlus, Printer, Van } from 'lucide-react';
 import { startOfMonth, endOfMonth, isWithinInterval, startOfDay, endOfDay } from "date-fns"
 import { FilterSelect } from "@/myComponents/FilterSelect";
 import { Label } from "@/components/ui/label"
@@ -13,11 +14,12 @@ import { Label } from "@/components/ui/label"
 import { DataTable } from "./data-table"
 import AddProgrammationModal from "./add-modal"
 import ImprimerProgrammationModal from "./imprimer/modal"
+import Link from "next/link";
 
 
 export default function index() {
 
-    const [reload, setReload] = useState(false)
+    const [reload, setReload] = useState(0)
 
     const [bons, setBons] = useState([])
     const [openAdd, setOpenAdd] = useState(false)
@@ -110,9 +112,10 @@ export default function index() {
     }, [programmations])
 
     return <>
-        <DashboardLayourt title="Liste des programmations de bons" icon={<List />}>
+        <DashboardLayourt title="Liste des programmations de bons" icon={<Van />}>
             {/* listes des programmations de commande */}
             <div className="container mx-auto py-10">
+
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-8 mb-2 text-center bg-light border rounded shadow-sm p-2">
                         <div className="mt-2 d-flex justify-content-center">
@@ -133,11 +136,16 @@ export default function index() {
                             {selectedBon && (
                                 <>
                                     <p className="text-center bg-dark text-white my-3">Bon choisi : {`${selectedBon.code} | Commandée: ${selectedBon.qteCommander} | Programmée:${selectedBon.qteProgrammer} | Stock:${selectedBon.stock}`} </p>
-                                    <button
+                                    {/* <button
                                         className="btn btn-sm bg-dark text-white"
                                         disabled={selectedBon?.stock == 0}
                                         onClick={addProgrammation}
-                                    >➕ Programmer ce bon</button>
+                                    >➕ Programmer ce bon</button> */}
+                                    <div className="flex justify-content-center">
+                                        <button className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2"
+                                        disabled={selectedBon?.stock == 0}
+                                        onClick={addProgrammation}><MessageSquarePlus className="mx-1" /> Programmer ce bon</button>
+                                    </div>
                                 </>
                             )}
                         </div>

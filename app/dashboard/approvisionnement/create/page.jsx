@@ -27,7 +27,8 @@ import axios from "axios";
 import apiRoutes from "@/api/routes";
 import routes from "@/app/routes"
 import { FilterSelect } from "@/myComponents/FilterSelect";
-import { SquareArrowRightEnter, X } from "lucide-react";
+import { Logs, MessageSquarePlus, SquareArrowRightEnter, X } from "lucide-react";
+import Link from "next/link";
 
 
 export default function index() {
@@ -95,8 +96,8 @@ export default function index() {
             [name]: type === "file"
                 ? files?.[0] ?? null
                 : type === "checkbox"
-                ? checked
-                : value,
+                    ? checked
+                    : value,
         }));
     };
 
@@ -134,7 +135,9 @@ export default function index() {
 
         try {
             await toast.promise(
-                axiosInstance.post(apiRoutes.createApprovisionnement, data),
+                axiosInstance.post(apiRoutes.createApprovisionnement, data, {
+                    headers: { "Content-Type": "multipart/form-data" }
+                }),
                 {
                     loading: `Approvisionnement en cours ...`,
                     success: async (res) => {
@@ -144,7 +147,6 @@ export default function index() {
 
                         // redirection
                         router.push(routes.approvisionnement.list)
-                        router.refresh()
                         return 'Approvisionnement effectué avec succès!'
                     },
                     error: (err) => {
@@ -186,12 +188,15 @@ export default function index() {
 
 
     return <>
-        <DashboardLayourt title="➕ Ajouter un approvisionnement">
+        <DashboardLayourt title="Ajouter un approvisionnement" icon={<MessageSquarePlus />}>
             {/* ajouter des approvisionnement */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 ">
+                        <div className="flex justify-content-center">
+                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.approvisionnement.list}><Logs className="mx-1" /> Liste des approvisionnements</Link>
+                        </div>
+                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
                             <div className="row">
                                 <div className="col-md-12 mb-2">
                                     <Label htmlFor="reference">Reference  <span className="text-danger">*</span></Label>
@@ -255,11 +260,12 @@ export default function index() {
                                 </div>
                                 <div className="col-md-12 mb-2">
                                     <Field>
-                                        <FieldLabel htmlFor="image">Preuve</FieldLabel>
+                                        <FieldLabel htmlFor="image">Preuve <span className="text-danger">*</span> </FieldLabel>
                                         <Input
                                             id="preuve"
                                             type="file"
                                             name="preuve"
+                                            required
                                             onChange={(e) => handleChange(e)}
                                         />
                                     </Field>

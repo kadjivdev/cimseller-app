@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import apiRoutes from "@/api/routes";
-import { List, Printer, ShoppingCart } from 'lucide-react';
+import { CalendarCheck, List, Printer, ShoppingCart } from 'lucide-react';
 import { startOfMonth, endOfMonth, isWithinInterval, startOfDay, endOfDay } from "date-fns"
 import { FilterSelect } from "@/myComponents/FilterSelect";
 import { Label } from "@/components/ui/label"
@@ -35,7 +35,7 @@ export default function index() {
     }, [])
 
     return <>
-        <DashboardLayourt title="Liste des ventes journalières" icon={<List />}>
+        <DashboardLayourt title="Liste des ventes journalières" icon={<CalendarCheck />}>
             {/* listes des ventes journalière */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">

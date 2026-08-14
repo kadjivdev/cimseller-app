@@ -24,14 +24,10 @@ export default function DeleteApprovisionnementModal({ open, onOpenChange, appro
                 loading: `Suppression en cours de l'approvisionnement ${approvisionnement?.code}...`,
                 success: (res) => {
                     console.log("Response de suppression :", res.data)
-                    
-                    router.push(routes.approvisionnement?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
-                    setReload(true)
-                    
+
+                    setReload((prev) => prev + 1)
                     // fermeture du modal
                     onOpenChange(false)
-                    // 
                     return 'Approvisionnement supprimé avec succès!'
                 },
                 error: (err) => err?.message || 'Erreur de chargement',

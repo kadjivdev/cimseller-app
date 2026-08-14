@@ -187,16 +187,16 @@ export default function UpdateReglementModal({ open, onOpenChange, reglement, se
 
     try {
       await toast.promise(
-        axiosInstance.put(apiRoutes.updateReglement(reglement.id), data),
+        axiosInstance.put(apiRoutes.updateReglement(reglement.id), data, {
+          headers: { "Content-Type": "multipart/form-data" }
+        }),
         {
           loading: `Mise à jour en cours du reglement ${reglement?.code} ...`,
           success: async (res) => {
             console.log("Response de mise à jour à succès:", res.data)
 
             // redirection
-            setReload(true)
-            router.push(routes.reglement?.list)
-            router.refresh()
+            setReload((prev) => prev + 1)
             onOpenChange(false)
             return 'Reglement modifié avec succès!'
           },
@@ -251,7 +251,7 @@ export default function UpdateReglementModal({ open, onOpenChange, reglement, se
         <DialogHeader>
           <DialogTitle>
             <PencilLine /> Modifier du reglement
-            <span className="badge bg-light rounded border text-dark">{reglement?.code}</span>
+            <span className="mx-1 badge bg-dark rounded border text-white">{reglement?.code}</span>
           </DialogTitle>
           <DialogDescription>
             Remplissez les informations pour modifier ce reglement.
@@ -330,11 +330,12 @@ export default function UpdateReglementModal({ open, onOpenChange, reglement, se
           </div>
           <div className="col-md-12 mb-2">
             <Field>
-              <FieldLabel htmlFor="image">Preuve</FieldLabel>
+              <FieldLabel htmlFor="image">Preuve <span className="text-danger">*</span> </FieldLabel>
               <Input
                 id="preuve"
                 type="file"
                 name="preuve"
+                required
                 onChange={(e) => handleChange(e)}
               />
             </Field>

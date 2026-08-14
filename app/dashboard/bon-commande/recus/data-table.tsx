@@ -44,7 +44,7 @@ const exportColumns = [
     { label: "Crée par", key: "createdBy" as const },
 ]
 
-export function DataTable({ data, setReload, date, setDate, totalAmount }) {
+export function DataTable({ data, setReload, date, setDate, totalAmount }:any) {
 
     const [open, setOpen] = useState(false)
     const [selectedRecu, setSelectedRecu] = useState<Recu | null>(null)

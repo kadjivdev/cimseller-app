@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useColumns, Bon } from "../bon-commande/columns"
+import { useColumns, Vente } from "./columns"
 import { TableActions } from "./tableActions"
 import { Card } from "@/components/ui/card"
 import {
@@ -29,12 +29,6 @@ import {
 import { Settings2 } from "lucide-react"
 
 // modals
-import UpdateBonModal from "./modal"
-import ShowBonModal from "./show-modal"
-import RecuBonModal from "./recus-modal"
-import AccuseBonModal from "./accuses-modal"
-import DeleteBonModal from "./delete-modal"
-import ValidBonModal from "./valid-modal"
 import { DatePickerRange } from "@/myComponents/DatePickerRange"
 
 const exportColumns = [
@@ -49,52 +43,13 @@ const exportColumns = [
     { label: "Crée par", key: "createdBy" as const },
 ]
 
-export function DataTable({ data, setReload, bons, types, status, date, setDate, totalAmount }:any) {
-
-    const [open, setOpen] = useState(false)
-    const [openShow, setOpenShow] = useState(false)
-    const [openDelete, setOpenDelete] = useState(false)
-    const [openValid, setOpenValid] = useState(false)
-    const [openRecu, setOpenRecu] = useState(false)
-    const [openAccuse, setOpenAccuse] = useState(false)
-    const [selectedBon, setSelectedBon] = useState<Bon | null>(null)
+export function DataTable({ data, date, setDate}:any) {
 
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // ✅ Nouveau
 
-    // 
-    const handleEdit = (bon: Bon) => {
-        setSelectedBon(bon)
-        setOpen(true)
-    }
-
-    const handleShow = (bon: Bon) => {
-        setSelectedBon(bon)
-        setOpenShow(true)
-    }
-
-    const handleDelete = (bon: Bon) => {
-        setSelectedBon(bon)
-        setOpenDelete(true)
-    }
-
-    const handleValid = (bon: Bon) => {
-        setSelectedBon(bon)
-        setOpenValid(true)
-    }
-
-    const handleRecu = (bon: Bon) => {
-        setSelectedBon(bon)
-        setOpenRecu(true)
-    }
-
-    const handleAccuse = (bon: Bon) => {
-        setSelectedBon(bon)
-        setOpenAccuse(true)
-    }
-
-    const columns = useColumns(handleEdit, handleShow, handleDelete, handleValid, handleRecu, handleAccuse) // 👈 passe les callbacks
+    const columns = useColumns() // 👈 passe les callbacks
 
     const table = useReactTable({
         data,
@@ -109,7 +64,6 @@ export function DataTable({ data, setReload, bons, types, status, date, setDate,
         getPaginationRowModel: getPaginationRowModel(),
     })
 
-
     return (
         <>
             <Card className="p-2">
@@ -121,8 +75,6 @@ export function DataTable({ data, setReload, bons, types, status, date, setDate,
                         setDate={setDate}
                     />
 
-                    {/* Total amount */}
-                    <h3 className="">Montant total: <span className="badge bg-dark border text-light rounded">cfa {totalAmount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} </span></h3>
                     {/* ── HEADER ── */}
                     <div className="flex items-center justify-between gap-4 no-print bg-dark p-2 rounded">
                         <Input
@@ -161,7 +113,7 @@ export function DataTable({ data, setReload, bons, types, status, date, setDate,
                             <TableActions
                                 data={data}
                                 columns={exportColumns}
-                                filename="utilisateurs"
+                                filename="ventes"
                             />
                         </div>
                     </div>
@@ -194,7 +146,7 @@ export function DataTable({ data, setReload, bons, types, status, date, setDate,
                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                                            Aucun bon trouvé.
+                                            Aucune vente.
                                         </TableCell>
                                     </TableRow>
                                 )}
@@ -218,53 +170,6 @@ export function DataTable({ data, setReload, bons, types, status, date, setDate,
                     </div>
                 </div>
             </Card>
-
-            {/* ✅ Une seule instance du modal pour toute la table */}
-            <UpdateBonModal
-                open={open}
-                onOpenChange={setOpen}
-                bon={selectedBon}
-                setReload={setReload}
-            />
-
-            {/* ✅ Une seule instance du modal pour toute la table */}
-            <ShowBonModal
-                open={openShow}
-                onOpenChange={setOpenShow}
-                bon={selectedBon}
-            />
-
-            {/* RecuBonModal */}
-            <RecuBonModal
-                open={openRecu}
-                onOpenChange={setOpenRecu}
-                bon={selectedBon}
-                setReload={setReload}
-            />
-
-            {/* AccuseBonModal */}
-            <AccuseBonModal
-                open={openAccuse}
-                onOpenChange={setOpenAccuse}
-                bon={selectedBon}
-                setReload={setReload}
-            />
-
-            {/* validation de aprovisionnement */}
-            <ValidBonModal
-                open={openValid}
-                onOpenChange={setOpenValid}
-                bon={selectedBon}
-                setReload={setReload}
-            />
-
-            {/* suppression de bon */}
-            <DeleteBonModal
-                open={openDelete}
-                onOpenChange={setOpenDelete}
-                bon={selectedBon}
-                setReload={setReload}
-            />
         </>
     )
 }

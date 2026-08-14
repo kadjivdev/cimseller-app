@@ -10,7 +10,6 @@ import { SquareArrowRightEnter, X } from "lucide-react"
 
 import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
-import routes from "@/app/routes"
 
 export default function ValidBonModal({ open, onOpenChange, bon, setReload }) {
     const router = useRouter()
@@ -26,14 +25,12 @@ export default function ValidBonModal({ open, onOpenChange, bon, setReload }) {
                 success: (res) => {
                     console.log("Response de validation :", res.data)
 
-                    setReload(true)
-                    router.push(routes.bonCommande?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
+                    setReload((prev) => prev + 1)
                     onOpenChange(false)
 
                     return 'Bon validé avec succès!'
                 },
-                error: (err) =>{
+                error: (err) => {
                     console.log("Erreure de validation du bon :", err.response?.data?.error)
                     return err.response?.data?.error
                 },

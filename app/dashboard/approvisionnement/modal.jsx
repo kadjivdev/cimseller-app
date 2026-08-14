@@ -140,16 +140,16 @@ export default function UpdateApprovisionnementModal({ open, onOpenChange, appro
 
     try {
       await toast.promise(
-        axiosInstance.put(apiRoutes.updateApprovisionnement(approvisionnement.id), data),
+        axiosInstance.put(apiRoutes.updateApprovisionnement(approvisionnement.id), data, {
+          headers: { "Content-Type": "multipart/form-data" }
+        }),
         {
           loading: `Mise à jour en cours de l'approvisionnement ${approvisionnement?.code} ...`,
           success: async (res) => {
             console.log("Response de mise à jour à succès:", res.data)
 
             // redirection
-            setReload(true)
-            router.push(routes.approvisionnement?.list)
-            router.refresh()
+            setReload((prev) => prev + 1)
             onOpenChange(false)
             return 'Approvisionnement modifié avec succès!'
           },

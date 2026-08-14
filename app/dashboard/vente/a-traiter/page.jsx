@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import apiRoutes from "@/api/routes";
-import { List, Printer, ShoppingCart } from 'lucide-react';
+import { HandCoins, List, Printer, ShoppingCart } from 'lucide-react';
 import { startOfMonth, endOfMonth, isWithinInterval, startOfDay, endOfDay } from "date-fns"
 import { FilterSelect } from "@/myComponents/FilterSelect";
 import { Label } from "@/components/ui/label"
@@ -15,7 +15,7 @@ import UpdateVenteModal from "./update-modal";
 
 export default function index() {
 
-    const [reload, setReload] = useState(false)
+    const [reload, setReload] = useState(0)
     const [open, setOpen] = useState(false)
 
     const [ventes, setVentes] = useState([])
@@ -51,7 +51,7 @@ export default function index() {
 
 
     return <>
-        <DashboardLayourt title="Liste des ventes à traiter" icon={<List />}>
+        <DashboardLayourt title="Liste des ventes à traiter" icon={<HandCoins />}>
             {/* listes des ventes */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">

@@ -2,17 +2,18 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Eraser, Eye, ListOrdered, MoreHorizontal, PencilLine } from "lucide-react"
+import { ArrowUpDown, Eraser, Eye, ListOrdered, MoreHorizontal, PencilLine, Pointer } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenu,
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export type Client = {
   id: number
@@ -34,7 +35,14 @@ export type Client = {
 
 // export type Name:String
 
-export function useColumns(onEdit: (client: Client) => void, onDelete: (client: Client) => void, onShowApprovisionnement: (client: Client) => void, onShowReglement: (client: Client) => void): ColumnDef<Client>[] {
+export function useColumns(
+  onEdit: (client: Client) => void, 
+  onDelete: (client: Client) => void, 
+  onShowApprovisionnement: (client: Client) => void, 
+  onShowReglement: (client: Client) => void,
+  onShowVenteReglement: (client: Client) => void,
+  handleProfil: (client: Client) => void,
+): ColumnDef<Client>[] {
   // verifier si le user a cette permission
   // const isUserPermitted = (name:String) => {
   //   return (rolePermissions).some(per => per.name == name);
@@ -105,6 +113,28 @@ export function useColumns(onEdit: (client: Client) => void, onDelete: (client: 
         </>
       },
     },
+     {
+      accessorKey: "venteAmount",
+      header: ({ column }) => (
+        <Button className="w-100 rounded border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Vente validée <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => {
+        let client = row.original
+        return <>
+          <span className="badge bg-light text-warning border">{row.getValue("venteAmount")?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span> <br />
+          <button
+            className="btn-sm bg-dark px-2 mt-1 text-white rounded border shadow-sm"
+            onClick={(e) => {
+              e.preventDefault()
+              onShowVenteReglement(client)
+            }}
+          ><ListOrdered /></button>
+        </>
+      },
+    },
     {
       accessorKey: "solde",
       header: ({ column }) => (
@@ -113,7 +143,7 @@ export function useColumns(onEdit: (client: Client) => void, onDelete: (client: 
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light text-success text-lg border">{(row.getValue('approvisionnementAmount') - row.getValue('reglementAmount')).toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span>,
+      cell: ({ row }) => <span className="badge bg-light text-success text-lg border">{row.getValue('solde').toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span>,
     },
     {
       accessorKey: "zone",
@@ -143,7 +173,18 @@ export function useColumns(onEdit: (client: Client) => void, onDelete: (client: 
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.original?.profil ? <Link href={row.original?.profil}><Eye /></Link> : "—",
+      cell: ({ row }) => row.original?.profil ? 
+      <div className="d-flex justify-content-center">
+          <Avatar onClick={(e)=>handleProfil(row.original)} className="shadow-sm" style={{cursor:'pointer'}}>
+            <AvatarImage
+              src={row.original?.profil}
+              alt="@shadcn"
+              className="grayscale"
+            />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+      </div>
+      : "—",
     },
     {
       accessorKey: "phone",

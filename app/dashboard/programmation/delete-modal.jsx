@@ -15,9 +15,9 @@ import { useEffect } from "react"
 export default function DeleteProgrammationModal({ open, onOpenChange, programmation, setReload }) {
     const router = useRouter()
 
-    useEffect(()=>{
-        if (!programmation) return 
-    },[])
+    useEffect(() => {
+        if (!programmation) return
+    }, [])
 
     // submission
     const submitDeleteForm = (e) => {
@@ -28,12 +28,8 @@ export default function DeleteProgrammationModal({ open, onOpenChange, programma
                 loading: `Suppression en cours de la progreammation ${programmation?.code}...`,
                 success: (res) => {
                     console.log("Response de suppression :", res.data)
-                    
-                    router.push(apiRoutes.allProgrammation?.list)
-                    router.refresh() // 👈 recharge les données server-side sans full reload
-                    setReload(true)
-                    
-                    // fermeture du modal
+
+                    setReload((prev) => prev + 1)
                     onOpenChange(false)
                     // 
                     return 'Programmation supprimée avec succès!'

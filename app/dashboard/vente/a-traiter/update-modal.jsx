@@ -32,10 +32,13 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
   ]
 
   useEffect(() => {
-    if (!vente || !vente.venteComptability) return
-    setData({ aib: 0, tva: 0, ttcPrice: 0, usinePrice: 0, marge: 0, })
+    if (!vente || !vente?.venteComptability) return
+    setData({ aib: 0, tva: 1.18, ttcPrice: 0, usinePrice: 0, marge: 0, })
     setTotaux({ usinePrixHT: 0, margePrice: 0, htPrice: 0, bruitPrice: 0, netHorsTaxe: 0, tvaPrice: 0, aibPrice: 0, prixTTC: 0 })
-  }, [])
+
+    handleAibSelect(1.18)
+    operation()
+  }, [vente])
 
   const handleChange = (e) => {
     e.preventDefault()
@@ -82,7 +85,7 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
     const prixBruite = parseFloat(prixHt) * 1.18
 
     // Calculer le prix net hors taxe à partir du prix hors taxe
-    const quantite = parseInt(vente.qteTotal);
+    const quantite = parseInt(vente?.qteTotal);
 
     const prixNHT = parseFloat(prixHt) * quantite;
 
@@ -115,7 +118,7 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
       {
         ...prev,
         usinePrixHT: Number(prixUsineHT),
-        margePrice: Number(prixMarge.toFixed(2)) ,
+        margePrice: Number(prixMarge.toFixed(2)),
         htPrice: Number(prixHt),
         bruitPrice: Number(prixBruite),
         netHorsTaxe: Number(prixNHT.toFixed(2)),
@@ -146,15 +149,13 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
     // return
     try {
       await toast.promise(
-        axiosInstance.put(apiRoutes.updateComptabilities(vente.venteComptability?.id), combinedData),
+        axiosInstance.put(apiRoutes.updateComptabilities(vente?.venteComptability?.id), combinedData),
         {
           loading: `Traitement de la vente ${vente?.code} ...`,
           success: async (res) => {
             console.log("Response de mise à jour à succès:", res.data)
 
-            setReload(true)
-            // router.push(routes.vente?.aComptabiliser)
-            router.refresh()
+            setReload((prev) => prev + 1)
             onOpenChange(false)
 
             return `Vente traitée avec succès!`
@@ -181,7 +182,7 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:max-w-[800px] sm:max-w-[480px] overflow-y-auto max-h-[90vh]">
+      <DialogContent className="md:max-w-[1000px] sm:max-w-[480px] overflow-y-auto max-h-[90vh]">
         <DialogHeader className="bg-light p-1">
           <DialogTitle>
             <PencilLine />Traitement de la vente
@@ -190,124 +191,171 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
           <DialogDescription>
             Le traitement sera définitif et irréversible! <br />
           </DialogDescription>
-          <h4 className="">Montant de la vente: <span className="badge mx-1 bg-light rounded border text-dark"> {vente?.montant?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}  fcfa</span></h4>
-          <table className="table table-sm pt-1">
-            <tbody>
-              <tr>
-                <th>Prix Usine Hors Taxe:</th>
-                <td>{totaux.usinePrixHT?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
-              </tr>
-              <tr>
-                <th>Prix Marge:</th>
-                <td >{totaux.margePrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
-              </tr>
-              <tr>
-                <th>Prix Hors Taxe :</th>
-                <td>{totaux.htPrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
-              </tr>
-              <tr>
-                <th>Prix Bruite :</th>
-                <td >{totaux.bruitPrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
-              </tr>
-              <tr>
-                <th>Net Hors Taxe :</th>
-                <td >{totaux.netHorsTaxe?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
-              </tr>
-              <tr>
-                <th>TVA :</th>
-                <td >{totaux.tvaPrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
-              </tr>
-              <tr>
-                <th>AIB :</th>
-                <td >{totaux.aibPrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
-              </tr>
-              <tr>
-                <th>TTC :</th>
-                <td><span className="badge bg-success">{totaux.prixTTC?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</span></td>
-              </tr>
-            </tbody>
-          </table>
         </DialogHeader>
 
-        <form onSubmit={updateVenteForm}>
-          <div className="row">
-            <div className="col-md-6">
-              <div className="mb-2">
-                <Label htmlFor="aib">AIB <span className="text-danger">*</span>  </Label>
-                <FilterSelect
-                  options={aibs?.map((aib) => ({ id: aib.value, label: `${aib.label}` }))}
-                  handleSelect={handleAibSelect}
-                  selected={data?.aib}
-                />
-                {errors?.aib && <span className="text-danger">{errors?.aib}</span>}
-              </div>
-            </div>
-            <div className="col-md-6">
-              <div className="mb-2">
-                <Label htmlFor="ttcPrice">Prix TTC <span className="text-danger">*</span>  </Label>
-                <Input id="ttcPrice"
-                  type="number"
-                  name="ttcPrice"
-                  placeholder="Ex: 75000"
-                  required
-                  min={1}
-                  value={data.ttcPrice}
-                  onChange={handleChange} />
-                {errors?.ttcPrice && <span className="text-danger">{errors?.ttcPrice}</span>}
-              </div>
-            </div>
-            <div className="col-md-6">
-              <div className="mb-2">
-                <Label htmlFor="usinePrice">Prix Usine <span className="text-danger">*</span>  </Label>
-                <Input id="usinePrice"
-                  type="number"
-                  name="usinePrice"
-                  placeholder="Ex: 75000"
-                  required
-                  min={1}
-                  value={data.usinePrice}
-                  onChange={handleChange} />
-                {errors?.usinePrice && <span className="text-danger">{errors?.usinePrice}</span>}
-              </div>
-            </div>
-            <div className="col-md-6">
-              <div className="mb-2">
-                <Label htmlFor="tva">TVA <span className="text-danger">*</span>  </Label>
-                <Input id="tva"
-                  type="number"
-                  name="tva"
-                  placeholder="Ex: 18/100"
-                  required
-                  min={1}
-                  max={data?.tva}
-                  value={data.tva}
-                  onChange={handleChange} />
-                {errors?.tva && <span className="text-danger">{errors?.tva}</span>}
-              </div>
-            </div>
-            <div className="col-md-6">
-              <div className="mb-2">
-                <Label htmlFor="marge">Marge <span className="text-danger">*</span>  </Label>
-                <Input id="marge"
-                  type="number"
-                  name="marge"
-                  placeholder="Ex: 10000"
-                  required
-                  min={0}
-                  value={data.marge}
-                  onChange={handleChange} />
-                {errors?.marge && <span className="text-danger">{errors?.marge}</span>}
-              </div>
+        <div className="row">
+          <div className="col-md-3">
+            <div className="border rounded">
+              <table className="table table-sm p-2">
+                <tbody>
+                  <tr>
+                    <th>Date de vente:</th>
+                    <td>{new Date(vente?.date).toLocaleDateString("fr-FR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}</td>
+                  </tr>
+                  <tr>
+                    <th>Client:</th>
+                    <td ><span className="badge bg-light border rounded shadow-sm text-dark"> {vente?.client?.raison_sociale}</span></td>
+                  </tr>
+                  <tr>
+                    <th>Produit:</th>
+                    <td ><span className="badge bg-light border rounded shadow-sm text-dark"> {vente?.produit?.name}</span></td>
+                  </tr>
+                  <tr>
+                    <th>Quantité :</th>
+                    <td><span className="badge bg-light border rounded text-dark shadow-sm">{vente?.qteTotal?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</span></td>
+                  </tr>
+                  <tr>
+                    <th>Prix Unitaire :</th>
+                    <td ><span className="badge bg-light border rounded text-dark shadow-sm">{vente?.unitePrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</span></td>
+                  </tr>
+                  <tr>
+                    <th>Transport :</th>
+                    <td ><span className="badge bg-light border rounded text-dark shadow-sm">{vente?.transport?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</span></td>
+                  </tr>
+                  <tr>
+                    <th>Montant :</th>
+                    <td ><span className="badge bg-light text-dark rounded border"> {vente?.montant?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</span></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-          <DialogFooter className="flex justify-content-center">
-            <Button className="shadow-sm rounded bg-dark text-white" variant="outline" onClick={(e) => { e.preventDefault(), onOpenChange(false) }}><X /> Annuler</Button>
-            <Button
-              type="submit"
-              className="bg-success text-white shadow-sm rounded"
-            ><Send /> Envoyer</Button>
-          </DialogFooter>
-        </form>
+          <div className="col-md-6 border rounded">
+            <form onSubmit={updateVenteForm}>
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="mb-2">
+                    <Label htmlFor="aib">AIB <span className="text-danger">*</span>  </Label>
+                    <FilterSelect
+                      options={aibs?.map((aib) => ({ id: aib.value, label: `${aib.label}` }))}
+                      handleSelect={handleAibSelect}
+                      selected={data?.aib}
+                    />
+                    {errors?.aib && <span className="text-danger">{errors?.aib}</span>}
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="mb-2">
+                    <Label htmlFor="ttcPrice">Prix TTC <span className="text-danger">*</span>  </Label>
+                    <Input id="ttcPrice"
+                      type="number"
+                      name="ttcPrice"
+                      placeholder="Ex: 75000"
+                      required
+                      min={1}
+                      value={data.ttcPrice}
+                      onChange={handleChange} />
+                    {errors?.ttcPrice && <span className="text-danger">{errors?.ttcPrice}</span>}
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="mb-2">
+                    <Label htmlFor="usinePrice">Prix Usine <span className="text-danger">*</span>  </Label>
+                    <Input id="usinePrice"
+                      type="number"
+                      name="usinePrice"
+                      placeholder="Ex: 75000"
+                      required
+                      min={1}
+                      value={data.usinePrice}
+                      onChange={handleChange} />
+                    {errors?.usinePrice && <span className="text-danger">{errors?.usinePrice}</span>}
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="mb-2">
+                    <Label htmlFor="tva">TVA <span className="text-danger">*</span>  </Label>
+                    <Input id="tva"
+                      type="number"
+                      name="tva"
+                      placeholder="Ex: 18/100"
+                      required
+                      min={1}
+                      max={data?.tva}
+                      value={data.tva}
+                      onChange={handleChange} />
+                    {errors?.tva && <span className="text-danger">{errors?.tva}</span>}
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="mb-2">
+                    <Label htmlFor="marge">Marge <span className="text-danger">*</span>  </Label>
+                    <Input id="marge"
+                      type="number"
+                      name="marge"
+                      placeholder="Ex: 10000"
+                      required
+                      min={0}
+                      value={data.marge}
+                      onChange={handleChange} />
+                    {errors?.marge && <span className="text-danger">{errors?.marge}</span>}
+                  </div>
+                </div>
+              </div>
+              <DialogFooter className="flex justify-content-center">
+                <Button className="shadow-sm rounded bg-dark text-white" variant="outline" onClick={(e) => { e.preventDefault(), onOpenChange(false) }}><X /> Annuler</Button>
+                <Button
+                  type="submit"
+                  className="bg-success text-white shadow-sm rounded"
+                ><Send /> Valider</Button>
+              </DialogFooter>
+            </form>
+          </div>
+          <div className="col-md-3">
+            <div className="border rounded">
+              <table className="table table-sm pt-1">
+                <tbody>
+                  <tr>
+                    <th>Prix Usine Hors Taxe:</th>
+                    <td>{totaux.usinePrixHT?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                  <tr>
+                    <th>Prix Marge:</th>
+                    <td >{totaux.margePrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                  <tr>
+                    <th>Prix Hors Taxe :</th>
+                    <td>{totaux.htPrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                  <tr>
+                    <th>Prix Bruite :</th>
+                    <td >{totaux.bruitPrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                  <tr>
+                    <th>Net Hors Taxe :</th>
+                    <td >{totaux.netHorsTaxe?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                  <tr>
+                    <th>TVA :</th>
+                    <td >{totaux.tvaPrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                  <tr>
+                    <th>AIB :</th>
+                    <td >{totaux.aibPrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                  <tr>
+                    <th>TTC :</th>
+                    <td><span className="badge bg-success">{totaux.prixTTC?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </DialogContent>
     </Dialog >
   )

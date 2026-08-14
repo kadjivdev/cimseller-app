@@ -2,7 +2,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, CircleCheckBig, CircleX, Eraser, MoreHorizontal, PencilLine } from "lucide-react"
+import { ArrowUpDown, CircleCheckBig, CircleX, Eraser, Eye, MoreHorizontal, PencilLine } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -119,12 +119,12 @@ export function useColumns(onEdit: (reglement: Reglement) => void, onDelete: (re
     {
       accessorKey: "montant",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded bg-success text-white" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Montant <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {row.original.montant?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-success"> {row.original.montant?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
       accessorKey: "date",
@@ -146,6 +146,16 @@ export function useColumns(onEdit: (reglement: Reglement) => void, onDelete: (re
       },
     },
     {
+      accessorKey: "preuve",
+      header: ({ column }) => (
+        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Preuve <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.original?.preuve? <div className="d-flex justify-content-center"> <Link className="text-dark" target="_blank" href={row.original?.preuve}><Eye/></Link></div>:'--',
+    },
+    {
       accessorKey: "type",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
@@ -164,16 +174,6 @@ export function useColumns(onEdit: (reglement: Reglement) => void, onDelete: (re
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => `${row.original.compteBancaire?.intitule} - ${row.original.compteBancaire?.numero}` || "—",
-    },
-    {
-      accessorKey: "preuve",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Preuve <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => row.original?.preuve ? <Link href={row.original?.preuve} /> : '--',
     },
     {
       accessorKey: "comment",

@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import axios from "axios";
 import apiRoutes from "@/api/routes";
-import { CircleCheckBig, List } from 'lucide-react';
+import { CircleCheckBig, KeyRound, List } from 'lucide-react';
 
 import { columns } from "../columns"
 import { DataTable } from "../data-table"
@@ -75,7 +75,7 @@ export default function index() {
 
 
     return <>
-        <DashboardLayourt title="Liste des Clients befs" icon={ <CircleCheckBig />}>
+        <DashboardLayourt title="Liste des Clients befs" icon={ <KeyRound />}>
             {/* listes des befs */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">

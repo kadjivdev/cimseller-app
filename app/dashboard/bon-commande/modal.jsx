@@ -183,9 +183,7 @@ export default function UpdateBonModal({ open, onOpenChange, bon, setReload }) {
             console.log("Response de mise à jour à succès:", res.data)
 
             // redirection
-            setReload(true)
-            router.push(routes.bonCommande?.list)
-            router.refresh()
+            setReload((prev)=>prev+1)
             onOpenChange(false)
             return 'Bon modifié avec succès!'
           },

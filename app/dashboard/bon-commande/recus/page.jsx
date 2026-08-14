@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import apiRoutes from "@/api/routes";
-import { List } from 'lucide-react';
+import { List, ReceiptText } from 'lucide-react';
 import { startOfMonth, endOfMonth, isWithinInterval, startOfDay, endOfDay } from "date-fns"
 
 import { columns } from "./columns"
@@ -23,7 +23,7 @@ import {
 
 export default function index() {
 
-    const [reload, setReload] = useState(false)
+    const [reload, setReload] = useState(0)
    
     const [recus, setRecus] = useState([])
     const [totalAmount, setTotalAmount] = useState(0)
@@ -76,7 +76,7 @@ export default function index() {
     }, [totalAmount])
 
     return <>
-        <DashboardLayourt title="Liste des recus de bons de commandes" icon={<List />}>
+        <DashboardLayourt title="Liste des recus de bons de commandes" icon={<ReceiptText />}>
             {/* listes des recus de bons de commande */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">

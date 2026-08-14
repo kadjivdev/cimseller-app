@@ -78,9 +78,7 @@ export default function RecuBonModal({ open, onOpenChange, bon, setReload }) {
           success: async (res) => {
             console.log("Response de mise à jour à succès:", res.data)
 
-            setReload(true)
-            router.push(routes.bonCommande?.list)
-            router.refresh()
+            setReload((prev) => prev + 1)
             onOpenChange(false)
 
             return `Reçus insérés avec succès!`
@@ -193,7 +191,7 @@ export default function RecuBonModal({ open, onOpenChange, bon, setReload }) {
                             value={dt.reference}
                             onChange={(e) => {
                               const value = e.target.value
-                              console.log("Value :",value)
+                              console.log("Value :", value)
                               setData((prev) => ({
                                 ...prev,
                                 recus: prev.recus.map((recu, idx) =>

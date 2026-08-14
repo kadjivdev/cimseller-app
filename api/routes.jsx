@@ -95,7 +95,6 @@ const apiRoutes = {
   typeVente: `ventes/types`,
   typeFactureVente: `ventes/types-facture`,
 
-
   // approvisionnement's routes
   allApprovisionnement: `approvisionnements`,
   createApprovisionnement: `approvisionnements`,
@@ -208,7 +207,7 @@ const apiRoutes = {
   retrieveClient: (id) => (`clients/${id}`),
   updateClient: (id) => (`clients/${id}`),
   deleteClient: (id) => (`clients/${id}`),
-  allClientStatus: `clients/status`,
+  allClientStatus: `clients-status`,
 
   // client's routes
 }

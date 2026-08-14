@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import apiRoutes from "@/api/routes";
-import { List, Printer, ShoppingCart } from 'lucide-react';
+import { List, MessageSquarePlus, Printer, ShoppingBasket, ShoppingCart } from 'lucide-react';
 import { startOfMonth, endOfMonth, isWithinInterval, startOfDay, endOfDay } from "date-fns"
 import { FilterSelect } from "@/myComponents/FilterSelect";
 import { Label } from "@/components/ui/label"
@@ -15,7 +15,7 @@ import AddVenteModal from "./add-modal"
 
 export default function index() {
 
-    const [reload, setReload] = useState(false)
+    const [reload, setReload] = useState(0)
     const [open, setOpen] = useState(false)
     const [openAdd, setOpenAdd] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
@@ -97,7 +97,7 @@ export default function index() {
     }
 
     return <>
-        <DashboardLayourt title="Liste des ventes" icon={<List />}>
+        <DashboardLayourt title="Liste des ventes" icon={<ShoppingBasket />}>
             {/* listes des ventes de commande */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
@@ -105,7 +105,7 @@ export default function index() {
                         <div className="mt-3 border rounded p-1">
                             <Label htmlFor="">Choisissez une programmation <span className="text-danger">*</span>  </Label>
                             <FilterSelect
-                                options={programmations?.map((pr) => ({ id: pr.id, label: `${pr.code} | Programmée: ${pr.qteProgrammer}` }))}
+                                options={programmations?.map((pr) => ({ id: pr.id, label: `${pr.code} | Bl: ${pr.bl} | Programmée: ${pr.qteProgrammer}` }))}
                                 handleSelect={handleProgrammationSelect}
                                 selected={selectedProgrammation?.id}
                             />

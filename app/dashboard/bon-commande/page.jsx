@@ -5,15 +5,17 @@ import { useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import apiRoutes from "@/api/routes";
-import { List } from 'lucide-react';
+import routes from "@/app/routes";
+import { MessageSquarePlus, Truck } from 'lucide-react';
 import { startOfMonth, endOfMonth, isWithinInterval, startOfDay, endOfDay } from "date-fns"
 
 import { DataTable } from "./data-table"
+import Link from "next/link";
 
 export default function index() {
 
-    const [reload, setReload] = useState(false)
-   
+    const [reload, setReload] = useState(0)
+
     const [bons, setBons] = useState([])
     const [totalAmount, setTotalAmount] = useState(0)
 
@@ -65,11 +67,14 @@ export default function index() {
     }, [totalAmount])
 
     return <>
-        <DashboardLayourt title="Liste des bons de commandes" icon={<List />}>
+        <DashboardLayourt title="Liste des bons de commandes" icon={<Truck />}>
             {/* listes des bons de commande */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
+                        <div className="flex justify-content-center">
+                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.bonCommande.create}><MessageSquarePlus className="mx-1" /> Ajouter un bon de commande</Link>
+                        </div>
                         <DataTable
                             data={filteredBons}
                             setReload={setReload}

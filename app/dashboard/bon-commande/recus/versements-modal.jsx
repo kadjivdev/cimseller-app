@@ -18,7 +18,7 @@ import { FilterSelect } from "@/myComponents/FilterSelect"
 import { Field } from "@/components/ui/field"
 import routes from "@/app/routes"
 
-export default function VersementRecuBonModal({ open, onOpenChange, recu,setReload }) {
+export default function VersementRecuBonModal({ open, onOpenChange, recu, setReload }) {
   const router = useRouter()
 
   const [typesDetailRecus, setTypesDetailRecus] = useState([])
@@ -77,7 +77,7 @@ export default function VersementRecuBonModal({ open, onOpenChange, recu,setRelo
             ...prev,
             recuId: res.data?.id,
             versements: res.data?.versements?.length > 0 ?
-              [...res.data?.versements?.map((vs) => ({ code: vs.code, reference: vs.reference, compteId: vs.compteId, typeDetailRecuId: vs.typeDetailRecuId, date: vs.date.split("T")?.[0] , montant: vs.montant, preuve: '' }))] :
+              [...res.data?.versements?.map((vs) => ({ code: vs.code, reference: vs.reference, compteId: vs.compteId, typeDetailRecuId: vs.typeDetailRecuId, date: vs.date.split("T")?.[0], montant: vs.montant, preuve: '' }))] :
               [{ code: '', reference: '', compteId: '', typeDetailRecuId: '', date: '', montant: 1, preuve: '' }]
           }))
           return 'Recu chargé!'
@@ -131,9 +131,7 @@ export default function VersementRecuBonModal({ open, onOpenChange, recu,setRelo
           success: async (res) => {
             console.log("Response de mise à jour à succès:", res.data)
 
-            setReload(true)
-            router.push(routes.allCommandeRecu?.list)
-            router.refresh()
+            setReload((prev) => prev + 1)
             onOpenChange(false)
 
             return `Versements insérés avec succès!`

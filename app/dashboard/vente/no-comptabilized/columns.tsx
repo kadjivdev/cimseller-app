@@ -303,7 +303,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.original?.preuve? <Link href={row.original?.preuve} className={`[&>svg]:size-3 btn btn-sm bg-dark text-white'}`}><Eye/></Link>:'---'
+      cell: ({ row }) => row.original?.preuve? <div className="d-flex justify-content-center"> <Link className="text-dark" href={row.original?.preuve} target="_blank"><Eye/></Link></div>:'---'
     },
     {
       accessorKey: "destination",

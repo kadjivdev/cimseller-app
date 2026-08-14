@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import apiRoutes from "@/api/routes";
-import { List, Printer } from 'lucide-react';
+import { List, Printer, Truck } from 'lucide-react';
 import { startOfMonth, endOfMonth, isWithinInterval, startOfDay, endOfDay } from "date-fns"
 import { FilterSelect } from "@/myComponents/FilterSelect";
 import { Label } from "@/components/ui/label"
@@ -89,7 +89,7 @@ export default function index() {
     }, [programmations])
 
     return <>
-        <DashboardLayourt title="Panel de livraisons de bon" icon={<List />}>
+        <DashboardLayourt title="Panel de livraisons de bon" icon={<Truck />}>
             {/* listes des programmations de commande */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">

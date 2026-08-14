@@ -98,9 +98,7 @@ export default function AccuseBonModal({ open, onOpenChange, bon, setReload }) {
           success: async (res) => {
             console.log("Response de mise à jour à succès:", res.data)
 
-            setReload(true)
-            router.push(routes.bonCommande?.list)
-            router.refresh()
+            setReload((prev)=>prev+1)
             onOpenChange(false)
 
             return `Accusés insérés avec succès!`

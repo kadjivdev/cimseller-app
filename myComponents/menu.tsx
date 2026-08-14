@@ -1,4 +1,4 @@
-import { Accessibility, BaggageClaim, BanknoteArrowDown, BanknoteArrowUp, CalendarCheck2, ChevronRightIcon, CircleArrowOutUpRight, Download, FileIcon, FileText, FolderIcon, FolderPlus, HandCoins, HatGlasses, KeyRound, Landmark, LayoutDashboardIcon, ListTree, Lock, MapPinHouse, PackageSearch, PencilLine, ReceiptText, ShoppingCart, SquareMenu, Tally4, TruckElectric, Users, Van } from "lucide-react"
+import { Accessibility, BaggageClaim, BanknoteArrowDown, BanknoteArrowUp, CalendarCheck2, ChevronRightIcon, CircleArrowOutUpRight, CircleCheckBig, Download, FileIcon, FileText, FolderIcon, FolderPlus, HandCoins, HatGlasses, KeyRound, Landmark, LayoutDashboardIcon, ListTree, Lock, MapPinHouse, PackageSearch, PencilLine, ReceiptText, ShoppingCart, SquareMenu, Tally4, TruckElectric, Users, Van } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -249,12 +249,12 @@ export function Menu() {
             {
               name: "Liste",
               url: routes.client.list,
-              icon: <ListTree />,
+              icon: <Users />,
             },
             {
               name: "Actifs",
               url: routes.client.actif,
-              icon: <ListTree />,
+              icon: <CircleCheckBig />,
             },
             {
               name: "Inactifs",
@@ -264,7 +264,7 @@ export function Menu() {
             {
               name: "Befs",
               url: routes.client.bef,
-              icon: <ListTree />,
+              icon: <KeyRound />,
             }
           ]
         },

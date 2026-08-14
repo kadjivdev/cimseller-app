@@ -7,7 +7,8 @@ import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import axios from "axios";
 import apiRoutes from "@/api/routes";
-import { List } from 'lucide-react';
+import routes from "@/app/routes";
+import { HandCoins, List, MessageSquarePlus } from 'lucide-react';
 import { startOfMonth, endOfMonth, addDays, isWithinInterval, startOfDay, endOfDay } from "date-fns"
 
 import { columns } from "./columns"
@@ -22,13 +23,14 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import Link from "next/link";
 
 export default function index() {
 
-    const [reload, setReload] = useState(false)
     const [approvisionnements, setApprovisionnements] = useState([])
     const [totalAmount, setTotalAmount] = useState(0)
     const [clientId, setClientId] = useState(null)
+    const [reload, setReload] = useState(0)
 
     // filtres de données par poériode
     const [date, setDate] = useState({
@@ -81,11 +83,14 @@ export default function index() {
     }, [totalAmount])
 
     return <>
-        <DashboardLayourt title="Liste des approvisionnements" icon={<List />}>
+        <DashboardLayourt title="Liste des approvisionnements" icon={<HandCoins />}>
             {/* listes des approvisionnements */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
+                        <div className="flex justify-content-center">
+                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.approvisionnement.create}><MessageSquarePlus className="mx-1" /> Ajouter un approvisionnement</Link>
+                        </div>
                         <DataTable
                             data={filteredApprovisionnements}
                             setReload={setReload}

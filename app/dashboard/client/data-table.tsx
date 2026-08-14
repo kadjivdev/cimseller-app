@@ -2,18 +2,18 @@
 
 import { useState } from "react"
 import {
-    flexRender,
-    getCoreRowModel,
-    getSortedRowModel,
-    getFilteredRowModel,
+    VisibilityState, // ✅ Import
     getPaginationRowModel,
+    getFilteredRowModel,
+    getSortedRowModel,
+    getCoreRowModel,
     useReactTable,
     SortingState,
-    VisibilityState, // ✅ Import
+    flexRender,
 } from "@tanstack/react-table"
 import {
-    Table, TableBody, TableCell,
     TableHead, TableHeader, TableRow,
+    Table, TableBody, TableCell,
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -21,36 +21,45 @@ import { useColumns, Client } from "../client/columns"
 import { TableActions } from "./tableActions"
 import { Card } from "@/components/ui/card"
 import {
-    DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuTrigger,
+    DropdownMenu,
 } from "@/components/ui/dropdown-menu"
 import { Import, Settings2 } from "lucide-react"
 
 // modals
 import UpdateClientModal from "./modal"
+import ProfilClientModal from "./profil"
 import DeleteClientModal from "./delete-modal"
 import ImportClientModal from "./import"
 import ShowApprovisionnements from "./approvisionnement/showApprovisionnements"
 import ShowReglements from "./reglement/showReglements"
+import ShowVentes from "./vente/showVentes"
 
 const exportColumns = [
     { label: "Raison sociale ", key: "raison_sociale" as const },
-    { label: "Zone ", key: "zone.name" as const },
-    { label: "Statut ", key: "statut.name" as const },
+    { label: "Zone ", key: "zone" as const },
+    { label: "Statut ", key: "statut" as const },
     { label: "Profil", key: "profil" as const },
+    { label: "Montant approvisionné", key: "approvisionnementAmount" as const },
+    { label: "Vente validée", key: "venteAmount" as const },
+    { label: "Montant réglé", key: "reglementAmount" as const },
+    { label: "Solde client", key: "solde" as const },
     { label: "Téléphone", key: "phone" as const },
     { label: "Email", key: "email" as const },
     { label: "Adresse", key: "adresse" as const },
     { label: "Crée le", key: "createdAt" as const },
 ]
 
-export function DataTable({ data, setReload, zones, status }) {
+export function DataTable({ data, setReload, zones, status }:any) {
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
+    const [openProfil, setOpenProfil] = useState(false)
+
     const [openShowApprovisionnement, setOpenShowApprovisionnement] = useState(false)
     const [openShowReglement, setOpenShowReglement] = useState(false)
+    const [openShowVente, setOpenShowVente] = useState(false)
     const [openImport, setOpenImport] = useState(false)
     const [selectedClient, setSelectedClient] = useState<Client | null>(null)
 
@@ -69,6 +78,11 @@ export function DataTable({ data, setReload, zones, status }) {
         setOpenDelete(true)
     }
 
+    const handleProfil = (client: Client) => {
+        setSelectedClient(client)
+        setOpenProfil(true)
+    }
+
     const handleShowApprovisionnement = (client: Client) => {
         setSelectedClient(client)
         setOpenShowApprovisionnement(true)
@@ -79,7 +93,12 @@ export function DataTable({ data, setReload, zones, status }) {
         setOpenShowReglement(true)
     }
 
-    const columns = useColumns(handleEdit, handleDelete, handleShowApprovisionnement, handleShowReglement) // 👈 passe les callbacks
+    const onShowVenteReglement = (client:Client)=>{
+        setSelectedClient(client)
+        setOpenShowVente(true)
+    }
+
+    const columns = useColumns(handleEdit, handleDelete, handleShowApprovisionnement, handleShowReglement,onShowVenteReglement,handleProfil) // 👈 passe les callbacks
 
     const table = useReactTable({
         data,
@@ -220,6 +239,13 @@ export function DataTable({ data, setReload, zones, status }) {
                 setReload={setReload}
             />
 
+            <ProfilClientModal
+                open={openProfil}
+                onOpenChange={setOpenProfil}
+                client={selectedClient}
+                setReload={setReload}
+            />
+
             {/* Importation de comptes */}
             <ImportClientModal
                 open={openImport}
@@ -232,6 +258,13 @@ export function DataTable({ data, setReload, zones, status }) {
             <ShowApprovisionnements
                 open={openShowApprovisionnement}
                 onOpenChange={setOpenShowApprovisionnement}
+                client={selectedClient}
+            />
+
+            {/* Afficher les ventes */}
+            <ShowVentes
+                open={openShowVente}
+                onOpenChange={setOpenShowVente}
                 client={selectedClient}
             />
 

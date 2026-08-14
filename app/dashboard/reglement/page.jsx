@@ -7,7 +7,8 @@ import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import axios from "axios";
 import apiRoutes from "@/api/routes";
-import { List } from 'lucide-react';
+import routes from "@/app/routes";
+import { HandCoins, List, MessageSquarePlus } from 'lucide-react';
 import { startOfMonth, endOfMonth, addDays, isWithinInterval, startOfDay, endOfDay } from "date-fns"
 
 import { columns } from "./columns"
@@ -22,10 +23,11 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import Link from "next/link";
 
 export default function index() {
 
-    const [reload, setReload] = useState(false)
+    const [reload, setReload] = useState(0)
     const [reglements, setReglements] = useState([])
     const [totalAmount, setTotalAmount] = useState(0)
     const [clientId, setClientId] = useState(null)
@@ -82,11 +84,14 @@ export default function index() {
     }, [totalAmount])
 
     return <>
-        <DashboardLayourt title="Liste des reglements" icon={<List />}>
+        <DashboardLayourt title="Liste des reglements" icon={<HandCoins />}>
             {/* listes des reglements */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
+                        <div className="flex justify-content-center">
+                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.reglement.create}><MessageSquarePlus className="mx-1" /> Ajouter un règlement</Link>
+                        </div>
                         <DataTable
                             data={filteredReglements}
                             setReload={setReload}

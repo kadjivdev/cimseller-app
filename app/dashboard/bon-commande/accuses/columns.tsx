@@ -2,16 +2,9 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, CircleCheckBig, CircleX, Eraser, Eye, FolderPlus, HandCoins, MoreHorizontal, PencilLine, ReceiptText, ShoppingCart, Van } from "lucide-react"
+import { ArrowUpDown,  Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+
 import Link from "next/link"
 
 export type Accuse = {

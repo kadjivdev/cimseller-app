@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { Logs, SquareArrowRightEnter, X } from "lucide-react";
+import { List, Logs, MessageSquarePlus, SquareArrowRightEnter, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox"
 
 
@@ -30,6 +30,7 @@ import axios from "axios";
 import apiRoutes from "@/api/routes";
 import routes from "@/app/routes"
 import { FilterSelect } from "@/myComponents/FilterSelect";
+import Link from "next/link";
 
 
 export default function index() {
@@ -63,6 +64,7 @@ export default function index() {
             {
                 loading: 'Chargement des status de client...',
                 success: (res) => {
+                    console.log("allClientStatus :",res.data)
                     setStatus(res.data || [])
                     return 'Status de client chargés!'
                 },
@@ -70,7 +72,6 @@ export default function index() {
             }
         )
     }, [])
-
 
     const handleChange = (e) => {
         const { name, value, files, type } = e.target;
@@ -115,7 +116,11 @@ export default function index() {
 
         try {
             await toast.promise(
-                axiosInstance.post(apiRoutes.createClient, data),
+                axiosInstance.post(apiRoutes.createClient, data,{
+                    headers:{
+                        "Content-Type":"multipart/form-data",
+                    }
+                }),
                 {
                     loading: `Creation de client en cours...`,
                     success: async (data) => {
@@ -154,7 +159,6 @@ export default function index() {
         }
     }
 
-
     // gestion des consoles
     useEffect(() => {
         console.log("Data to submit :", data)
@@ -166,12 +170,15 @@ export default function index() {
 
 
     return <>
-        <DashboardLayourt title="➕ Ajouter un client">
+        <DashboardLayourt title="Ajouter un client" icon={<MessageSquarePlus />}>
             {/* ajouter des clients */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 ">
+                        <div className="flex justify-content-center">
+                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.client.create}><List className="mx-1" /> Listes des clients</Link>
+                        </div>
+                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
                             <div className="row">
                                 <div className="col-md-12 mb-2">
                                     <Label htmlFor="raison_sociale">Raison sociale  <span className="text-danger">*</span></Label>

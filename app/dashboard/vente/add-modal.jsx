@@ -23,11 +23,12 @@ import { Label } from "@/components/ui/label"
 export default function AddVenteModal({ open, onOpenChange, programmation, handleProgrammationSelect }) {
   const router = useRouter()
 
-  const [data, setData] = useState({ programmationId: "", produitId: '', typeId: '', typeFactureVenteId: '', clientCommanderId: '', clientd: '', date: '', unitePrice: '', qteTotal: '', remise: 0, transport: 0, montant: '', destination: '', preuve: '', observation: '' })
-  const [errors, setErrors] = useState({ produitId: '', typeId: '', typeFactureVenteId: '', clientCommanderId: '', clientd: '', date: '', unitePrice: '', qteTotal: '', remise: '', transport: '', destination: '', preuve: '', observation: '' })
+  const [data, setData] = useState({ programmationId: "", typeId: '', typeFactureVenteId: '', clientCommanderId: '', clientd: '', date: '', unitePrice: '', qteTotal: '', remise: 0, transport: 0, montant: '', destination: '', preuve: '', observation: '' })
+  const [errors, setErrors] = useState({ typeId: '', typeFactureVenteId: '', clientCommanderId: '', clientd: '', date: '', unitePrice: '', qteTotal: '', remise: '', transport: '', destination: '', preuve: '', observation: '' })
+
+  // const [activeButton,setActiveButton] = useState(false)
 
   const [clients, setClients] = useState([])
-  const [produits, setProduits] = useState([])
   const [types, setTypes] = useState([])
   const [typeFactures, setTypeFactures] = useState([])
   const [client, setClient] = useState(null)
@@ -37,7 +38,7 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
     if (!open) return
     if (!programmation) return
 
-   setData({ programmationId: "", produitId: '', typeId: '', typeFactureVenteId: '', clientCommanderId: '', clientd: '', date: '', unitePrice: '', qteTotal: '', remise: 0, transport: 0, montant: '', destination: '', preuve: '', observation: '' })
+    setData({ programmationId: "", produitId: '', typeId: '', typeFactureVenteId: '', clientCommanderId: '', clientd: '', date: '', unitePrice: '', qteTotal: '', remise: 0, transport: 0, montant: '', destination: '', preuve: '', observation: '' })
 
     // Charge des clients
     toast.promise(
@@ -51,20 +52,6 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
           return 'Clients chargés!'
         },
         error: (err) => err?.response?.message || 'Erreur de chargement des clients actifs',
-      }
-    )
-
-    // Charge des produits
-    toast.promise(
-      () => axiosInstance.get(apiRoutes.allProduit),
-      {
-        loading: 'Chargement des produits ...',
-        success: (res) => {
-          console.log("Les produits :", res.data)
-          setProduits(res.data || [])
-          return 'Produits chargés!'
-        },
-        error: (err) => err?.response?.message || 'Erreur de chargement des produits',
       }
     )
 
@@ -139,11 +126,19 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
     return venteAmontant + transportAmount
   }, [data.qteTotal, data.remise, data.transport, data.unitePrice])
 
-  // handle produits selection
-  const handleProduitsSelect = (produitId) => {
-    console.log("Le produit selectionné :", produitId)
-    setData((prev) => ({ ...prev, produitId }))
-  }
+  const activeButton = useMemo(() => {
+    // type: comptant
+    if (data.typeId == 1 && data.clientId) {//comptant(on compare la vente au solde du client)
+      return totalAmount < client?.solde
+    }
+
+    //type: crédit
+    if (client?.seuil > 0 && data.clientId) {
+      return totalAmount < client?.seuil//crédit(on compare la vente au seuil du client)
+    }
+
+    return true
+  })
 
   // handle type selection
   const handleTypeSelect = (typeId) => {
@@ -174,6 +169,7 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
   const handleChange = (e) => {
     e.preventDefault()
     let { value, checked, files, type, name } = e.target
+
     setData((prev) => ({
       ...prev,
       [name]: type === "file"
@@ -187,7 +183,7 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
   // submission
   const submitVenteForm = async (e) => {
     e.preventDefault()
-    if (totalAmount > client?.solde) return
+    if (!activeButton) return
 
     // ✅ construit un vrai FormData pour multer
     const formData = new FormData()
@@ -199,14 +195,16 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
 
     try {
       await toast.promise(
-        axiosInstance.post(apiRoutes.createVente, data),
+        axiosInstance.post(apiRoutes.createVente, data, {
+          headers: { "Content-Type": "multipart/form-data" }
+        }),
         {
           loading: `Vente de la programmation ${programmation?.code} ...`,
           success: async (res) => {
             console.log("Response de mise à jour à succès:", res.data)
 
-            router.push(routes.vente?.list)
-            router.refresh()
+            // router.push(routes.vente?.list)
+            // router.refresh()
             handleProgrammationSelect(programmation?.id)
             onOpenChange(false)
 
@@ -233,7 +231,7 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
                 preuve: preuve?._errors?.[0],
                 observation: observation?._errors?.[0]
               })
-              return err.response.data?.message || `Erreurs de validation pour l'insersion de la vente, vérifiez le formulaire.`
+              return err.response.data?.error || `Erreurs de validation pour l'insersion de la vente, vérifiez le formulaire.`
             }
 
             return err?.response?.data?.error || "Erreure d'insersion de la vente"
@@ -274,23 +272,36 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
 
           <h5 className="">Montant total de la vente : <span className="badge bg-light shadow-sm rounded border text-success">{totalAmount?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || 0.00}</span> </h5>
           {client &&
-            <h5 className="">Solde du client : <span className="badge bg-light shadow-sm rounded border text-success">{client?.solde?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || 0.00}</span> </h5>
+            <div>
+              <h5>
+                Solde du client : <span className="badge bg-light shadow-sm rounded border text-success">
+                  {client?.solde?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || '0,00'}
+                </span>
+              </h5>
+              {data.typeId === 2 &&
+                <p>
+                  Seuil Crédit : <span className="badge bg-light shadow-sm rounded border text-danger">
+                    {client?.seuil?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || '0,00'}
+                  </span>
+                </p>
+              }
+            </div>
           }
 
-          {(totalAmount > client?.solde) &&
-            <div className="alert alert-danger">Le montant total de la vente est suppérieure au solde du client.</div>
+          {!activeButton &&
+            <div className="alert alert-danger">Le montant total de la vente est suppérieure au (solde ou seuil) du client.</div>
           }
 
           <div className="row">
             <div className="col-md-6">
               <div className="mb-2">
-                <Label htmlFor="produitId">Le produit <span className="text-danger">*</span>  </Label>
+                <Label htmlFor="typeId">Type de vente <span className="text-danger">*</span>  </Label>
                 <FilterSelect
-                  options={produits?.map((pr) => ({ id: pr.id, label: `${pr.name}` }))}
-                  handleSelect={handleProduitsSelect}
-                  selected={data?.produitId}
+                  options={types?.map((tp) => ({ id: tp.id, label: `${tp.name}` }))}
+                  handleSelect={handleTypeSelect}
+                  selected={data?.typeId}
                 />
-                {errors?.produitId && <span className="text-danger">{errors?.produitId}</span>}
+                {errors?.typeId && <span className="text-danger">{errors?.typeId}</span>}
               </div>
             </div>
             <div className="col-md-6">
@@ -313,17 +324,6 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
                   selected={data?.clientId}
                 />
                 {errors?.clientId && <span className="text-danger">{errors?.clientId}</span>}
-              </div>
-            </div>
-            <div className="col-md-6">
-              <div className="mb-2">
-                <Label htmlFor="typeId">Type de vente <span className="text-danger">*</span>  </Label>
-                <FilterSelect
-                  options={types?.map((tp) => ({ id: tp.id, label: `${tp.name}` }))}
-                  handleSelect={handleTypeSelect}
-                  selected={data?.typeId}
-                />
-                {errors?.typeId && <span className="text-danger">{errors?.typeId}</span>}
               </div>
             </div>
             <div className="col-md-6">
@@ -387,6 +387,7 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
                   placeholder="Ex: 10000"
                   required
                   min={0}
+                  readOnly
                   value={data.remise}
                   onChange={handleChange} />
                 {errors?.remise && <span className="text-danger">{errors?.remise}</span>}
@@ -451,7 +452,7 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
             <Button
               type="submit"
               className="bg-dark text-white shadow-sm rounded"
-              disabled={totalAmount > client?.solde}
+              disabled={!activeButton}
             ><SquareArrowRightEnter /> Enregistrer</Button>
           </DialogFooter>
         </form>
