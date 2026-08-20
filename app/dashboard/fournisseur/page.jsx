@@ -23,10 +23,17 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import Link from "next/link";
+import { useApp } from "@/app/AppContext"
 
 export default function index() {
+    const { user } = useApp()
     const [fournisseurs, setFournisseurs] = useState([])
     const [reload, setReload] = useState(0)
+
+    console.log("User agent's :", user)
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // get fournisseurs
     const retriveFournisseurs = async () => {
@@ -66,14 +73,17 @@ export default function index() {
             {/* listes des fournisseurs */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.fournisseur.create}><MessageSquarePlus className="mx-1" /> Ajouter un fournisseur</Link>
-                        </div>
-                        <DataTable
-                            data={fournisseurs}
-                            setReload={setReload} />
-                    </div>
+                    {isPermittedTo("fournisseur.view") ?
+                        <div className="col-md-10">
+                            <div className="flex justify-content-center">
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.fournisseur.create}><MessageSquarePlus className="mx-1" /> Ajouter un fournisseur</Link>
+                            </div>
+                            <DataTable
+                                data={fournisseurs}
+                                setReload={setReload} />
+                        </div> :
+                        <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                    }
                 </div>
             </div>
         </DashboardLayourt>

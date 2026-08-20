@@ -13,19 +13,17 @@ import { toast } from "sonner"
 import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
 import { useRouter } from "next/navigation"
-import routes from "@/app/routes"
-import { PencilLine, SquareArrowRightEnter, Trash2, X } from "lucide-react";
+import { Eye, PencilLine, SquareArrowRightEnter, Trash2, X } from "lucide-react";
 import { Field } from "@/components/ui/field"
 import { FilterSelect } from "@/myComponents/FilterSelect"
+import Link from "next/link"
 
 export default function AccuseBonModal({ open, onOpenChange, bon, setReload }) {
-  const router = useRouter()
 
   const [typeDocuments, setTypeDocuments] = useState([])
   const [data, setData] = useState({ commandeId: "", accuses: [{ reference: '', libelle: "", date: '', typeDocumentId: 1, montant: 1, preuve: '' }] })
   const [errors, setErrors] = useState({ commandeId: '', accuses: '' })
 
-  
   // initialisation des erreurs
   useEffect(() => {
     if (!open) return
@@ -36,7 +34,6 @@ export default function AccuseBonModal({ open, onOpenChange, bon, setReload }) {
       {
         loading: 'Chargement des types de documents ...',
         success: (res) => {
-          console.log("Les documents :", res.data)
           setTypeDocuments(res.data || [])
           return 'Types de document chargé!'
         },
@@ -53,12 +50,11 @@ export default function AccuseBonModal({ open, onOpenChange, bon, setReload }) {
       {
         loading: 'Chargement du bon ...',
         success: (res) => {
-          console.log("Le bon :", res.data)
           setData((prev) => ({
             ...prev,
             commandeId: res.data?.id,
             accuses: res.data?.commandeAccuses?.length > 0 ?
-              [...res.data?.commandeAccuses?.map((cr) => ({ code: cr.code, reference: cr.reference, libelle: cr.libelle, date: cr.date.split("T")?.[0], typeDocumentId: cr.typeDocumentId, montant: cr.montant??1, preuve: '' }))] :
+              [...res.data?.commandeAccuses?.map((cr) => ({ code: cr.code, reference: cr.reference, libelle: cr.libelle, date: cr.date.split("T")?.[0], typeDocumentId: cr.typeDocumentId, montant: cr.montant ?? 1, preuve: cr.preuve }))] :
               [{ code: '', reference: '', libelle: "", date: '', typeDocumentId: 1, montant: 1, preuve: '' }]
           }))
           return 'Bon chargé!'
@@ -70,42 +66,55 @@ export default function AccuseBonModal({ open, onOpenChange, bon, setReload }) {
       }
     )
 
-    setErrors({
-      accuses: ''
-    })
+    setErrors({ accuses: '' })
   }, [open])
+
+  // ✅ handler centralisé pour tous les champs simples d'une ligne d'accusé
+  const handleChange = (index, field, value) => {
+    setData((prev) => ({
+      ...prev,
+      accuses: prev.accuses.map((ac, idx) =>
+        idx === index ? { ...ac, [field]: value } : ac
+      ),
+    }))
+  }
+
+  // handle type selection for a specific accuse row
+  const handleTypeSelect = (index, typeDocumentId) => {
+    handleChange(index, 'typeDocumentId', typeDocumentId)
+  }
 
   // submission
   const submitUpdateForm = async (e) => {
     e.preventDefault()
 
-    console.log("data state :", data)
-
-    // ✅ construit un vrai FormData pour multer
     const formData = new FormData()
-    formData.append('name', data.name)
+    formData.append('commandeId', data.commandeId)
 
-    if (data.image instanceof File) {
-      formData.append("image", data.image);
-    }
-    console.log("formData :", formData)
+    // on retire les Files du JSON (ils partent séparément) et on stringifie le reste
+    const accusesSansFichiers = data.accuses.map(({ preuve, ...rest }) => rest)
+    formData.append('accuses', JSON.stringify(accusesSansFichiers))
+
+    // chaque fichier est nommé par son index pour être retrouvé côté serveur
+    data.accuses.forEach((ac, index) => {
+      if (ac.preuve instanceof File) {
+        formData.append(`preuve_${index}`, ac.preuve)
+      }
+    })
 
     try {
       await toast.promise(
-        axiosInstance.post(apiRoutes.createCommandeRecuAccuse, data),
+        axiosInstance.post(apiRoutes.createCommandeRecuAccuse, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }),
         {
           loading: `Insertion des accusés au bon ${bon?.code} ...`,
           success: async (res) => {
-            console.log("Response de mise à jour à succès:", res.data)
-
-            setReload((prev)=>prev+1)
+            setReload((prev) => prev + 1)
             onOpenChange(false)
-
             return `Accusés insérés avec succès!`
           },
           error: (err) => {
-            console.log("Erreur complète :", err.response)
-
             if (err?.response?.status === 422) {
               const validationErrors = err.response.data?.errors
               const { commandeId, accuses } = validationErrors
@@ -113,26 +122,15 @@ export default function AccuseBonModal({ open, onOpenChange, bon, setReload }) {
                 commandeId: commandeId?._errors?.[0],
                 accuses: accuses?._errors?.[0],
               })
-              return err.response.data?.message || `Erreurs de validation pour l'insertion des reçus, vérifiez le formulaire.`
+              return err.response.data?.message || `Erreurs de validation pour l'insertion des accusés, vérifiez le formulaire.`
             }
-
             return err?.response?.data?.error || err?.message || "Erreur de mise à jour du bon"
           },
         }
       )
-
     } catch (error) {
       console.log("Erreur catchée :", error)
     }
-  }
-
-  // handle type selection for a specific accuse row
-  const handleTypeSelect = (index, typeDocumentId) => {
-    console.log("Le type selectionné :", typeDocumentId, "ligne", index)
-    setData((prev) => ({
-      ...prev,
-      accuses: prev.accuses.map((ac, idx) => (idx === index ? { ...ac, typeDocumentId } : ac)),
-    }))
   }
 
   // addLigne
@@ -154,21 +152,13 @@ export default function AccuseBonModal({ open, onOpenChange, bon, setReload }) {
     }))
   }
 
-  useEffect(() => {
-    console.log("Data to submit :", data)
-  }, [data])
-
-  useEffect(() => {
-    console.log("Les erreures :", errors)
-  }, [errors])
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:max-w-[800px] sm:max-w-[480px] overflow-y-auto max-h-[90vh]">
+      <DialogContent className="md:max-w-[1000px] sm:max-w-[480px] overflow-y-auto max-h-[90vh]">
         <DialogHeader className="bg-light p-1">
           <DialogTitle>
             <PencilLine /> Ajouter des accusés au bon
-            <span className="badge mx-1 bg-light rounded border text-dark">{bon?.code}</span>
+            <span className="badge mx-1 bg-dark rounded border text-white">{bon?.code}</span>
           </DialogTitle>
           <DialogDescription>
             Remplissez les informations pour ajouter des accusés à ce bon.
@@ -177,7 +167,7 @@ export default function AccuseBonModal({ open, onOpenChange, bon, setReload }) {
 
         <form onSubmit={submitUpdateForm}>
 
-          {errors.recus && <p className="text-center text-danger">{errors.recus}</p>}
+          {errors.accuses && <p className="text-center text-danger">{errors.accuses}</p>}
 
           {/* les accuses */}
           <div className="row">
@@ -206,130 +196,89 @@ export default function AccuseBonModal({ open, onOpenChange, bon, setReload }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {
-                    data.accuses?.map((dt, index) => (
-                      <tr key={index}>
-                        <th scope="row">{index + 1}</th>
-                        <th scope="row"><span className="badge bg-light border rounded text-dark">{dt.code || '--'}</span></th>
-                        <td scope="row">
-                          <Input id="reference"
-                            type="text"
-                            name="reference"
-                            placeholder="Ex: XX00490"
-                            required
-                            value={dt.reference}
+                  {data.accuses?.map((dt, index) => (
+                    <tr key={index}>
+                      <th scope="row">{index + 1}</th>
+                      <th scope="row"><span className="badge bg-light border rounded text-dark">{dt.code || '--'}</span></th>
+                      <td scope="row">
+                        <Input id="reference"
+                          type="text"
+                          name="reference"
+                          placeholder="Ex: XX00490"
+                          required
+                          value={dt.reference}
+                          onChange={(e) => handleChange(index, 'reference', e.target.value)}
+                        />
+                        {errors.accuses?.[0]?.reference && <span className="text-danger">{errors.accuses?.[0]?.reference}</span>}
+                      </td>
+                      <td>
+                        <Input id="libelle"
+                          type="text"
+                          name="libelle"
+                          placeholder="Ex: ACUSE DE DOCUMENT"
+                          required
+                          value={dt.libelle}
+                          onChange={(e) => handleChange(index, 'libelle', e.target.value)}
+                        />
+                        {errors.accuses?.[0]?.libelle && <span className="text-danger">{errors.accuses?.[0]?.libelle}</span>}
+                      </td>
+                      <td>
+                        <Input id="date"
+                          type="date"
+                          name="date"
+                          required
+                          value={dt.date}
+                          onChange={(e) => handleChange(index, 'date', e.target.value)}
+                        />
+                        {errors.accuses?.[0]?.date && <span className="text-danger">{errors.accuses?.[0]?.date}</span>}
+                      </td>
+                      <td>
+                        <FilterSelect
+                          options={typeDocuments?.map((td) => ({ id: td.id, label: td.name }))}
+                          handleSelect={(value) => handleTypeSelect(index, value)}
+                          selected={dt?.typeDocumentId}
+                        />
+                        {errors.accuses?.[0]?.typeDocumentId && <span className="text-danger">{errors.accuses?.[0]?.typeDocumentId}</span>}
+                      </td>
+                      <td>
+                        <Input id="montant"
+                          type="number"
+                          name="montant"
+                          placeholder="Ex: 1.000"
+                          required
+                          min={1}
+                          value={dt.montant}
+                          onChange={(e) => {
+                            const value = Number(e.target.value)
+                            handleChange(index, 'montant', isNaN(value) ? 0 : value)
+                          }}
+                        />
+                        {errors.accuses?.[0]?.montant && <span className="text-danger">{errors.accuses?.[0]?.montant}</span>}
+                      </td>
+                      <td className="d-flex">
+                        {dt.preuve && typeof dt.preuve === 'string' &&
+                          <Link target="_blank" href={dt.preuve} className="bg-light rounded border shadow-sm text-dark"><Eye /></Link>
+                        }
+                        <Field>
+                          <Input
+                            id="preuve"
+                            type="file"
+                            name="preuve"
                             onChange={(e) => {
-                              const value = String(e.target.value)
-                              setData((prev) => ({
-                                ...prev,
-                                accuses: prev.accuses.map((ac, idx) =>
-                                  idx === index
-                                    ? { ...ac, reference: isNaN(value) ? '' : value }
-                                    : ac
-                                ),
-                              }))
-                            }} />
-                          {errors.accuses?.[0]?.reference && <span className="text-danger">{errors.accuses?.[0]?.reference}</span>}
-                        </td>
-                        <td>
-                          <Input id="libelle"
-                            type="text"
-                            name="libelle"
-                            placeholder="Ex: ACUSE DE DOCUMENT"
-                            required
-                            value={dt.libelle}
-                            onChange={(e) => {
-                              const value = e.target.value
-                              setData((prev) => ({
-                                ...prev,
-                                accuses: prev.accuses.map((ac, idx) =>
-                                  idx === index
-                                    ? { ...ac, libelle: value }
-                                    : ac
-                                ),
-                              }))
-                            }} />
-                          {errors.accuses?.[0]?.libelle && <span className="text-danger">{errors.accuses?.[0]?.libelle}</span>}
-                        </td>
-                        <td>
-                          <Input id="date"
-                            type="date"
-                            name="date"
-                            required
-                            value={dt.date}
-                            onChange={(e) => {
-                              const value = e.target.value
-                              setData((prev) => ({
-                                ...prev,
-                                accuses: prev.accuses.map((ac, idx) =>
-                                  idx === index
-                                    ? { ...ac, date: value }
-                                    : ac
-                                ),
-                              }))
+                              const file = e.target.files?.[0] || null
+                              handleChange(index, 'preuve', file)
                             }}
                           />
-                          {errors.accuses?.[0]?.date && <span className="text-danger">{errors.accuses?.[0]?.date}</span>}
-                        </td>
-                        <td>
-                          <FilterSelect
-                            options={typeDocuments?.map((td) => ({ id: td.id, label: td.name }))}
-                            handleSelect={(value) => handleTypeSelect(index, value)}
-                            selected={dt?.typeDocumentId}
-                          />
-                          {errors.accuses?.[0]?.typeDocumentId && <span className="text-danger">{errors.accuses?.[0]?.typeDocumentId}</span>}
-                        </td>
-                        <td>
-                          <Input id="montant"
-                            type="number"
-                            name="montant"
-                            placeholder="Ex: 1.000"
-                            required
-                            min={1}
-                            value={dt.montant}
-                            onChange={(e) => {
-                              const value = Number(e.target.value)
-                              setData((prev) => ({
-                                ...prev,
-                                accuses: prev.accuses.map((ac, idx) =>
-                                  idx === index
-                                    ? { ...ac, montant: value }
-                                    : ac
-                                ),
-                              }))
-                            }}
-                          />
-                          {errors.accuses?.[0]?.montant && <span className="text-danger">{errors.accuses?.[0]?.montant}</span>}
-                        </td>
-                        <td>
-                          <Field>
-                            <Input
-                              id="preuve"
-                              type="file"
-                              name="preuve"
-                              onChange={(e) => {
-                                const value = Number(e.target.files?.[0])
-                                setData((prev) => ({
-                                  ...prev,
-                                  accuses: prev.accuses.map((ac, idx) =>
-                                    idx === index
-                                      ? { ...ac, preuve: isNaN(value) ? '' : value }
-                                      : ac
-                                  ),
-                                }))
-                              }}
-                            />
-                          </Field>
-                          {errors.accuses?.[0]?.preuve && <span className="text-danger">{errors.accuses?.[0]?.preuve}</span>}
-                        </td>
-                        <td>
-                          <button
-                            className="btn btn-sm bg-danger text-white border rounded"
-                            onClick={(e) => removeLigne(e, index)}><Trash2 /></button>
-                        </td>
-                      </tr>
-                    ))
-                  }
+                        </Field>
+                        {errors.accuses?.[0]?.preuve && <span className="text-danger">{errors.accuses?.[0]?.preuve}</span>}
+                      </td>
+                      <td>
+                        <button
+                          className="btn btn-sm bg-danger text-white border rounded"
+                          onClick={(e) => removeLigne(e, index)}><Trash2 /></button>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -341,6 +290,6 @@ export default function AccuseBonModal({ open, onOpenChange, bon, setReload }) {
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog >
+    </Dialog>
   )
 }

@@ -11,13 +11,20 @@ import { startOfMonth, endOfMonth, isWithinInterval, startOfDay, endOfDay } from
 
 import { DataTable } from "./data-table"
 import Link from "next/link";
+import { useApp } from "@/app/AppContext"
 
 export default function index() {
+    const { user } = useApp()
 
     const [reload, setReload] = useState(0)
 
     const [bons, setBons] = useState([])
     const [totalAmount, setTotalAmount] = useState(0)
+
+    console.log("User agent's :", user)
+    const isPermittedTo = (value) => {
+        return user?.role?.permissions?.some((pr) => pr.name === value)
+    }
 
     // filtres de données par poériode
     const [date, setDate] = useState({
@@ -71,18 +78,21 @@ export default function index() {
             {/* listes des bons de commande */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.bonCommande.create}><MessageSquarePlus className="mx-1" /> Ajouter un bon de commande</Link>
-                        </div>
-                        <DataTable
-                            data={filteredBons}
-                            setReload={setReload}
-                            date={date}
-                            setDate={setDate}
-                            totalAmount={totalAmount}
-                        />
-                    </div>
+                    {isPermittedTo('commande.view') ?
+                        <div className="col-md-10">
+                            <div className="flex justify-content-center">
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.bonCommande.create}><MessageSquarePlus className="mx-1" /> Ajouter un bon de commande</Link>
+                            </div>
+                            <DataTable
+                                data={filteredBons}
+                                setReload={setReload}
+                                date={date}
+                                setDate={setDate}
+                                totalAmount={totalAmount}
+                            />
+                        </div> :
+                        <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                    }
                 </div>
             </div>
         </DashboardLayourt>

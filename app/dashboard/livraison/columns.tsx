@@ -5,15 +5,17 @@ import { ColumnDef } from "@tanstack/react-table"
 import { ArrowRight, ArrowUpDown, CheckCircle, CircleCheckBig, CircleX, ClosedCaption, DoorClosedLockedIcon, Eraser, Eye, FileText, FolderPlus, MoreHorizontal, PencilLine, ReceiptText, ShoppingCart, Van, VanIcon, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenu,
 } from "@/components/ui/dropdown-menu"
 import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
+import { useApp } from "@/app/AppContext"
+
 export type Programmation = {
   id: number
   statut: {
@@ -68,10 +70,11 @@ export function useColumns(
   onTransfer: (programmation: Programmation) => void,
   onClose: (programmation: Programmation) => void)
   : ColumnDef<Programmation>[] {
-  // verifier si le user a cette permission
-  // const isUserPermitted = (name:String) => {
-  //   return (rolePermissions).some(per => per.name == name);
-  // }
+  
+  const { user} = useApp()
+  const isPermittedTo = (name:string) => {
+    return user?.role?.permissions?.some((pr:any) => pr.name == name)
+  }
 
   return [
     {
@@ -240,9 +243,10 @@ export function useColumns(
 
         return (
           <>
-            <span className="badge bg-light border text-dark"> {row.original?.bl || "—"} </span>
-            <span className="">{row.original?.preuve && <Link href={row.original?.preuve}><FileText /> </Link>}</span>
-          </>)
+            <span className="badge bg-light border text-dark"> {row.original?.bl || "—"} </span> <br />
+            <span className="badge shadow-sm rounded border text-dark">{row.original?.preuve && <Link target="_blank" href={row.original?.preuve}><FileText className="text-dark" /> </Link>}</span>
+          </>
+          )
       }
     },
     {
@@ -258,6 +262,7 @@ export function useColumns(
         let classText = ''
         let statutText = null
         let icon;
+        
         switch (statut?.id) {
           case 3:
             classText = 'bg-warning text-white'//partiellement livrée
@@ -310,35 +315,37 @@ export function useColumns(
               <DropdownMenuSeparator />
 
               {/* livrer le bon */}
-              <DropdownMenuItem
-                style={{ cursor: "pointer" }}
-                className="text-success"
-                onSelect={(e) => {
-                  e.preventDefault()
-                  onDelivery(programmation) // 👈 remonte juste du bon
-                }}
-              >
-                {(programmation.qteLivre> programmation.qteProgrammer || programmation.qteLivre== programmation.qteProgrammer)?
-                <span className=""><Eye /> Détail livraison</span> :<span className=""><VanIcon /> Livrer</span> 
-              }
-                
-              </DropdownMenuItem>
-
-              {/* transferer le bon */}
-              <DropdownMenuItem
+              {isPermittedTo("programmation.update") &&
+              <>
+                <DropdownMenuItem
                   style={{ cursor: "pointer" }}
-                  className="text-warning"
+                  className="text-success"
                   onSelect={(e) => {
                     e.preventDefault()
-                    onTransfer(programmation) // 👈 remonte juste du bon
+                    onDelivery(programmation) // 👈 remonte juste du bon
                   }}
                 >
-                  {
-                    programmation?.transfert?
-                    <><Eye /> Voir le transfert </>:
-                    <><ArrowRight /> Transferer </>
-                  }
+                  {(programmation.qteLivre> programmation.qteProgrammer || programmation.qteLivre== programmation.qteProgrammer)?
+                  <span className=""><Eye /> Détail livraison</span> :<span className=""><VanIcon /> Livrer</span> 
+                }</DropdownMenuItem>
+
+                {/* transferer le bon */}
+                <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-warning"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      onTransfer(programmation) // 👈 remonte juste du bon
+                    }}
+                  >
+                    {
+                      programmation?.transfert?
+                      <><Eye /> Voir le transfert </>:
+                      <><ArrowRight /> Transferer </>
+                    }
                 </DropdownMenuItem>
+              </>
+            }
             </DropdownMenuContent>
           </DropdownMenu>
         )

@@ -13,6 +13,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Textarea } from "@/components/ui/textarea"
+import { useApp } from "@/app/AppContext"
+
 export type Programmation = {
   id: number
   statut: {
@@ -61,12 +63,14 @@ export type Programmation = {
 export function useColumns(
   onEdit: (programmation: Programmation) => void,
   onDelete: (programmation: Programmation) => void,
-  onValid: (programmation: Programmation) => void,)
+  onValid: (programmation: Programmation) => void,
+  onAnnuler:(programmation:Programmation)=>void)
   : ColumnDef<Programmation>[] {
-  // verifier si le user a cette permission
-  // const isUserPermitted = (name:String) => {
-  //   return (rolePermissions).some(per => per.name == name);
-  // }
+
+  const { user} = useApp()
+  const isPermittedTo = (name:string) => {
+      return user?.role?.permissions?.some((pr:any) => pr.name == name)
+  }
 
   return [
     {
@@ -314,7 +318,7 @@ export function useColumns(
       cell: ({ row }) => {
         const programmation = row.original
         return (
-          !programmation.validatedBy ?
+          (!programmation.validatedBy && programmation.statut?.id!=2) ?
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
@@ -328,7 +332,7 @@ export function useColumns(
                 <DropdownMenuSeparator />
 
                 {/* modifier */}
-                {!programmation.validatedBy &&
+                {(!programmation.validatedBy && isPermittedTo("programmation.edit")) &&
                   <DropdownMenuItem
                     style={{ cursor: "pointer" }}
                     className="text-warning"
@@ -340,23 +344,23 @@ export function useColumns(
                     <PencilLine /> Modifier
                   </DropdownMenuItem>
                 }
-
+                
                 {/* valider */}
-                {!programmation.validatedBy &&
+                {((!programmation.validatedBy && isPermittedTo("programmation.edit")) && programmation.statut?.id!=2) &&
                   <DropdownMenuItem
                     style={{ cursor: "pointer" }}
-                    className="text-success"
+                    className="text-info"
                     onSelect={(e) => {
                       e.preventDefault()
-                      onValid(programmation) // 👈 remonte juste la programmation
+                      onAnnuler(programmation) // 👈 remonte juste la programmation
                     }}
                   >
-                    <CircleCheckBig /> Valider
+                    <X /> Annuler
                   </DropdownMenuItem>
                 }
 
                 {/* suppression */}
-                {!programmation.validatedBy &&
+                {(!programmation.validatedBy && isPermittedTo("programmation.delete")) &&
                   <DropdownMenuItem
                     style={{ cursor: "pointer" }}
                     className="text-danger"

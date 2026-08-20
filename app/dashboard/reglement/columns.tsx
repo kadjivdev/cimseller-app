@@ -14,9 +14,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
-import { Field } from "@/components/ui/field"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
 
 export type Reglement = {
   id: number
@@ -56,12 +53,13 @@ export type Reglement = {
   createdAt: string
   validatedAt: string
 }
+import { useApp } from "@/app/AppContext"
 
 export function useColumns(onEdit: (reglement: Reglement) => void, onDelete: (regglement: Reglement) => void, onValid: (reglement: Reglement) => void): ColumnDef<Reglement>[] {
-  // verifier si le user a cette permission
-  // const isUserPermitted = (name:String) => {
-  //   return (rolePermissions).some(per => per.name == name);
-  // }
+  const { user} = useApp()
+  const isPermittedTo = (name:string) => {
+        return user?.role?.permissions?.some((pr:any) => pr.name == name)
+    }
 
   return [
     {
@@ -292,18 +290,21 @@ export function useColumns(onEdit: (reglement: Reglement) => void, onDelete: (re
                 <DropdownMenuSeparator />
 
                 {/* modifier */}
-                <DropdownMenuItem
-                  style={{ cursor: "pointer" }}
-                  className="text-warning"
-                  onSelect={(e) => {
-                    e.preventDefault()
-                    onEdit(reglement) // 👈 remonte juste du reglement
-                  }}
-                >
-                  <PencilLine /> Modifier
-                </DropdownMenuItem>
+                {isPermittedTo("reglement.edit") && 
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-warning"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      onEdit(reglement) // 👈 remonte juste du reglement
+                    }}
+                  >
+                    <PencilLine /> Modifier
+                  </DropdownMenuItem>
+                }
 
                 {/* valider */}
+                {isPermittedTo("reglement.validate") && 
                 <DropdownMenuItem
                   style={{ cursor: "pointer" }}
                   className="text-success"
@@ -314,8 +315,10 @@ export function useColumns(onEdit: (reglement: Reglement) => void, onDelete: (re
                 >
                   <CircleCheckBig /> Valider
                 </DropdownMenuItem>
+                }
 
                 {/* suppression */}
+                {isPermittedTo("reglement.delete") && 
                 <DropdownMenuItem
                   style={{ cursor: "pointer" }}
                   className="text-danger"
@@ -325,6 +328,7 @@ export function useColumns(onEdit: (reglement: Reglement) => void, onDelete: (re
                   }}>
                   <Eraser /> Supprimer
                 </DropdownMenuItem>
+                                }
               </DropdownMenuContent>
             </DropdownMenu> : '--'
         )

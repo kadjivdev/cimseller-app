@@ -1,6 +1,5 @@
 'use client'
 
-
 import {
     Field,
     FieldContent,
@@ -31,14 +30,18 @@ import routes from "@/app/routes"
 import { FilterSelect } from "@/myComponents/FilterSelect";
 import Link from "next/link";
 
-
 export default function index() {
-    const { loading, setLoading } = useApp()
+    const { user, loading, setLoading } = useApp()
     const router = useRouter()
 
     const [data, setData] = useState({ fullname: '', phone: '', email: '' })
     const [errors, setErrors] = useState({ fullname: '', phone: '', email: '' })
 
+    console.log("User agent's :", user)
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
+    
     // handle input change
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -98,57 +101,59 @@ export default function index() {
 
     return <>
         <DashboardLayourt title="Ajouter un avaliseur" icon={<MessageSquarePlus />}>
-        
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.avaliseur.create}><List className="mx-1" /> Liste des avaliseurs</Link>
-                        </div>
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
-                            <div className="row">
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="immatriculation">Nom complet  <span className="text-danger">*</span></Label>
-                                    <Input id="fullname"
-                                        type="text"
-                                        name="fullname"
-                                        placeholder="Ex: John Doe"
-                                        autoFocus
-                                        required
-                                        value={data.fullname}
-                                        onChange={handleChange} />
-                                    {errors.fullname && <span className="text-danger">{errors.fullname}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="phone">Téléphone <span className="text-danger">*</span>  </Label>
-                                    <Input id="phone"
-                                        type="text"
-                                        name="phone"
-                                        required
-                                        placeholder="Ex: +2290156854397"
-                                        value={data.phone}
-                                        onChange={handleChange} />
-                                    {errors.phone && <span className="text-danger">{errors.phone}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="email">Email <span className="text-danger">*</span>  </Label>
-                                    <Input id="email"
-                                        type="email"
-                                        name="email"
-                                        required
-                                        placeholder="Ex: gogochristian009@gmail.com"
-                                        value={data.email}
-                                        onChange={handleChange} />
-                                    {errors.email && <span className="text-danger">{errors.email}</span>}
-                                </div>
+                    {isPermittedTo("approvisionnement.view") ?
+                        <div className="col-md-10">
+                            <div className="flex justify-content-center">
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.avaliseur.create}><List className="mx-1" /> Liste des avaliseurs</Link>
                             </div>
-                            <br />
-                            <div className="d-flex justify-content-center bg-light p-3">
-                                <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.avaliseur.list))} > <X /> Retour</Button>
-                                <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
-                            </div>
-                        </form>
-                    </div>
+                            <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
+                                <div className="row">
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="immatriculation">Nom complet  <span className="text-danger">*</span></Label>
+                                        <Input id="fullname"
+                                            type="text"
+                                            name="fullname"
+                                            placeholder="Ex: John Doe"
+                                            autoFocus
+                                            required
+                                            value={data.fullname}
+                                            onChange={handleChange} />
+                                        {errors.fullname && <span className="text-danger">{errors.fullname}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="phone">Téléphone <span className="text-danger">*</span>  </Label>
+                                        <Input id="phone"
+                                            type="text"
+                                            name="phone"
+                                            required
+                                            placeholder="Ex: +2290156854397"
+                                            value={data.phone}
+                                            onChange={handleChange} />
+                                        {errors.phone && <span className="text-danger">{errors.phone}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="email">Email <span className="text-danger">*</span>  </Label>
+                                        <Input id="email"
+                                            type="email"
+                                            name="email"
+                                            required
+                                            placeholder="Ex: gogochristian009@gmail.com"
+                                            value={data.email}
+                                            onChange={handleChange} />
+                                        {errors.email && <span className="text-danger">{errors.email}</span>}
+                                    </div>
+                                </div>
+                                <br />
+                                <div className="d-flex justify-content-center bg-light p-3">
+                                    <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.avaliseur.list))} > <X /> Retour</Button>
+                                    <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
+                                </div>
+                            </form>
+                        </div> :
+                        <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                    }
                 </div>
             </div >
         </DashboardLayourt >

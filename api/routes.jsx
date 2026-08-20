@@ -1,6 +1,7 @@
 // BASE URL
 
 const apiRoutes = {
+  dashboard: `dashboard`,
 
   // auth routes
   login: `auth/login`,
@@ -75,6 +76,7 @@ const apiRoutes = {
   actualiseProgrammation: `programmations/actualise`,
   transfertProgrammation: `programmations/transfert`,
   livraisonProgrammation: `programmations/livraison`,
+  annulerProgrammation:`programmations/annuler`,
   updateProgrammation: (id) => (`programmations/${id}`),
   validateProgrammation: (id) => (`programmations/${id}`),
   retrieveProgrammation: (id) => (`programmations/${id}`),
@@ -83,10 +85,12 @@ const apiRoutes = {
   // vente's routes
   allVente: `ventes`,
   allValidatedVente: `ventes/validated`,
+  allNoValidatedVente: `ventes/no-validated`,
   allDallyVente: `ventes/dally`,
   allComptabilizedVente: `ventes/comptabilized`,
   allNoComptabilizedVente: `ventes/no-comptabilized`,
-  allTraitedVente: `ventes/no-traited`,
+  allNoTraitedVente: `ventes/no-traited`,
+  allTraitedVente: `ventes/traited`,
   createVente: `ventes`,
   updateVente: (id) => (`ventes/${id}`),
   validateVente: (id) => (`ventes/${id}`),

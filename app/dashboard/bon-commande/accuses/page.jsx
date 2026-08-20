@@ -20,13 +20,20 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { useApp } from "@/app/AppContext"
+
 
 export default function index() {
-
+    const { user } = useApp()
     const [reload, setReload] = useState(0)
-   
+
     const [accuses, setAccuses] = useState([])
     const [totalAmount, setTotalAmount] = useState(0)
+
+    console.log("User agent's :", user)
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // filtres de données par poériode
     const [date, setDate] = useState({
@@ -80,15 +87,18 @@ export default function index() {
             {/* listes des accuses de bons de commande */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <DataTable
-                            data={filteredAccuses}
-                            setReload={setReload}
-                            date={date}
-                            setDate={setDate}
-                            totalAmount={totalAmount}
-                        />
-                    </div>
+                    {isPermittedTo("accuse.view") ?
+                        <div className="col-md-10">
+                            <DataTable
+                                data={filteredAccuses}
+                                setReload={setReload}
+                                date={date}
+                                setDate={setDate}
+                                totalAmount={totalAmount}
+                            />
+                        </div> :
+                        <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                    }
                 </div>
             </div>
         </DashboardLayourt>

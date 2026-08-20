@@ -44,11 +44,9 @@ const exportColumns = [
     { label: "Crée par", key: "createdBy" as const },
 ]
 
-export function DataTable({ data, setReload, date, setDate, handleBonSelect }) {
+export function DataTable({ data, setReload, date, setDate, handleBonSelect }:any) {
 
     const [open, setOpen] = useState(false)
-    const [openDelete, setOpenDelete] = useState(false)
-    const [openValid, setOpenValid] = useState(false)
     const [selectedProgrammation, setSelectedProgrammation] = useState<Programmation | null>(null)
 
     const [globalFilter, setGlobalFilter] = useState("")
@@ -61,17 +59,7 @@ export function DataTable({ data, setReload, date, setDate, handleBonSelect }) {
         setOpen(true)
     }
 
-    const handleDelete = (programmation: Programmation) => {
-        setSelectedProgrammation(programmation)
-        setOpenDelete(true)
-    }
-
-    const handleValid = (programmation: Programmation) => {
-        setSelectedProgrammation(programmation)
-        setOpenValid(true)
-    }
-
-    const columns = useColumns(handleEdit, handleDelete, handleValid) // 👈 passe les callbacks
+    const columns = useColumns(handleEdit) // 👈 passe les callbacks
 
     const table = useReactTable({
         data,
@@ -201,7 +189,6 @@ export function DataTable({ data, setReload, date, setDate, handleBonSelect }) {
                 programmation={selectedProgrammation}
                 handleBonSelect={handleBonSelect}
             />
-
         </>
     )
 }

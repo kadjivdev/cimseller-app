@@ -32,12 +32,16 @@ import Link from "next/link";
 
 
 export default function index() {
-    const { loading, setLoading } = useApp()
+    const {user, loading, setLoading } = useApp()
     const router = useRouter()
 
     const [types, setTypes] = useState([])
     const [data, setData] = useState({ name: '', description: '', fournisseurPrice: '', typeId: '', image: '' })
     const [errors, setErrors] = useState({ name: '', description: '', fournisseurPrice: '', typeId: '', image: '' })
+
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // Charge tous les type de produit
     useEffect(() => {
@@ -144,77 +148,80 @@ export default function index() {
             {/* ajouter des roles */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.produit.list}><List className="mx-1" /> Liste des produits</Link>
-                        </div>
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
-                            <div className="row">
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="fullname">Nom  <span className="text-danger">*</span></Label>
-                                    <Input id="name"
-                                        type="text"
-                                        name="name"
-                                        placeholder="Ex: Ciment"
-                                        autoFocus
-                                        required
-                                        value={data.name}
-                                        onChange={handleChange} />
-                                    {errors.name && <span className="text-danger">{errors.name}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="fournisseurPrice">Prix du forunisseur </Label>
-                                    <Input
-                                        id="fournisseurPrice"
-                                        type="number"
-                                        placeholder="Ex : 75000"
-                                        name="fournisseurPrice"
-                                        value={data.fournisseurPrice}
-                                        onChange={handleChange} />
-                                    {errors.fournisseurPrice && <span className="text-danger">{errors.fournisseurPrice}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="type_id">Type de produit <span className="text-danger">*</span>  </Label>
-                                    <FilterSelect
-                                        options={types?.map((type) => ({ id: type.id, label: type.name }))}
-                                        handleSelect={handleSelect}
-                                        selected={data?.typeId}
-                                    />
-                                    {errors.typeId && <span className="text-danger">{errors.typeId}</span>}
-
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Field>
-                                        <FieldLabel htmlFor="image">Image produit</FieldLabel>
+                    {isPermittedTo("produit.create") ?
+                        <div className="col-md-10">
+                            <div className="flex justify-content-center">
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.produit.list}><List className="mx-1" /> Liste des produits</Link>
+                            </div>
+                            <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
+                                <div className="row">
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="fullname">Nom  <span className="text-danger">*</span></Label>
+                                        <Input id="name"
+                                            type="text"
+                                            name="name"
+                                            placeholder="Ex: Ciment"
+                                            autoFocus
+                                            required
+                                            value={data.name}
+                                            onChange={handleChange} />
+                                        {errors.name && <span className="text-danger">{errors.name}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="fournisseurPrice">Prix du forunisseur </Label>
                                         <Input
-                                            id="image"
-                                            type="file"
-                                            name="image"
-                                            onChange={(e) => handleChange(e)}
+                                            id="fournisseurPrice"
+                                            type="number"
+                                            placeholder="Ex : 75000"
+                                            name="fournisseurPrice"
+                                            value={data.fournisseurPrice}
+                                            onChange={handleChange} />
+                                        {errors.fournisseurPrice && <span className="text-danger">{errors.fournisseurPrice}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="type_id">Type de produit <span className="text-danger">*</span>  </Label>
+                                        <FilterSelect
+                                            options={types?.map((type) => ({ id: type.id, label: type.name }))}
+                                            handleSelect={handleSelect}
+                                            selected={data?.typeId}
                                         />
-                                    </Field>
-                                    {errors.image && <span className="text-danger">{errors.image}</span>}
+                                        {errors.typeId && <span className="text-danger">{errors.typeId}</span>}
+
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Field>
+                                            <FieldLabel htmlFor="image">Image produit</FieldLabel>
+                                            <Input
+                                                id="image"
+                                                type="file"
+                                                name="image"
+                                                onChange={(e) => handleChange(e)}
+                                            />
+                                        </Field>
+                                        {errors.image && <span className="text-danger">{errors.image}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="description">Description  </Label>
+                                        <Textarea
+                                            rows={1}
+                                            placeholder="Ex :Description"
+                                            id="description"
+                                            name="description"
+                                            value={data.description}
+                                            onChange={handleChange}
+                                        ></Textarea>
+                                        {errors.description && <span className="text-danger">{errors.description}</span>}
+                                    </div>
                                 </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="description">Description  </Label>
-                                    <Textarea
-                                        rows={1}
-                                        placeholder="Ex :Description"
-                                        id="description"
-                                        name="description"
-                                        value={data.description}
-                                        onChange={handleChange}
-                                    ></Textarea>
-                                    {errors.description && <span className="text-danger">{errors.description}</span>}
+                                <br />
+                                <div className="d-flex justify-content-center bg-light p-3">
+                                    <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.produit.list))} > <X /> Retour</Button>
+                                    <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
                                 </div>
-                            </div>
-                            <br />
-                            <div className="d-flex justify-content-center bg-light p-3">
-                                <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.produit.list))} > <X /> Retour</Button>
-                                <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
-                            </div>
-                        </form>
-                    </div>
+                            </form>
+                        </div> :
+                        <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                    }
                 </div>
             </div >
         </DashboardLayourt >

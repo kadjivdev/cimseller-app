@@ -31,7 +31,7 @@ export default function index() {
     useEffect(() => {
         // Charge des ventes
         toast.promise(
-            () => axiosInstance.get(apiRoutes.allTraitedVente),
+            () => axiosInstance.get(apiRoutes.allNoTraitedVente),
             {
                 loading: 'Chargement des ventes non traitées ...',
                 success: (res) => {

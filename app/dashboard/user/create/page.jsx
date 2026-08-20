@@ -22,7 +22,6 @@ import { Button } from "@/components/ui/button"
 import { List, Logs, SquareArrowRightEnter, Users, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox"
 
-
 import { useApp } from "@/app/AppContext"
 import { useRouter } from "next/navigation"
 import axiosInstance from "@/api/axios";
@@ -34,13 +33,17 @@ import Link from "next/link";
 
 
 export default function index() {
-    const { loading, setLoading } = useApp()
+    const { user, loading, setLoading } = useApp()
     const router = useRouter()
 
     const [roles, setRoles] = useState([])
     const [data, setData] = useState({ fullname: '', email: '', roleId: '', password: '', confirm_password: '' })
     const [errors, setErrors] = useState({ fullname: '', email: '', roleId: '', password: '', confirm_password: '' })
     const [reload, setReload] = useState(false)
+
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // initialisation
     useEffect(() => {
@@ -129,85 +132,87 @@ export default function index() {
 
 
     return <>
-        <DashboardLayourt title="Ajouter un utilisateur" icon={<Users/>}>
+        <DashboardLayourt title="Ajouter un utilisateur" icon={<Users />}>
             {/* listes des roles */}
-            <div className="container mx-auto py-10">
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.user.list}><List className="mx-1" /> Liste des utilisateurs</Link>
+            {isPermittedTo("user.create") &&
+                <div className="container mx-auto py-10">
+                    <div className="row d-flex justify-content-center">
+                        <div className="col-md-10">
+                            <div className="flex justify-content-center">
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.user.list}><List className="mx-1" /> Liste des utilisateurs</Link>
+                            </div>
+                            <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
+                                <div className="row">
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="fullname">Nom Complet <span className="text-danger">*</span></Label>
+                                        <Input id="fullname"
+                                            type="text"
+                                            name="fullname"
+                                            placeholder="Ex: Christian GOGO"
+                                            autoFocus
+                                            required
+                                            value={data.fullname}
+                                            onChange={handleChange} />
+                                        {errors.fullname && <span className="text-danger">{errors.fullname}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="email">Email <span className="text-danger">*</span> </Label>
+                                        <Input id="email"
+                                            name="email"
+                                            placeholder="gogochristian009@gmail.com"
+                                            required
+                                            value={data.email}
+                                            onChange={handleChange} />
+                                        {errors.email && <span className="text-danger">{errors.email}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="password">Mot de passe <span className="text-danger">*</span></Label>
+                                        <Input id="password"
+                                            name="password"
+                                            placeholder="***********"
+                                            type="password"
+                                            required
+                                            value={data.password}
+                                            onChange={handleChange} />
+                                        {errors.password && <span className="text-danger">{errors.password}</span>}
+
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="confirm_password">Confirmer le mot de passe <span className="text-danger">*</span></Label>
+                                        <Input id="confirm_password"
+                                            type="password"
+                                            name="confirm_password"
+                                            placeholder="***********"
+                                            required
+                                            value={data.confirm_password}
+                                            onChange={handleChange} />
+                                        {errors.confirm_password && <span className="text-danger">{errors.confirm_password}</span>}
+                                    </div>
+                                </div>
+
+                                <Separator />
+
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <Label htmlFor="role_id">Choisissez un rôle</Label>
+                                        <FilterSelect
+                                            options={roles?.map((role) => ({ id: role.id, label: role.name }))}
+                                            handleSelect={handleSelect}
+                                            selected={data?.roleId}
+                                        />
+                                        {errors.roleId && <span className="text-center">{errors.roleId}</span>}
+                                    </div>
+                                </div>
+                                <br />
+                                <div className="d-flex justify-content-center bg-light p-3">
+                                    <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.user.list))} > <X /> Retour</Button>
+                                    <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
+                                </div>
+                            </form>
                         </div>
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
-                            <div className="row">
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="fullname">Nom Complet <span className="text-danger">*</span></Label>
-                                    <Input id="fullname"
-                                        type="text"
-                                        name="fullname"
-                                        placeholder="Ex: Christian GOGO"
-                                        autoFocus
-                                        required
-                                        value={data.fullname}
-                                        onChange={handleChange} />
-                                    {errors.fullname && <span className="text-danger">{errors.fullname}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="email">Email <span className="text-danger">*</span> </Label>
-                                    <Input id="email"
-                                        name="email"
-                                        placeholder="gogochristian009@gmail.com"
-                                        required
-                                        value={data.email}
-                                        onChange={handleChange} />
-                                    {errors.email && <span className="text-danger">{errors.email}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="password">Mot de passe <span className="text-danger">*</span></Label>
-                                    <Input id="password"
-                                        name="password"
-                                        placeholder="***********"
-                                        type="password"
-                                        required
-                                        value={data.password}
-                                        onChange={handleChange} />
-                                    {errors.password && <span className="text-danger">{errors.password}</span>}
-
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="confirm_password">Confirmer le mot de passe <span className="text-danger">*</span></Label>
-                                    <Input id="confirm_password"
-                                        type="password"
-                                        name="confirm_password"
-                                        placeholder="***********"
-                                        required
-                                        value={data.confirm_password}
-                                        onChange={handleChange} />
-                                    {errors.confirm_password && <span className="text-danger">{errors.confirm_password}</span>}
-                                </div>
-                            </div>
-
-                            <Separator />
-
-                            <div className="row">
-                                <div className="col-md-12">
-                                    <Label htmlFor="role_id">Choisissez un rôle</Label>
-                                    <FilterSelect
-                                        options={roles?.map((role) => ({ id: role.id, label: role.name }))}
-                                        handleSelect={handleSelect}
-                                        selected={data?.roleId}
-                                    />
-                                    {errors.roleId && <span className="text-center">{errors.roleId}</span>}
-                                </div>
-                            </div>
-                            <br />
-                            <div className="d-flex justify-content-center bg-light p-3">
-                                <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.user.list))} > <X /> Retour</Button>
-                                <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
-                            </div>
-                        </form>
                     </div>
-                </div>
-            </div >
+                </div >
+            }
         </DashboardLayourt >
     </>
 }

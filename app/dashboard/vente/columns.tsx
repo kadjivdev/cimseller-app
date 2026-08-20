@@ -77,6 +77,7 @@ export type Vente = {
   createdAt: string
   validatedAt: string
 }
+import { useApp } from "@/app/AppContext"
 
 export function useColumns(
   onEdit: (vente: Vente) => void,
@@ -84,12 +85,93 @@ export function useColumns(
   onValid: (vente: Vente) => void,
   onShowReglements: (vente: Vente)=>void)
   : ColumnDef<Vente>[] {
-  // verifier si le user a cette permission
-  // const isUserPermitted = (name:String) => {
-  //   return (rolePermissions).some(per => per.name == name);
-  // }
+
+  const { user} = useApp()
+  const isPermittedTo = (name:string) => {
+      return user?.role?.permissions?.some((pr:any) => pr.name == name)
+  }
 
   return [
+    
+    // 
+    {
+      id: "actions",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Actions <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const vente = row.original
+        return (
+         
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+
+                {/* modifier */}
+                {(!vente.validatedBy && isPermittedTo("vente.edit")) &&
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-warning"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      onEdit(vente) // 👈 remonte juste de la vente
+                    }}
+                  >
+                    <PencilLine /> Modifier
+                  </DropdownMenuItem>
+                }
+
+                {/* valider */}
+                {(!vente.validatedBy && isPermittedTo("vente.validate")) &&
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-success"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      onValid(vente) // 👈 remonte juste la vente
+                    }}
+                  >
+                    <CircleCheckBig /> Valider
+                  </DropdownMenuItem>
+                }
+
+                {/* suppression */}
+                {(!vente.validatedBy && isPermittedTo("vente.delete")) &&
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-danger"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      onDelete(vente) // 👈 remonte juste de la vente
+                    }}>
+                    <Eraser /> Supprimer
+                  </DropdownMenuItem>
+                }
+
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-info"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      onShowReglements(vente) // 👈 remonte juste de la vente
+                    }}>
+                    <Eye /> Les règlements
+                  </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu> 
+        )
+      },
+    },
     {
       accessorKey: "id",
       header: ({ column }) => (
@@ -378,85 +460,6 @@ export function useColumns(
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => <span className="badge border rounded text-dark"> {row.original.createdBy?.fullname || "—"} </span>,
-    },
-    // 
-    {
-      id: "actions",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Actions <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const vente = row.original
-        return (
-         
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-
-                {/* modifier */}
-                {!vente.validatedBy &&
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-warning"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onEdit(vente) // 👈 remonte juste de la vente
-                    }}
-                  >
-                    <PencilLine /> Modifier
-                  </DropdownMenuItem>
-                }
-
-                {/* valider */}
-                {!vente.validatedBy &&
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-success"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onValid(vente) // 👈 remonte juste la vente
-                    }}
-                  >
-                    <CircleCheckBig /> Valider
-                  </DropdownMenuItem>
-                }
-
-                {/* suppression */}
-                {!vente.validatedBy &&
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-danger"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onDelete(vente) // 👈 remonte juste de la vente
-                    }}>
-                    <Eraser /> Supprimer
-                  </DropdownMenuItem>
-                }
-
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-info"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onShowReglements(vente) // 👈 remonte juste de la vente
-                    }}>
-                    <Eye /> Les règlements
-                  </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu> 
-        )
-      },
     },
   ]
 }

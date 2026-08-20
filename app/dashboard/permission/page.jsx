@@ -21,10 +21,15 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-
+import { useApp } from "@/app/AppContext"
 
 export default function index() {
+    const { user } = useApp()
     const [permissions, setPermissions] = useState({})
+
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // get permissions
     const retrivePermissions = async () => {
@@ -63,11 +68,14 @@ export default function index() {
         <DashboardLayourt title="Listes des permissions" icon={<UserKey />}>
             {/* listes de spermissions */}
             <div className="container mx-auto py-10">
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <DataTable data={permissions} />
-                    </div>
-                </div>
+                {isPermittedTo("permission.view") ?
+                    <div className="row d-flex justify-content-center">
+                        <div className="col-md-10">
+                            <DataTable data={permissions} />
+                        </div>
+                    </div> :
+                    <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                }
             </div>
         </DashboardLayourt>
     </>

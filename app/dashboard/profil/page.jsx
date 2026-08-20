@@ -115,7 +115,7 @@ function ProfilContent() {
                         <div className="">
                             {/* form */}
                             <form onSubmit={updateProfil}>
-                                <Card className="w-full shadow-sm bg-light">
+                                <Card className="w-full shadow-sm bg-white m-3 border">
                                     <CardContent>
                                         {/* header */}
                                         <div className="d-flex justify-content-center">

@@ -113,7 +113,7 @@ export function useColumns(
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.montant ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-success border text-white"> {(row.original.montant ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
       accessorKey: "preuve",
@@ -123,7 +123,7 @@ export function useColumns(
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.original?.preuve ? <Link className="badge bg-light border text-dark"> <Eye /> </Link> : "--",
+      cell: ({ row }) => row.original?.preuve ? <Link href={row.original?.preuve} target="_blank" className="badge bg-light border text-dark"> <Eye /> </Link> : "--",
     },
     {
       accessorKey: "date",

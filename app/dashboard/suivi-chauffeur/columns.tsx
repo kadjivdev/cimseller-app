@@ -4,14 +4,6 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, CheckCircle, CircleCheckBig, CircleX, Eraser, Eye, FolderPlus, MoreHorizontal, PencilLine, ReceiptText, ShoppingCart, Van, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Textarea } from "@/components/ui/textarea"
 export type Programmation = {
   id: number
@@ -68,6 +60,7 @@ export type Programmation = {
       code: String
       date: String
       montant: Number
+      qteTotal:Number
       commandeClient: {
         id: Number,
         client: {
@@ -330,8 +323,22 @@ export function useColumns()
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <Textarea
-        placeholder='--' />,
+      cell: ({ row }) => {
+        const programmation = row.original
+
+        return (
+            <div className="d-flex flex-wrap gap-1">
+                {programmation?.ventes?.map((vente) => {
+                    const text = `Client: ${vente?.commandeClient?.client?.raison_sociale} | Vente: ${vente?.code} | Qte Vendue: ${vente.qteTotal}`
+                    return (
+                        <span key={vente.id} className="badge rounded border text-dark">
+                            {text}
+                        </span>
+                    )
+                })}
+            </div>
+        )
     },
+  }
   ]
 }

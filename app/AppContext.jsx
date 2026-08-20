@@ -11,15 +11,19 @@ export const AppContext = createContext();
 export const AppProvider = ({ children }) => {
 
     const [user, setUser] = useState(null);
+    const [permissions, setPermissions] = useState(null);
     const [loading, setLoading] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [initialized, setInitialized] = useState(false); // 👈 Nouveau
 
     useEffect(() => {
         const storedUser = window.localStorage.getItem("user");
-        if (storedUser) {
+        const storedPermissions = window.localStorage.getItem("permissions");
+
+        if (storedUser || storedPermissions) {
             try {
                 setUser(JSON.parse(storedUser));
+                setPermissions(JSON.parse(storedPermissions))
                 setIsAuthenticated(true);
             } catch (error) {
                 console.warn("Impossible de parser l'utilisateur en localStorage", error);
@@ -37,11 +41,13 @@ export const AppProvider = ({ children }) => {
                 { email, password }
             );
             const userData = response.data?.user || response.data;
+            const allPermissions = response.data?.permissions ||[];
 
-            setUser(userData)
-            setIsAuthenticated(true)
+            // setUser(userData)
+            // setIsAuthenticated(true)
 
             window.localStorage.setItem("user", JSON.stringify(userData))
+            window.localStorage.setItem("permissions", JSON.stringify(allPermissions))
 
             return { success: true, status: response.status, message: response.message };
         } catch (error) {
@@ -118,6 +124,7 @@ export const AppProvider = ({ children }) => {
         loading,
         isAuthenticated,
         setLoading,
+        permissions,
         initialized, // 👈 Exposé
 
         login,

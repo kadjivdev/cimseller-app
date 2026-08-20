@@ -35,7 +35,9 @@ export default function DeliveryProgrammationModal({ open, onOpenChange, program
     setData((prev) => ({
       ...prev,
       programId: programmation?.id,
-      qteLivre: programmation.stock || 0,
+      qteLivre:
+        programmation?.statut?.id == 4 ?//livrée
+          programmation.qteLivre : programmation.stock || 0,
       dateLivraison: programmation?.dateLivraison?.split("T")?.[0] || '',
       newBl: programmation.bl || '',
       preuve: '',
@@ -50,7 +52,16 @@ export default function DeliveryProgrammationModal({ open, onOpenChange, program
   // handleChange
   const handleChange = (e) => {
     e.preventDefault()
-    let { value, checked, files, type, name } = e.target
+    let { value, checked, files, type, name, max } = e.target
+
+    if (name == "qteLivre" && value > max) {
+      toast.error(`Le stock maximum est de ${max} Tonne(s)`)
+      setData((prev) => ({
+        ...prev, qteLivre: max
+      }))
+      return
+    }
+
     setData((prev) => ({
       ...prev,
       programId: programmation?.id,
@@ -69,10 +80,24 @@ export default function DeliveryProgrammationModal({ open, onOpenChange, program
   // submission
   const submitUpdateForm = async (e) => {
     e.preventDefault()
+    const formData = new FormData()
+    formData.append("programId", data.programId)
+    formData.append("qteLivre", data.qteLivre)
+    formData.append("dateLivraison", data.dateLivraison)
+    formData.append("newBl", data.newBl)
+    formData.append("livraisonComment", data.livraisonComment)
+
+    if (data.preuve instanceof File) {
+      formData.append("preuve", data.preuve)
+    }
 
     try {
       await toast.promise(
-        axiosInstance.put(apiRoutes.livraisonProgrammation, data),
+        axiosInstance.put(apiRoutes.livraisonProgrammation, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }),
         {
           loading: `Livraison de la programmation ${programmation?.code} ...`,
           success: async (res) => {
@@ -153,9 +178,10 @@ export default function DeliveryProgrammationModal({ open, onOpenChange, program
                 <Input id="qteLivre"
                   type="number"
                   name="qteLivre"
-                  readOnly={true}
+                  max={programmation?.stock}
                   value={data.qteLivre}
                   required
+                  readOnly={programmation?.stock==0}
                   onChange={handleChange} />
                 {errors?.qteLivre && <span className="text-danger">{errors?.qteLivre}</span>}
               </div>

@@ -32,6 +32,8 @@ import { Settings2 } from "lucide-react"
 import UpdateProgrammationModal from "./update-modal"
 import DeleteProgrammationModal from "./delete-modal"
 import ValidProgrammationModal from "./valid-modal"
+import AnnulerProgrammationModal from "./annuler-modal"
+
 import { DatePickerRange } from "@/myComponents/DatePickerRange"
 
 const exportColumns = [
@@ -51,6 +53,7 @@ export function DataTable({ data, setReload, date, setDate, handleBonSelect }:an
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
     const [openValid, setOpenValid] = useState(false)
+    const [openAnnuler, setOpenAnnuler] = useState(false)
     const [selectedProgrammation, setSelectedProgrammation] = useState<Programmation | null>(null)
 
     const [globalFilter, setGlobalFilter] = useState("")
@@ -73,7 +76,12 @@ export function DataTable({ data, setReload, date, setDate, handleBonSelect }:an
         setOpenValid(true)
     }
 
-    const columns = useColumns(handleEdit, handleDelete, handleValid) // 👈 passe les callbacks
+     const handleAnnuler = (programmation: Programmation) => {
+        setSelectedProgrammation(programmation)
+        setOpenAnnuler(true)
+    }
+
+    const columns = useColumns(handleEdit, handleDelete, handleValid,handleAnnuler) // 👈 passe les callbacks
 
     const table = useReactTable({
         data,
@@ -87,7 +95,6 @@ export function DataTable({ data, setReload, date, setDate, handleBonSelect }:an
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-
 
     return (
         <>
@@ -200,6 +207,14 @@ export function DataTable({ data, setReload, date, setDate, handleBonSelect }:an
             <ValidProgrammationModal
                 open={openValid}
                 onOpenChange={setOpenValid}
+                programmation={selectedProgrammation}
+                handleBonSelect={handleBonSelect}
+            />
+
+            {/* annulation de programmtion */}
+            <AnnulerProgrammationModal
+                open={openAnnuler}
+                onOpenChange={setOpenAnnuler}
                 programmation={selectedProgrammation}
                 handleBonSelect={handleBonSelect}
             />

@@ -33,11 +33,16 @@ import Link from "next/link";
 
 
 export default function index() {
-    const { loading, setLoading } = useApp()
+    const { user, loading, setLoading } = useApp()
     const router = useRouter()
 
     const [data, setData] = useState({ nom: '', prenom: '', phone: '' })
     const [errors, setErrors] = useState({ nom: '', prenom: '', phone: '' })
+
+    console.log("User agent's :", user)
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -47,6 +52,11 @@ export default function index() {
     // submission
     const submitForm = async (e) => {
         e.preventDefault()
+
+        if (!isPermittedTo("agent.create")) {
+            toast.warning("Vous n'êtes pas permis d'éffectuer cette action")
+            return
+        }
 
         try {
             await toast.promise(
@@ -100,52 +110,59 @@ export default function index() {
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.agent.list}><List className="mx-1" /> Liste des agents</Link>
-                        </div>
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
-                            <div className="row">
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="fullname">Nom  <span className="text-danger">*</span></Label>
-                                    <Input id="nom"
-                                        type="text"
-                                        name="nom"
-                                        placeholder="Ex: John"
-                                        autoFocus
-                                        required
-                                        value={data.nom}
-                                        onChange={handleChange} />
-                                    {errors.nom && <span className="text-danger">{errors.nom}</span>}
+                        {isPermittedTo("agent.view") ?
+                            <>
+                                <div className="flex justify-content-center">
+                                    <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.agent.list}><List className="mx-1" /> Liste des agents</Link>
                                 </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="fullname">Prénom  <span className="text-danger">*</span></Label>
-                                    <Input id="prenom"
-                                        type="text"
-                                        name="prenom"
-                                        placeholder="Ex: Doe"
-                                        required
-                                        value={data.prenom}
-                                        onChange={handleChange} />
-                                    {errors.prenom && <span className="text-danger">{errors.prenom}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="fullname">Télephone  <span className="text-danger">*</span></Label>
-                                    <Input id="phone"
-                                        type="text"
-                                        name="phone"
-                                        placeholder="Ex: +243 99 999 9999"
-                                        required
-                                        value={data.phone}
-                                        onChange={handleChange} />
-                                    {errors.phone && <span className="text-danger">{errors.phone}</span>}
-                                </div>
-                            </div>
-                            <br />
-                            <div className="d-flex justify-content-center bg-light p-3">
-                                <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.agent.list))} > <X /> Retour</Button>
-                                <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
-                            </div>
-                        </form>
+                                <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
+                                    <div className="row">
+                                        <div className="col-md-12 mb-2">
+                                            <Label htmlFor="fullname">Nom  <span className="text-danger">*</span></Label>
+                                            <Input id="nom"
+                                                type="text"
+                                                name="nom"
+                                                placeholder="Ex: John"
+                                                autoFocus
+                                                required
+                                                value={data.nom}
+                                                onChange={handleChange} />
+                                            {errors.nom && <span className="text-danger">{errors.nom}</span>}
+                                        </div>
+                                        <div className="col-md-12 mb-2">
+                                            <Label htmlFor="fullname">Prénom  <span className="text-danger">*</span></Label>
+                                            <Input id="prenom"
+                                                type="text"
+                                                name="prenom"
+                                                placeholder="Ex: Doe"
+                                                required
+                                                value={data.prenom}
+                                                onChange={handleChange} />
+                                            {errors.prenom && <span className="text-danger">{errors.prenom}</span>}
+                                        </div>
+                                        <div className="col-md-12 mb-2">
+                                            <Label htmlFor="fullname">Télephone  <span className="text-danger">*</span></Label>
+                                            <Input id="phone"
+                                                type="text"
+                                                name="phone"
+                                                placeholder="Ex: +243 99 999 9999"
+                                                required
+                                                value={data.phone}
+                                                onChange={handleChange} />
+                                            {errors.phone && <span className="text-danger">{errors.phone}</span>}
+                                        </div>
+                                    </div>
+                                    <br />
+                                    {isPermittedTo("agent.create") &&
+                                        <div className="d-flex justify-content-center bg-light p-3">
+                                            <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.agent.list))} > <X /> Retour</Button>
+                                            <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
+                                        </div>
+                                    }
+                                </form>
+                            </>:
+                            <p className="text-center text-danger">Vous n'êtes pas autorisé à accéder à cette page</p>
+                        }
                     </div>
                 </div>
             </div >

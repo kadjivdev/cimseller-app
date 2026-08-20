@@ -11,10 +11,11 @@ import { FilterSelect } from "@/myComponents/FilterSelect";
 import { Label } from "@/components/ui/label"
 
 import { DataTable } from "./data-table"
+import { useApp } from "@/app/AppContext"
 
 
 export default function index() {
-
+    const { user } = useApp()
     const [reload, setReload] = useState(false)
 
     const [bons, setBons] = useState([])
@@ -22,6 +23,11 @@ export default function index() {
     const [openPrint, setOpenPrint] = useState(false)
     const [selectedBon, setSelectedBon] = useState(null)
     const [programmations, setProgrammations] = useState([])
+
+    console.log("User agent's :", user)
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // filtres de données par poériode
     const [date, setDate] = useState({
@@ -92,36 +98,41 @@ export default function index() {
         <DashboardLayourt title="Panel de livraisons de bon" icon={<Truck />}>
             {/* listes des programmations de commande */}
             <div className="container mx-auto py-10">
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-8 mb-2 text-center bg-light border rounded shadow-sm p-2">
-                        <div className="mt-3 border rounded p-1">
-                            <Label htmlFor="bon_id">Choisissez un bon pour afficher ses programmations <span className="text-danger">*</span>  </Label>
-                            <FilterSelect
-                                options={bons?.map((bn) => ({ id: bn.id, label: `${bn.code} | Commandée: ${bn.qteCommander}` }))}
-                                handleSelect={handleBonSelect}
-                                selected={selectedBon?.id}
-                            />
-                            {selectedBon && (
-                                <>
-                                    <p className="text-center bg-dark text-white my-3">Bon choisi : {`${selectedBon.code} | Commandée: ${selectedBon.qteCommander} | Programmée:${selectedBon.qteProgrammer} | Stock:${selectedBon.stock}`} </p>
-                                    <p className="text-center bg-info text-dark"> {`Fournisseur: ${selectedBon.fournisseur?.sigle}-${selectedBon.fournisseur?.raison_sociale} | Produit: ${selectedBon.commandeDetails?.[0]?.product?.name}`} </p>
-                                </>
-                            )}
-                        </div>
-                    </div>
+                {isPermittedTo("livraison.view") ?
+                    <>
+                        <div className="row d-flex justify-content-center">
+                            <div className="col-md-8 mb-2 text-center bg-light border rounded shadow-sm p-2">
+                                <div className="mt-3 border rounded p-1">
+                                    <Label htmlFor="bon_id">Choisissez un bon pour afficher ses programmations <span className="text-danger">*</span>  </Label>
+                                    <FilterSelect
+                                        options={bons?.map((bn) => ({ id: bn.id, label: `${bn.code} | Commandée: ${bn.qteCommander}` }))}
+                                        handleSelect={handleBonSelect}
+                                        selected={selectedBon?.id}
+                                    />
+                                    {selectedBon && (
+                                        <>
+                                            <p className="text-center bg-dark text-white my-3">Bon choisi : {`${selectedBon.code} | Commandée: ${selectedBon.qteCommander} | Programmée:${selectedBon.qteProgrammer} | Stock:${selectedBon.stock}`} </p>
+                                            <p className="text-center bg-info text-dark"> {`Fournisseur: ${selectedBon.fournisseur?.sigle}-${selectedBon.fournisseur?.raison_sociale} | Produit: ${selectedBon.commandeDetails?.[0]?.product?.name}`} </p>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
 
-                </div>
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <DataTable
-                            data={filteredProgrammations}
-                            setReload={setReload}
-                            date={date}
-                            setDate={setDate}
-                            handleBonSelect={handleBonSelect}
-                        />
-                    </div>
-                </div>
+                        </div>
+                        <div className="row d-flex justify-content-center">
+                            <div className="col-md-10">
+                                <DataTable
+                                    data={filteredProgrammations}
+                                    setReload={setReload}
+                                    date={date}
+                                    setDate={setDate}
+                                    handleBonSelect={handleBonSelect}
+                                />
+                            </div>
+                        </div>
+                    </> :
+                    <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                }
             </div>
         </DashboardLayourt>
     </>

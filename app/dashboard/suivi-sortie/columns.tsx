@@ -277,7 +277,11 @@ export function useColumns(
                   onEdit(programmation) // 👈 remonte juste du bon
                 }}
               >
-                <PencilLine /> Actualiser le bon
+                {(programmation?.dateSortie && programmation.bl) ?
+                <span><Eye /> Voir détail</span>:
+                <span><PencilLine /> Actualiser le bon</span>
+              }
+                
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

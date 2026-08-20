@@ -34,12 +34,16 @@ import Link from "next/link";
 
 
 export default function index() {
-    const { loading, setLoading } = useApp()
+    const {user, loading, setLoading } = useApp()
     const router = useRouter()
 
     const [representants, setRepresentants] = useState([])
     const [data, setData] = useState({ name: '', description: '' })
     const [errors, setErrors] = useState({ name: '', description: '' })
+
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // get representants
     const retriveRepresentants = async () => {
@@ -136,58 +140,61 @@ export default function index() {
 
 
     return <>
-        <DashboardLayourt title="Ajouter une zone" icon={<MessageSquarePlus/>}>
+        <DashboardLayourt title="Ajouter une zone" icon={<MessageSquarePlus />}>
             {/* listes des zones */}
             <div className="container mx-auto py-10">
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.zone.list}><List className="mx-1" /> Liste des zones</Link>
+                {isPermittedTo("zone.create") ?
+                    <div className="row d-flex justify-content-center">
+                        <div className="col-md-10">
+                            <div className="flex justify-content-center">
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.zone.list}><List className="mx-1" /> Liste des zones</Link>
+                            </div>
+                            <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
+                                <div className="row">
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="fullname">Nom  <span className="text-danger">*</span></Label>
+                                        <Input id="name"
+                                            type="text"
+                                            name="name"
+                                            placeholder="Ex: Cotonou"
+                                            autoFocus
+                                            required
+                                            value={data.name}
+                                            onChange={handleChange} />
+                                        {errors.name && <span className="text-danger">{errors.name}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="description">Description  </Label>
+                                        <Textarea
+                                            rows={1}
+                                            placeholder="Ex :Description"
+                                            id="description"
+                                            name="description"
+                                            value={data.description}
+                                            onChange={handleChange}
+                                        ></Textarea>
+                                        {errors.description && <span className="text-danger">{errors.description}</span>}
+                                    </div>
+                                    <div className="col-md-12">
+                                        <Label htmlFor="representant_id">Choisissez un representant</Label>
+                                        <FilterSelect
+                                            options={representants?.map((r) => ({ id: r.id, label: `${r.nom} - ${r.prenom}` }))}
+                                            handleSelect={handleSelect}
+                                            selected={data?.representantId}
+                                        />
+                                        {errors.representantId && <span className="text-center">{errors.representantId}</span>}
+                                    </div>
+                                </div>
+                                <br />
+                                <div className="d-flex justify-content-center bg-light p-3">
+                                    <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.zone.list))} > <X /> Retour</Button>
+                                    <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
+                                </div>
+                            </form>
                         </div>
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
-                            <div className="row">
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="fullname">Nom  <span className="text-danger">*</span></Label>
-                                    <Input id="name"
-                                        type="text"
-                                        name="name"
-                                        placeholder="Ex: Cotonou"
-                                        autoFocus
-                                        required
-                                        value={data.name}
-                                        onChange={handleChange} />
-                                    {errors.name && <span className="text-danger">{errors.name}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="description">Description  </Label>
-                                    <Textarea
-                                        rows={1}
-                                        placeholder="Ex :Description"
-                                        id="description"
-                                        name="description"
-                                        value={data.description}
-                                        onChange={handleChange}
-                                    ></Textarea>
-                                    {errors.description && <span className="text-danger">{errors.description}</span>}
-                                </div>
-                                <div className="col-md-12">
-                                    <Label htmlFor="representant_id">Choisissez un representant</Label>
-                                    <FilterSelect
-                                        options={representants?.map((r) => ({ id: r.id, label: `${r.nom} - ${r.prenom}` }))}
-                                        handleSelect={handleSelect}
-                                        selected={data?.representantId}
-                                    />
-                                    {errors.representantId && <span className="text-center">{errors.representantId}</span>}
-                                </div>
-                            </div>
-                            <br />
-                            <div className="d-flex justify-content-center bg-light p-3">
-                                <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.zone.list))} > <X /> Retour</Button>
-                                <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                    </div> :
+                    <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                }
             </div >
         </DashboardLayourt >
     </>

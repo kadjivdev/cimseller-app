@@ -34,7 +34,7 @@ import Link from "next/link";
 
 
 export default function index() {
-    const { loading, setLoading } = useApp()
+    const { user, loading, setLoading } = useApp()
     const router = useRouter()
 
     const [zones, setZones] = useState([])
@@ -42,6 +42,11 @@ export default function index() {
 
     const [data, setData] = useState({ zoneId: '', statutId: '', raison_sociale: '', profil: '', phone: '', email: '', adresse: '' })
     const [errors, setErrors] = useState({ zoneId: '', statutId: '', raison_sociale: '', profil: '', phone: '', email: '', adresse: '' })
+
+    console.log("User agent's :", user)
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // initialisation
     useEffect(() => {
@@ -64,7 +69,7 @@ export default function index() {
             {
                 loading: 'Chargement des status de client...',
                 success: (res) => {
-                    console.log("allClientStatus :",res.data)
+                    console.log("allClientStatus :", res.data)
                     setStatus(res.data || [])
                     return 'Status de client chargés!'
                 },
@@ -116,9 +121,9 @@ export default function index() {
 
         try {
             await toast.promise(
-                axiosInstance.post(apiRoutes.createClient, data,{
-                    headers:{
-                        "Content-Type":"multipart/form-data",
+                axiosInstance.post(apiRoutes.createClient, data, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
                     }
                 }),
                 {
@@ -174,92 +179,95 @@ export default function index() {
             {/* ajouter des clients */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.client.create}><List className="mx-1" /> Listes des clients</Link>
-                        </div>
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
-                            <div className="row">
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="raison_sociale">Raison sociale  <span className="text-danger">*</span></Label>
-                                    <Input id="raison_sociale"
-                                        type="text"
-                                        name="raison_sociale"
-                                        placeholder="Ex: 2MKA"
-                                        autoFocus
-                                        required
-                                        value={data.raison_sociale}
-                                        onChange={handleChange} />
-                                    {errors.raison_sociale && <span className="text-danger">{errors.raison_sociale}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="phone">Téléphone </Label>
-                                    <Input id="phone"
-                                        type="text"
-                                        name="phone"
-                                        placeholder="Ex: +22956854397"
-                                        value={data.phone}
-                                        onChange={handleChange} />
-                                    {errors.phone && <span className="text-danger">{errors.phone}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="email">Email </Label>
-                                    <Input id="email"
-                                        type="email"
-                                        name="email"
-                                        placeholder="Ex: 2mka@gmail.com"
-                                        value={data.email}
-                                        onChange={handleChange} />
-                                    {errors.email && <span className="text-danger">{errors.email}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="adresse">Adresse </Label>
-                                    <Input id="adresse"
-                                        type="adresse"
-                                        name="adresse"
-                                        placeholder="Ex: Cotonou"
-                                        value={data.adresse}
-                                        onChange={handleChange} />
-                                    {errors.adresse && <span className="text-danger">{errors.adresse}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="description">Zone  <span className="text-danger">*</span>  </Label>
-                                    <FilterSelect
-                                        options={zones?.map((zone) => ({ id: zone.id, label: zone.name }))}
-                                        handleSelect={handleZoneSelect}
-                                        selected={data?.zoneId}
-                                    />
-                                    {errors.zoneId && <span className="text-danger">{errors.zoneId}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="description">Statut  <span className="text-danger">*</span>  </Label>
-                                    <FilterSelect
-                                        options={status?.map((statut) => ({ id: statut.id, label: statut.name }))}
-                                        handleSelect={handleStatutSelect}
-                                        selected={data?.statutId}
-                                    />
-                                    {errors.statutId && <span className="text-danger">{errors.statutId}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Field>
-                                        <FieldLabel htmlFor="profil">Profil</FieldLabel>
-                                        <Input
-                                            id="profil"
-                                            type="file"
-                                            name="profil"
-                                            onChange={(e) => handleChange(e)}
+                    {isPermittedTo("client.create") ?
+                        <div className="col-md-10">
+                            <div className="flex justify-content-center">
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.client.create}><List className="mx-1" /> Listes des clients</Link>
+                            </div>
+                            <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
+                                <div className="row">
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="raison_sociale">Raison sociale  <span className="text-danger">*</span></Label>
+                                        <Input id="raison_sociale"
+                                            type="text"
+                                            name="raison_sociale"
+                                            placeholder="Ex: 2MKA"
+                                            autoFocus
+                                            required
+                                            value={data.raison_sociale}
+                                            onChange={handleChange} />
+                                        {errors.raison_sociale && <span className="text-danger">{errors.raison_sociale}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="phone">Téléphone </Label>
+                                        <Input id="phone"
+                                            type="text"
+                                            name="phone"
+                                            placeholder="Ex: +22956854397"
+                                            value={data.phone}
+                                            onChange={handleChange} />
+                                        {errors.phone && <span className="text-danger">{errors.phone}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="email">Email </Label>
+                                        <Input id="email"
+                                            type="email"
+                                            name="email"
+                                            placeholder="Ex: 2mka@gmail.com"
+                                            value={data.email}
+                                            onChange={handleChange} />
+                                        {errors.email && <span className="text-danger">{errors.email}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="adresse">Adresse </Label>
+                                        <Input id="adresse"
+                                            type="adresse"
+                                            name="adresse"
+                                            placeholder="Ex: Cotonou"
+                                            value={data.adresse}
+                                            onChange={handleChange} />
+                                        {errors.adresse && <span className="text-danger">{errors.adresse}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="description">Zone  <span className="text-danger">*</span>  </Label>
+                                        <FilterSelect
+                                            options={zones?.map((zone) => ({ id: zone.id, label: zone.name }))}
+                                            handleSelect={handleZoneSelect}
+                                            selected={data?.zoneId}
                                         />
-                                    </Field>
-                                    {errors.profil && <span className="text-danger">{errors.profil}</span>}
+                                        {errors.zoneId && <span className="text-danger">{errors.zoneId}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="description">Statut  <span className="text-danger">*</span>  </Label>
+                                        <FilterSelect
+                                            options={status?.map((statut) => ({ id: statut.id, label: statut.name }))}
+                                            handleSelect={handleStatutSelect}
+                                            selected={data?.statutId}
+                                        />
+                                        {errors.statutId && <span className="text-danger">{errors.statutId}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Field>
+                                            <FieldLabel htmlFor="profil">Profil</FieldLabel>
+                                            <Input
+                                                id="profil"
+                                                type="file"
+                                                name="profil"
+                                                onChange={(e) => handleChange(e)}
+                                            />
+                                        </Field>
+                                        {errors.profil && <span className="text-danger">{errors.profil}</span>}
+                                    </div>
                                 </div>
-                            </div>
-                            <br />
-                            <div className="d-flex justify-content-center bg-light p-3">
-                                <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.produit.list))} > <X /> Retour</Button>
-                                <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
-                            </div>
-                        </form>
-                    </div>
+                                <br />
+                                <div className="d-flex justify-content-center bg-light p-3">
+                                    <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.produit.list))} > <X /> Retour</Button>
+                                    <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
+                                </div>
+                            </form>
+                        </div> :
+                        <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                    }
                 </div>
             </div >
         </DashboardLayourt >

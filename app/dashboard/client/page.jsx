@@ -23,13 +23,21 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import Link from "next/link";
+import { useApp } from "@/app/AppContext"
 
 export default function index() {
+    const { user} = useApp()
+
     const [zones, setZones] = useState([])
     const [status, setStatus] = useState([])
 
     const [clients, setClients] = useState([])
     const [reload, setReload] = useState(0)
+
+    console.log("User agent's :", user)
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // initialisation
     useEffect(() => {
@@ -65,7 +73,7 @@ export default function index() {
             {
                 loading: 'Chargement des status de client...',
                 success: (res) => {
-                    console.log("Les clients :",res.data)
+                    console.log("Les clients :", res.data)
                     setClients(res.data || [])
                     return 'Status de client chargés!'
                 },
@@ -74,22 +82,24 @@ export default function index() {
         )
     }, [reload])
 
-
     return <>
         <DashboardLayourt title="Liste des Clients" icon={<Users />}>
             {/* listes des clients */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.client.create}><MessageSquarePlus className="mx-1" /> Ajouter un client</Link>
-                        </div>
-                        <DataTable
-                            data={clients}
-                            setReload={setReload}
-                            zones={zones}
-                            status={status} />
-                    </div>
+                    {isPermittedTo("client.view") ?
+                        <div className="col-md-10">
+                            <div className="flex justify-content-center">
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.client.create}><MessageSquarePlus className="mx-1" /> Ajouter un client</Link>
+                            </div>
+                            <DataTable
+                                data={clients}
+                                setReload={setReload}
+                                zones={zones}
+                                status={status} />
+                        </div> :
+                        <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                    }
                 </div>
             </div>
         </DashboardLayourt>

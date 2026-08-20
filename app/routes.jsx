@@ -25,13 +25,14 @@ const routes = {
   },
   vente: {
     list: "/dashboard/vente",
+    enAttente: "/dashboard/vente/en-attente",
     journalier: "/dashboard/vente/dally",
     aComptabiliser: "/dashboard/vente/no-comptabilized",
   },
   comptabilite: {
     list: "/dashboard/vente/comptabilized",
     aTraiter: "/dashboard/vente/a-traiter",
-    exporter: "/dashboard/comptabilite/create",
+    traiter: "/dashboard/vente/traiter",
   },
   approvisionnement: {
     list: "/dashboard/approvisionnement",

@@ -31,7 +31,7 @@ import { Logs, MessageSquarePlus, SquareArrowRightEnter, X } from "lucide-react"
 import Link from "next/link";
 
 export default function index() {
-    const { loading, setLoading } = useApp()
+    const { user, loading, setLoading } = useApp()
     const router = useRouter()
 
     const [detailRecuTypes, setDetailRecuTypes] = useState([])
@@ -42,6 +42,10 @@ export default function index() {
 
     const [data, setData] = useState({ typeDetailRecuId: '', venteId: '', deblocDette: false, clientId: '', compteBancaireId: '', reference: '', montant: '', date: '', preuve: '', comment: '' })
     const [errors, setErrors] = useState({ typeDetailRecuId: '', venteId: '', deblocDette: '', clientId: '', compteBancaireId: '', reference: '', montant: '', date: '', preuve: '', comment: '' })
+
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // initialisation des données
     useEffect(() => {
@@ -253,141 +257,144 @@ export default function index() {
             {/* ajouter des reglements */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.reglement.list}><Logs className="mx-1" /> Liste des règlements</Link>
-                        </div>
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
-                            <div className="row">
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="venteId">Vente <span className="text-danger">*</span>  </Label>
-                                    <FilterSelect
-                                        options={ventes?.map((v) => ({ id: v.id, label: `${v.code} - Reste : ${v.reste?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || 0.00}` }))}
-                                        handleSelect={handleVenteSelect}
-                                        selected={data?.venteId}
-                                    />
-                                    {errors.venteId && <span className="text-danger">{errors.venteId}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="reference">Reference  <span className="text-danger">*</span></Label>
-                                    <Input id="reference"
-                                        type="text"
-                                        name="reference"
-                                        placeholder="Ex: XXX-XXX-XXX"
-                                        autoFocus
-                                        required
-                                        value={data.reference}
-                                        onChange={handleChange} />
-                                    {errors.reference && <span className="text-danger">{errors.reference}</span>}
-                                </div>
-                                {selectedClient &&
+                    {isPermittedTo("reglement.create") ?
+                        <div className="col-md-10">
+                            <div className="flex justify-content-center">
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.reglement.list}><Logs className="mx-1" /> Liste des règlements</Link>
+                            </div>
+                            <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
+                                <div className="row">
                                     <div className="col-md-12 mb-2">
-                                        <Label htmlFor="clientId">Client <span className="text-danger">*</span>  </Label>
-                                        <p className=""><span className="badge bg-light text-dark border shadow-sm"> {`${selectedClient?.raison_sociale} - ${selectedClient?.solde?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || 0.00}`}</span></p>
-                                        {errors.clientId && <span className="text-danger">{errors.clientId}</span>}
+                                        <Label htmlFor="venteId">Vente <span className="text-danger">*</span>  </Label>
+                                        <FilterSelect
+                                            options={ventes?.map((v) => ({ id: v.id, label: `${v.code} - Reste : ${v.reste?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || 0.00}` }))}
+                                            handleSelect={handleVenteSelect}
+                                            selected={data?.venteId}
+                                        />
+                                        {errors.venteId && <span className="text-danger">{errors.venteId}</span>}
                                     </div>
-                                }
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="montant">Montant <span className="text-danger">*</span></Label>
-                                    <Input id="montant"
-                                        type="number"
-                                        name="montant"
-                                        placeholder="Ex: 999.999.999"
-                                        required
-                                        min={0}
-                                        max={selectedVente?.reste}
-                                        value={data.montant}
-                                        onChange={handleChange} />
-                                    {errors.montant && <span className="text-danger">{errors.montant}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="montant">Date <span className="text-danger">*</span> </Label>
-                                    <Input id="date"
-                                        type="date"
-                                        name="date"
-                                        required
-                                        value={data.date}
-                                        onChange={handleChange} />
-                                    {errors.date && <span className="text-danger">{errors.date}</span>}
-                                </div>
-
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="clientId">Compte bancaire <span className="text-danger">*</span>  </Label>
-                                    <FilterSelect
-                                        options={compteBancaires?.map((cb) => ({ id: cb.id, label: `${cb.intitule} - ${cb.numero}` }))}
-                                        handleSelect={handleCompteBancaireSelect}
-                                        selected={data?.compteBancaireId}
-                                    />
-                                    {errors.compteBancaireId && <span className="text-danger">{errors.compteBancaireId}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="typeDetailRecuId">Type de reçu <span className="text-danger">*</span>  </Label>
-                                    <FilterSelect
-                                        options={detailRecuTypes?.map((dr) => ({ id: dr.id, label: dr.name }))}
-                                        handleSelect={handleTypeDetailRecuSelect}
-                                        selected={data?.typeDetailRecuId}
-                                    />
-                                    {errors.typeDetailRecuId && <span className="text-danger">{errors.typeDetailRecuId}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Field>
-                                        <FieldLabel htmlFor="image">Preuve <span className="text-danger">*</span> </FieldLabel>
-                                        <Input
-                                            id="preuve"
-                                            type="file"
-                                            name="preuve"
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="reference">Reference  <span className="text-danger">*</span></Label>
+                                        <Input id="reference"
+                                            type="text"
+                                            name="reference"
+                                            placeholder="Ex: XXX-XXX-XXX"
+                                            autoFocus
                                             required
-                                            onChange={(e) => handleChange(e)}
-                                        />
-                                    </Field>
-                                    {errors.preuve && <span className="text-danger">{errors.preuve}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Field orientation="horizontal">
-                                        <Checkbox
-                                            id="deblocDette"
-                                            name="deblocDette"
-                                            checked={data.deblocDette}
-                                            onCheckedChange={(checked) =>
-                                                setData((prev) => ({
-                                                    ...prev,
-                                                    deblocDette: checked,
-                                                }))
-                                            }
-                                        />
-                                    </Field>
-                                    {errors.deblocDette && <span className="text-danger">{errors.deblocDette}</span>}
+                                            value={data.reference}
+                                            onChange={handleChange} />
+                                        {errors.reference && <span className="text-danger">{errors.reference}</span>}
+                                    </div>
+                                    {selectedClient &&
+                                        <div className="col-md-12 mb-2">
+                                            <Label htmlFor="clientId">Client <span className="text-danger">*</span>  </Label>
+                                            <p className=""><span className="badge bg-light text-dark border shadow-sm"> {`${selectedClient?.raison_sociale} - ${selectedClient?.solde?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || 0.00}`}</span></p>
+                                            {errors.clientId && <span className="text-danger">{errors.clientId}</span>}
+                                        </div>
+                                    }
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="montant">Montant <span className="text-danger">*</span></Label>
+                                        <Input id="montant"
+                                            type="number"
+                                            name="montant"
+                                            placeholder="Ex: 999.999.999"
+                                            required
+                                            min={0}
+                                            max={selectedVente?.reste}
+                                            value={data.montant}
+                                            onChange={handleChange} />
+                                        {errors.montant && <span className="text-danger">{errors.montant}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="montant">Date <span className="text-danger">*</span> </Label>
+                                        <Input id="date"
+                                            type="date"
+                                            name="date"
+                                            required
+                                            value={data.date}
+                                            onChange={handleChange} />
+                                        {errors.date && <span className="text-danger">{errors.date}</span>}
+                                    </div>
 
-                                    <FieldContent>
-                                        <FieldLabel htmlFor="deblocDette">
-                                            Contourner la dette
-                                        </FieldLabel>
-                                        <FieldDescription>
-                                            En cliquant, vous acceptez d'éffectuer le règlement qaund bien même le client a une dette.
-                                        </FieldDescription>
-                                    </FieldContent>
-                                    
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="clientId">Compte bancaire <span className="text-danger">*</span>  </Label>
+                                        <FilterSelect
+                                            options={compteBancaires?.map((cb) => ({ id: cb.id, label: `${cb.intitule} - ${cb.numero}` }))}
+                                            handleSelect={handleCompteBancaireSelect}
+                                            selected={data?.compteBancaireId}
+                                        />
+                                        {errors.compteBancaireId && <span className="text-danger">{errors.compteBancaireId}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="typeDetailRecuId">Type de reçu <span className="text-danger">*</span>  </Label>
+                                        <FilterSelect
+                                            options={detailRecuTypes?.map((dr) => ({ id: dr.id, label: dr.name }))}
+                                            handleSelect={handleTypeDetailRecuSelect}
+                                            selected={data?.typeDetailRecuId}
+                                        />
+                                        {errors.typeDetailRecuId && <span className="text-danger">{errors.typeDetailRecuId}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Field>
+                                            <FieldLabel htmlFor="image">Preuve <span className="text-danger">*</span> </FieldLabel>
+                                            <Input
+                                                id="preuve"
+                                                type="file"
+                                                name="preuve"
+                                                required
+                                                onChange={(e) => handleChange(e)}
+                                            />
+                                        </Field>
+                                        {errors.preuve && <span className="text-danger">{errors.preuve}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Field orientation="horizontal">
+                                            <Checkbox
+                                                id="deblocDette"
+                                                name="deblocDette"
+                                                checked={data.deblocDette}
+                                                onCheckedChange={(checked) =>
+                                                    setData((prev) => ({
+                                                        ...prev,
+                                                        deblocDette: checked,
+                                                    }))
+                                                }
+                                            />
+                                        </Field>
+                                        {errors.deblocDette && <span className="text-danger">{errors.deblocDette}</span>}
+
+                                        <FieldContent>
+                                            <FieldLabel htmlFor="deblocDette">
+                                                Contourner la dette
+                                            </FieldLabel>
+                                            <FieldDescription>
+                                                En cliquant, vous acceptez d'éffectuer le règlement qaund bien même le client a une dette.
+                                            </FieldDescription>
+                                        </FieldContent>
+
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="comment">Commentaire  </Label>
+                                        <Textarea
+                                            rows={1}
+                                            placeholder="Ex: Laissez un commentaire ..."
+                                            id="comment"
+                                            name="comment"
+                                            value={data.comment}
+                                            onChange={handleChange}
+                                        ></Textarea>
+                                        {errors.comment && <span className="text-danger">{errors.comment}</span>}
+                                    </div>
                                 </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="comment">Commentaire  </Label>
-                                    <Textarea
-                                        rows={1}
-                                        placeholder="Ex: Laissez un commentaire ..."
-                                        id="comment"
-                                        name="comment"
-                                        value={data.comment}
-                                        onChange={handleChange}
-                                    ></Textarea>
-                                    {errors.comment && <span className="text-danger">{errors.comment}</span>}
+                                <br />
+                                <div className="d-flex justify-content-center bg-light p-3">
+                                    <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.reglement.list))} > <X /> Retour</Button>
+                                    <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
                                 </div>
-                            </div>
-                            <br />
-                            <div className="d-flex justify-content-center bg-light p-3">
-                                <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.reglement.list))} > <X /> Retour</Button>
-                                <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
-                            </div>
-                        </form>
-                    </div>
+                            </form>
+                        </div> :
+                        <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                    }
                 </div>
             </div >
         </DashboardLayourt >

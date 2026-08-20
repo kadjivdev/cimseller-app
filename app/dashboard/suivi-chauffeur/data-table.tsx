@@ -44,9 +44,7 @@ const exportColumns = [
     { label: "Crée par", key: "createdBy" as const },
 ]
 
-export function DataTable({ data, setReload, date, setDate,FournisseurfilterSelect,ChauffeurFilterSelect }) {
-
-    const [open, setOpen] = useState(false)
+export function DataTable({ data,date, setDate,FournisseurfilterSelect,ChauffeurFilterSelect,CamionfilterSelect }:any) {
 
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])
@@ -67,15 +65,21 @@ export function DataTable({ data, setReload, date, setDate,FournisseurfilterSele
         getPaginationRowModel: getPaginationRowModel(),
     })
 
-
     return (
         <>
             <Card className="p-2">
                 <div className="space-y-4">
 
-                    <div className="mb-2 text-center bg-light shadow-sm p-2">
-                        <FournisseurfilterSelect/>
-                        <ChauffeurFilterSelect/>
+                    <div className="row mb-2 text-center bg-light shadow-sm p-2">
+                        <div className="col-md-6">
+                            <FournisseurfilterSelect/>
+                        </div>
+                        <div className="col-md-6">
+                            <ChauffeurFilterSelect/>
+                        </div>
+                        <div className="col-md-6">
+                            <CamionfilterSelect/>
+                        </div>
                     </div>
 
                     {/* Filtre par période */}
@@ -122,7 +126,7 @@ export function DataTable({ data, setReload, date, setDate,FournisseurfilterSele
                             <TableActions
                                 data={data}
                                 columns={exportColumns}
-                                filename="utilisateurs"
+                                filename="suivi-chauffeur"
                             />
                         </div>
                     </div>
@@ -179,7 +183,6 @@ export function DataTable({ data, setReload, date, setDate,FournisseurfilterSele
                     </div>
                 </div>
             </Card>
-
         </>
     )
 }

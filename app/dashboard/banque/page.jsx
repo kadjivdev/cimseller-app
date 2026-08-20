@@ -7,11 +7,13 @@ import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import axios from "axios";
 import apiRoutes from "@/api/routes";
-import routes from "@/app/routes"; 
+import routes from "@/app/routes";
 import { HandCoins, List, MessageSquarePlus } from 'lucide-react';
 
 import { columns, Payment } from "./columns"
 import { DataTable } from "./data-table"
+import { useApp } from "@/app/AppContext"
+
 
 import {
     Table,
@@ -25,8 +27,14 @@ import {
 import Link from "next/link";
 
 export default function index() {
+    const { user } = useApp()
     const [banques, setBanques] = useState([])
     const [reload, setReload] = useState(0)
+
+    console.log("User agent's :", user)
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // get banques
     const retriveBanques = async () => {
@@ -66,14 +74,17 @@ export default function index() {
             {/* listes des banques */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.banque.create}><MessageSquarePlus className="mx-1" /> Ajouter une banque</Link>
-                        </div>
-                        <DataTable
-                            data={banques}
-                            setReload={setReload} />
-                    </div>
+                    {isPermittedTo("banque.view") ?
+                        <div className="col-md-10">
+                            <div className="flex justify-content-center">
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.banque.create}><MessageSquarePlus className="mx-1" /> Ajouter une banque</Link>
+                            </div>
+                            <DataTable
+                                data={banques}
+                                setReload={setReload} />
+                        </div> :
+                        <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                    }
                 </div>
             </div>
         </DashboardLayourt>

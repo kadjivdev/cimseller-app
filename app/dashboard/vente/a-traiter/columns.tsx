@@ -100,6 +100,47 @@ export function useColumns(setOpen:any,setSelectedVente:any)
   }
 
   return [
+    
+    // 
+    {
+      id: "actions",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Actions <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const vente = row.original
+        return (
+         
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+
+                {/* modifier */}
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="bg-info text-white"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      onEdit(vente) // 👈 remonte juste de la vente
+                    }}
+                  >
+                    <PencilLine /> Traiter la vente
+                  </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu> 
+        )
+      },
+    },
     {
       accessorKey: "id",
       header: ({ column }) => (
@@ -276,46 +317,6 @@ export function useColumns(setOpen:any,setSelectedVente:any)
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => <span className="badge border rounded text-dark"> {row.original.createdBy?.fullname || "—"} </span>,
-    },
-    // 
-    {
-      id: "actions",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Actions <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const vente = row.original
-        return (
-         
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-
-                {/* modifier */}
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="bg-info text-white"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onEdit(vente) // 👈 remonte juste de la vente
-                    }}
-                  >
-                    <PencilLine /> Traiter la vente
-                  </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu> 
-        )
-      },
     },
   ]
 }

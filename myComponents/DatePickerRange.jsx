@@ -25,14 +25,14 @@ export function DatePickerRange({ date, setDate }) {
     }
 
     return (
-        <Field className="mx-auto w-100 text-center bg-light p-3 rounded">
+        <Field className="mx-auto w-50 text-center bg-dark text-white p-3 rounded">
             <FieldLabel htmlFor="date-picker-range" className="text-lg">Filtre par période d'insersion</FieldLabel>
             <Popover>
-                <PopoverTrigger asChild className="text-center w-100">
+                <PopoverTrigger asChild className="text-center">
                     <Button
                         variant="outline"
                         id="date-picker-range"
-                        className="justify-center text-bold px-2.5 font-normal border-md shadow-sm rounded"
+                        className="justify-center text-bold text-dark px-2.5 font-normal border-md shadow-sm rounded"
                     >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {date?.from ? (

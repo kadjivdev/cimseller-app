@@ -23,11 +23,16 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import Link from "next/link";
+import { useApp } from "@/app/AppContext"
 
 export default function index() {
+    const { user } = useApp()
     const [users, setUsers] = useState([])
     const [reload, setReload] = useState(0)
 
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
     // get users
     const retriveUsers = async () => {
         try {
@@ -62,20 +67,22 @@ export default function index() {
     }, [reload])
 
     return <>
-        <DashboardLayourt title="Liste des utilisateurs" icon={<UserRoundPlus/>}>
+        <DashboardLayourt title="Liste des utilisateurs" icon={<UserRoundPlus />}>
             {/* listes des users */}
-            <div className="container mx-auto py-10">
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.user.create}><MessageSquarePlus className="mx-1" /> Ajouter un utilisateur</Link>
+            {isPermittedTo("user.view") &&
+                <div className="container mx-auto py-10">
+                    <div className="row d-flex justify-content-center">
+                        <div className="col-md-10">
+                            <div className="flex justify-content-center">
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.user.create}><MessageSquarePlus className="mx-1" /> Ajouter un utilisateur</Link>
+                            </div>
+                            <DataTable
+                                data={users}
+                                setReload={setReload} />
                         </div>
-                        <DataTable
-                            data={users}
-                            setReload={setReload} />
                     </div>
                 </div>
-            </div>
+            }
         </DashboardLayourt>
     </>
 }

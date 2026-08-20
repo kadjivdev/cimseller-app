@@ -21,12 +21,14 @@ export type Role = {
 }
 
 // export type Name:String
+import { useApp } from "@/app/AppContext"
 
 export function useColumns(onEdit: (role: Role) => void, onDelete: (role: Role) => void): ColumnDef<Role>[] {
-  // verifier si le user a cette permission
-  // const isUserPermitted = (name:String) => {
-  //   return (rolePermissions).some(per => per.name == name);
-  // }
+     const { user} = useApp()
+
+  const isPermittedTo = (name:string) => {
+        return user?.role?.permissions?.some((pr:any) => pr.name == name)
+    }
 
   return [
      {
@@ -107,6 +109,7 @@ export function useColumns(onEdit: (role: Role) => void, onDelete: (role: Role) 
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
 
+            {isPermittedTo("role.edit") && 
               <DropdownMenuItem
                 style={{ cursor: "pointer" }}
                 className="text-warning"
@@ -117,7 +120,9 @@ export function useColumns(onEdit: (role: Role) => void, onDelete: (role: Role) 
               >
                 <PencilLine /> Modifier
               </DropdownMenuItem>
+            }
 
+            {isPermittedTo("role.delete") && 
               <DropdownMenuItem
                 style={{ cursor: "pointer" }}
                 className="text-danger"
@@ -127,6 +132,7 @@ export function useColumns(onEdit: (role: Role) => void, onDelete: (role: Role) 
                 }}>
                 <Eraser /> Supprimer
               </DropdownMenuItem>
+            }
             </DropdownMenuContent>
           </DropdownMenu>
         )

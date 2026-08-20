@@ -15,10 +15,10 @@ import { DataTable } from "./data-table"
 import AddProgrammationModal from "./add-modal"
 import ImprimerProgrammationModal from "./imprimer/modal"
 import Link from "next/link";
-
+import { useApp } from "@/app/AppContext"
 
 export default function index() {
-
+    const { user } = useApp()
     const [reload, setReload] = useState(0)
 
     const [bons, setBons] = useState([])
@@ -26,6 +26,10 @@ export default function index() {
     const [openPrint, setOpenPrint] = useState(false)
     const [selectedBon, setSelectedBon] = useState(null)
     const [programmations, setProgrammations] = useState([])
+
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // filtres de données par poériode
     const [date, setDate] = useState({
@@ -115,54 +119,54 @@ export default function index() {
         <DashboardLayourt title="Liste des programmations de bons" icon={<Van />}>
             {/* listes des programmations de commande */}
             <div className="container mx-auto py-10">
-
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-8 mb-2 text-center bg-light border rounded shadow-sm p-2">
-                        <div className="mt-2 d-flex justify-content-center">
-                            <button
-                                className="btn btn-sm bg-dark text-warning text-center  d-flex align-items-center justify-content-center gap-1"
-                                onClick={printProgrammation}
-                            >
-                                <Printer size={16} /> Imprimer une liste de programmation
-                            </button>
+                {isPermittedTo("programmation.view") ?
+                    <>
+                        <div className="row d-flex justify-content-center">
+                            <div className="col-md-8 mb-2 text-center bg-light border rounded shadow-sm p-2">
+                                <div className="mt-2 d-flex justify-content-center">
+                                    {isPermittedTo("programmation.validate") &&
+                                        <button
+                                            className="btn btn-sm bg-dark text-warning text-center  d-flex align-items-center justify-content-center gap-1"
+                                            onClick={printProgrammation}
+                                        >
+                                            <Printer size={16} /> Imprimer une liste de programmation
+                                        </button>
+                                    }
+                                </div>
+                                <div className="mt-3 border rounded p-1">
+                                    <Label htmlFor="bon_id">Choisissez un bon pour afficher ses programmations <span className="text-danger">*</span>  </Label>
+                                    <FilterSelect
+                                        options={bons?.map((bn) => ({ id: bn.id, label: `${bn.code} | Commandée: ${bn.qteCommander}` }))}
+                                        handleSelect={handleBonSelect}
+                                        selected={selectedBon?.id}
+                                    />
+                                    {(selectedBon && isPermittedTo("programmation.create")) && (
+                                        <>
+                                            <p className="text-center bg-dark text-white my-3">Bon choisi : {`${selectedBon.code} | Commandée: ${selectedBon.qteCommander} | Programmée:${selectedBon.qteProgrammer} | Stock:${selectedBon.stock}`} </p>
+                                            <div className="flex justify-content-center">
+                                                <button className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2"
+                                                    disabled={selectedBon?.stock == 0}
+                                                    onClick={addProgrammation}><MessageSquarePlus className="mx-1" /> Programmer ce bon</button>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
                         </div>
-                        <div className="mt-3 border rounded p-1">
-                            <Label htmlFor="bon_id">Choisissez un bon pour afficher ses programmations <span className="text-danger">*</span>  </Label>
-                            <FilterSelect
-                                options={bons?.map((bn) => ({ id: bn.id, label: `${bn.code} | Commandée: ${bn.qteCommander}` }))}
-                                handleSelect={handleBonSelect}
-                                selected={selectedBon?.id}
-                            />
-                            {selectedBon && (
-                                <>
-                                    <p className="text-center bg-dark text-white my-3">Bon choisi : {`${selectedBon.code} | Commandée: ${selectedBon.qteCommander} | Programmée:${selectedBon.qteProgrammer} | Stock:${selectedBon.stock}`} </p>
-                                    {/* <button
-                                        className="btn btn-sm bg-dark text-white"
-                                        disabled={selectedBon?.stock == 0}
-                                        onClick={addProgrammation}
-                                    >➕ Programmer ce bon</button> */}
-                                    <div className="flex justify-content-center">
-                                        <button className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2"
-                                        disabled={selectedBon?.stock == 0}
-                                        onClick={addProgrammation}><MessageSquarePlus className="mx-1" /> Programmer ce bon</button>
-                                    </div>
-                                </>
-                            )}
+                        <div className="row d-flex justify-content-center">
+                            <div className="col-md-10">
+                                <DataTable
+                                    data={filteredProgrammations}
+                                    setReload={setReload}
+                                    date={date}
+                                    setDate={setDate}
+                                    handleBonSelect={handleBonSelect}
+                                />
+                            </div>
                         </div>
-                    </div>
-
-                </div>
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <DataTable
-                            data={filteredProgrammations}
-                            setReload={setReload}
-                            date={date}
-                            setDate={setDate}
-                            handleBonSelect={handleBonSelect}
-                        />
-                    </div>
-                </div>
+                    </> :
+                    <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                }
             </div>
         </DashboardLayourt>
 
@@ -178,6 +182,8 @@ export default function index() {
         <ImprimerProgrammationModal
             open={openPrint}
             onOpenChange={setOpenPrint}
+            bon={selectedBon}
+            handleBonSelect={handleBonSelect}
         />
     </>
 }

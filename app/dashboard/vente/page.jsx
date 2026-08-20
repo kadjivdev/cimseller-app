@@ -12,9 +12,10 @@ import { Label } from "@/components/ui/label"
 
 import { DataTable } from "./data-table"
 import AddVenteModal from "./add-modal"
+import { useApp } from "@/app/AppContext"
 
 export default function index() {
-
+    const { user } = useApp()
     const [reload, setReload] = useState(0)
     const [open, setOpen] = useState(false)
     const [openAdd, setOpenAdd] = useState(false)
@@ -30,6 +31,10 @@ export default function index() {
         from: startOfMonth(new Date()),
         to: endOfMonth(new Date()),
     })
+
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     //Initialization des données
     useEffect(() => {
@@ -100,41 +105,45 @@ export default function index() {
         <DashboardLayourt title="Liste des ventes" icon={<ShoppingBasket />}>
             {/* listes des ventes de commande */}
             <div className="container mx-auto py-10">
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-8 mb-2 text-center bg-light border rounded shadow-sm p-2">
-                        <div className="mt-3 border rounded p-1">
-                            <Label htmlFor="">Choisissez une programmation <span className="text-danger">*</span>  </Label>
-                            <FilterSelect
-                                options={programmations?.map((pr) => ({ id: pr.id, label: `${pr.code} | Bl: ${pr.bl} | Programmée: ${pr.qteProgrammer}` }))}
-                                handleSelect={handleProgrammationSelect}
-                                selected={selectedProgrammation?.id}
-                            />
-                            {selectedProgrammation && (
-                                <>
-                                    <p className="text-center bg-dark text-white my-3">Programmation choisie : {`${selectedProgrammation.code} | Programmée:${selectedProgrammation.qteProgrammer} | Reste à Vendre:${selectedProgrammation.resteAvendre}`} </p>
-                                    <button
-                                        className="btn btn-sm bg-success text-white"
-                                        disabled={selectedProgrammation?.resteAvendre == 0}
-                                        onClick={addVente}
-                                    ><span className="badge shadow-sm text-dark bg-white">➕ </span>Vendre ce bon</button>
-                                </>
-                            )}
-                        </div>
-                    </div>
+                {isPermittedTo("vente.view") ?
+                    <>
+                        <div className="row d-flex justify-content-center">
+                            <div className="col-md-8 mb-2 text-center bg-light border rounded shadow-sm p-2">
+                                <div className="mt-3 border rounded p-1">
+                                    <Label htmlFor="">Choisissez une programmation <span className="text-danger">*</span>  </Label>
+                                    <FilterSelect
+                                        options={programmations?.map((pr) => ({ id: pr.id, label: `${pr.code} | Bl: ${pr.bl} | Programmée: ${pr.qteProgrammer}` }))}
+                                        handleSelect={handleProgrammationSelect}
+                                        selected={selectedProgrammation?.id}
+                                    />
+                                    {(selectedProgrammation && isPermittedTo("vente.create")) && (
+                                        <>
+                                            <p className="text-center bg-dark text-white my-3">Programmation choisie : {`${selectedProgrammation.code} | Programmée:${selectedProgrammation.qteProgrammer} | Reste à Vendre:${selectedProgrammation.resteAvendre}`} </p>
+                                            <button
+                                                className="btn btn-sm bg-success text-white"
+                                                disabled={selectedProgrammation?.resteAvendre == 0}
+                                                onClick={addVente}
+                                            ><span className="badge shadow-sm text-dark bg-white">➕ </span>Vendre ce bon</button>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
 
-                </div>
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <DataTable
-                            data={filteredVentes}
-                            setReload={setReload}
-                            date={date}
-                            setDate={setDate}
-                            selectedProgrammation={selectedProgrammation}
-                            handleProgrammationSelect={handleProgrammationSelect}
-                        />
-                    </div>
-                </div>
+                        </div>
+                        <div className="row d-flex justify-content-center">
+                            <div className="col-md-10">
+                                <DataTable
+                                    data={filteredVentes}
+                                    setReload={setReload}
+                                    date={date}
+                                    setDate={setDate}
+                                    selectedProgrammation={selectedProgrammation}
+                                    handleProgrammationSelect={handleProgrammationSelect}
+                                />
+                            </div>
+                        </div> </> :
+                    <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                }
             </div>
         </DashboardLayourt>
 

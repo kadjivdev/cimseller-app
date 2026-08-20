@@ -36,6 +36,7 @@ import ImportClientModal from "./import"
 import ShowApprovisionnements from "./approvisionnement/showApprovisionnements"
 import ShowReglements from "./reglement/showReglements"
 import ShowVentes from "./vente/showVentes"
+import { useApp } from "@/app/AppContext"
 
 const exportColumns = [
     { label: "Raison sociale ", key: "raison_sociale" as const },
@@ -53,6 +54,8 @@ const exportColumns = [
 ]
 
 export function DataTable({ data, setReload, zones, status }:any) {
+    const { user} = useApp()
+
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
     const [openProfil, setOpenProfil] = useState(false)
@@ -66,6 +69,11 @@ export function DataTable({ data, setReload, zones, status }:any) {
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // ✅ Nouveau
+
+    console.log("User agent's :", user)
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // 
     const handleEdit = (client: Client) => {
@@ -161,13 +169,16 @@ export function DataTable({ data, setReload, zones, status }:any) {
                     </div>
 
                     {/* session importation */}
+                    {isPermittedTo("client.create") ?
                     <div className="d-flex justify-content-center">
                         <Button variant="outline"
                             className="border rounded bg-dark shadow-sm text-white"
                             onClick={() => setOpenImport(true)}>
                             <Import /> Importer des clients
                         </Button>
-                    </div>
+                    </div>:
+                    <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                    }
 
                     {/* Table */}
                     <div className="rounded-md border">

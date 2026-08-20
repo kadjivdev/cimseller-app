@@ -12,11 +12,12 @@ import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
-import { PencilLine, SquareArrowRightEnter, Trash2, X } from "lucide-react";
+import { Eye, PencilLine, SquareArrowRightEnter, Trash2, X } from "lucide-react";
 import { useRouter } from "next/navigation"
 import { FilterSelect } from "@/myComponents/FilterSelect"
 import { Field } from "@/components/ui/field"
 import routes from "@/app/routes"
+import Link from "next/link"
 
 export default function VersementRecuBonModal({ open, onOpenChange, recu, setReload }) {
   const router = useRouter()
@@ -38,7 +39,6 @@ export default function VersementRecuBonModal({ open, onOpenChange, recu, setRel
         loading: 'Chargement des types de détail reçu ...',
         success: (res) => {
           setTypesDetailRecus(res.data || [])
-          console.log("Le types :", res.data)
           return 'Types chargés!'
         },
         error: (err) => {
@@ -55,7 +55,6 @@ export default function VersementRecuBonModal({ open, onOpenChange, recu, setRel
         loading: 'Chargement des comptes bancaires ...',
         success: (res) => {
           setComptes(res.data || [])
-          console.log("Les comptes :", res.data)
           return 'Comptes chargés!'
         },
         error: (err) => {
@@ -71,13 +70,12 @@ export default function VersementRecuBonModal({ open, onOpenChange, recu, setRel
       {
         loading: 'Chargement du recu ...',
         success: (res) => {
-
-          console.log("Le bon :", res.data)
+          console.log("Le recu chargé :",res.data)
           setData((prev) => ({
             ...prev,
             recuId: res.data?.id,
             versements: res.data?.versements?.length > 0 ?
-              [...res.data?.versements?.map((vs) => ({ code: vs.code, reference: vs.reference, compteId: vs.compteId, typeDetailRecuId: vs.typeDetailRecuId, date: vs.date.split("T")?.[0], montant: vs.montant, preuve: '' }))] :
+              [...res.data?.versements?.map((vs) => ({ code: vs.code, reference: vs.reference, compteId: vs.compteId, typeDetailRecuId: vs.typeDetailRecuId, date: vs.date.split("T")?.[0], montant: vs.montant, preuve: vs.preuve }))] :
               [{ code: '', reference: '', compteId: '', typeDetailRecuId: '', date: '', montant: 1, preuve: '' }]
           }))
           return 'Recu chargé!'
@@ -90,55 +88,57 @@ export default function VersementRecuBonModal({ open, onOpenChange, recu, setRel
     )
   }, [open])
 
-  // handle type selection
-  const handleTypeSelect = (index, typeDetailRecuId) => {
-    console.log("Le type detail reçu selectionné :", typeDetailRecuId, "ligne", index)
+  // ✅ handler centralisé pour tous les champs simples d'une ligne de versement
+  const handleChange = (index, field, value) => {
     setData((prev) => ({
       ...prev,
-      versements: prev.versements.map((v, idx) => (idx === index ? { ...v, typeDetailRecuId } : v)),
+      versements: prev.versements.map((v, idx) =>
+        idx === index ? { ...v, [field]: value } : v
+      ),
     }))
+  }
+
+  // handle type selection
+  const handleTypeSelect = (index, typeDetailRecuId) => {
+    handleChange(index, 'typeDetailRecuId', typeDetailRecuId)
   }
 
   // handle compte selection
   const handleCompteSelect = (index, compteId) => {
-    console.log("Le compteId selectionné :", compteId, "ligne", index)
-    setData((prev) => ({
-      ...prev,
-      versements: prev.versements.map((v, idx) => (idx === index ? { ...v, compteId } : v)),
-    }))
+    handleChange(index, 'compteId', compteId)
   }
 
   // submission
   const submitUpdateForm = async (e) => {
     e.preventDefault()
 
-    console.log("data state :", data)
-
-    // ✅ construit un vrai FormData pour multer
     const formData = new FormData()
-    formData.append('name', data.name)
+    formData.append('recuId', data.recuId)
 
-    if (data.image instanceof File) {
-      formData.append("image", data.image);
-    }
-    console.log("formData :", formData)
+    // on retire les Files du JSON (ils partent séparément) et on stringifie le reste
+    const versementsSansFichiers = data.versements.map(({ preuve, ...rest }) => rest)
+    formData.append('versements', JSON.stringify(versementsSansFichiers))
+
+    // chaque fichier est nommé par son index pour être retrouvé côté serveur
+    data.versements.forEach((v, index) => {
+      if (v.preuve instanceof File) {
+        formData.append(`preuve_${index}`, v.preuve)
+      }
+    })
 
     try {
       await toast.promise(
-        axiosInstance.post(apiRoutes.createCommandeRecuVersement, data),
+        axiosInstance.post(apiRoutes.createCommandeRecuVersement, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }),
         {
           loading: `Insertion des versements au bon ${recu?.code} ...`,
           success: async (res) => {
-            console.log("Response de mise à jour à succès:", res.data)
-
             setReload((prev) => prev + 1)
             onOpenChange(false)
-
             return `Versements insérés avec succès!`
           },
           error: (err) => {
-            console.log("Erreur complète :", err.response)
-
             if (err?.response?.status === 422) {
               const validationErrors = err.response.data?.errors
               const { recuId, versements } = validationErrors
@@ -146,9 +146,8 @@ export default function VersementRecuBonModal({ open, onOpenChange, recu, setRel
                 recuId: recuId?._errors?.[0],
                 versements: versements?._errors?.[0],
               })
-              return err.response.data?.message || `Erreurs de validation pour l'insertion des reçus, vérifiez le formulaire.`
+              return err.response.data?.message || `Erreurs de validation pour l'insertion des versements, vérifiez le formulaire.`
             }
-
             return err?.response?.data?.error || err?.message || "Erreur de mise à jour du bon"
           },
         }
@@ -177,21 +176,13 @@ export default function VersementRecuBonModal({ open, onOpenChange, recu, setRel
     }))
   }
 
-  useEffect(() => {
-    console.log("Data to submit :", data)
-  }, [data])
-
-  useEffect(() => {
-    console.log("Les erreures :", errors)
-  }, [errors])
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:max-w-[1000px] sm:max-w-[480px] overflow-y-auto max-h-[90vh]">
+      <DialogContent className="md:max-w-[10000px] sm:max-w-[480px] overflow-y-auto max-h-[90vh]">
         <DialogHeader className="bg-light p-1">
           <DialogTitle>
             <PencilLine /> Liste des versements du reçu
-            <span className="badge mx-1 bg-light rounded border text-dark">{recu?.code}</span>
+            <span className="badge mx-1 bg-dark rounded border text-white">{recu?.code}</span>
           </DialogTitle>
           <DialogDescription>
             Versements à ce reçu.
@@ -228,118 +219,86 @@ export default function VersementRecuBonModal({ open, onOpenChange, recu, setRel
                   </tr>
                 </thead>
                 <tbody>
-                  {
-                    data.versements?.map((dt, index) => (
-                      <tr key={index}>
-                        <th scope="row">{index + 1}</th>
-                        <th scope="row"><span className="badge bg-light border rounded text-dark">{dt.code || '--'}</span></th>
-                        <td scope="row">
-                          <Input id="reference"
-                            type="text"
-                            name="reference"
-                            placeholder="Ex: XX00490"
-                            required
-                            value={dt.reference}
+                  {data.versements?.map((dt, index) => (
+                    <tr key={index}>
+                      <th scope="row">{index + 1}</th>
+                      <th scope="row"><span className="badge bg-light border rounded text-dark">{dt.code || '--'}</span></th>
+                      <td scope="row">
+                        <Input id="reference"
+                          type="text"
+                          name="reference"
+                          placeholder="Ex: XX00490"
+                          required
+                          value={dt.reference}
+                          onChange={(e) => handleChange(index, 'reference', e.target.value)}
+                        />
+                        {errors.versements?.[0]?.reference && <span className="text-danger">{errors.versements?.[0]?.reference}</span>}
+                      </td>
+                      <td>
+                        <FilterSelect
+                          options={comptes?.map((cp) => ({ id: cp.id, label: `${cp.intitule} - ${cp.numero}` }))}
+                          handleSelect={(value) => handleCompteSelect(index, value)}
+                          selected={dt?.compteId}
+                        />
+                        {errors.versements?.[0]?.compteId && <span className="text-danger">{errors.versements?.[0]?.compteId}</span>}
+                      </td>
+                      <td>
+                        <FilterSelect
+                          options={typesDetailRecus?.map((tp) => ({ id: tp.id, label: tp.name }))}
+                          handleSelect={(value) => handleTypeSelect(index, value)}
+                          selected={dt?.typeDetailRecuId}
+                        />
+                        {errors.versements?.[0]?.typeDetailRecuId && <span className="text-danger">{errors.versements?.[0]?.typeDetailRecuId}</span>}
+                      </td>
+                      <td>
+                        <Input id="date"
+                          type="date"
+                          name="date"
+                          required
+                          value={dt.date}
+                          onChange={(e) => handleChange(index, 'date', e.target.value)}
+                        />
+                        {errors.versements?.[0]?.date && <span className="text-danger">{errors.versements?.[0]?.date}</span>}
+                      </td>
+                      <td>
+                        <Input id="montant"
+                          type="number"
+                          name="montant"
+                          placeholder="Ex: 1.000"
+                          required
+                          min={1}
+                          value={dt.montant}
+                          onChange={(e) => {
+                            const value = Number(e.target.value)
+                            handleChange(index, 'montant', isNaN(value) ? 0 : value)
+                          }}
+                        />
+                        {errors.versements?.[0]?.montant && <span className="text-danger">{errors.versements?.[0]?.montant}</span>}
+                      </td>
+                      <td className="d-flex">
+                        {dt.preuve && typeof dt.preuve === 'string' &&
+                          <Link target="_blank" href={dt.preuve} className="bg-light rounded border shadow-sm text-dark"><Eye /></Link>
+                        }
+                        <Field>
+                          <Input
+                            id="preuve"
+                            type="file"
+                            name="preuve"
                             onChange={(e) => {
-                              const value = String(e.target.value)
-                              setData((prev) => ({
-                                ...prev,
-                                versements: prev.versements.map((versement, idx) =>
-                                  idx === index
-                                    ? { ...versement, reference: isNaN(value) ? '' : value }
-                                    : versement
-                                ),
-                              }))
-                            }} />
-                          {errors.versements?.[0]?.reference && <span className="text-danger">{errors.versements?.[0]?.reference}</span>}
-                        </td>
-                        <td>
-                          <FilterSelect
-                            options={comptes?.map((cp) => ({ id: cp.id, label: `${cp.intitule} - ${cp.numero}` }))}
-                            handleSelect={(value) => handleCompteSelect(index, value)}
-                            selected={dt?.compteId}
-                          />
-                          {errors.versements?.[0]?.compteId && <span className="text-danger">{errors.versements?.[0]?.compteId}</span>}
-                        </td>
-                        <td>
-                          <FilterSelect
-                            options={typesDetailRecus?.map((tp) => ({ id: tp.id, label: tp.name }))}
-                            handleSelect={(value) => handleTypeSelect(index, value)}
-                            selected={dt?.typeDetailRecuId}
-                          />
-                          {errors.versements?.[0]?.typeDetailRecuId && <span className="text-danger">{errors.versements?.[0]?.typeDetailRecuId}</span>}
-                        </td>
-                        <td>
-                          <Input id="date"
-                            type="date"
-                            name="date"
-                            required
-                            value={dt.date}
-                            onChange={(e) => {
-                              const value = e.target.value
-                              setData((prev) => ({
-                                ...prev,
-                                versements: prev.versements.map((versement, idx) =>
-                                  idx === index
-                                    ? { ...versement, date: value }
-                                    : versement
-                                ),
-                              }))
+                              const file = e.target.files?.[0] || null
+                              handleChange(index, 'preuve', file)
                             }}
                           />
-                          {errors.versements?.[0]?.date && <span className="text-danger">{errors.versements?.[0]?.date}</span>}
-                        </td>
-                        <td>
-                          <Input id="montant"
-                            type="number"
-                            name="montant"
-                            placeholder="Ex: 1.000"
-                            required
-                            min={1}
-                            value={dt.montant}
-                            onChange={(e) => {
-                              const value = Number(e.target.value)
-                              setData((prev) => ({
-                                ...prev,
-                                versements: prev.versements.map((versement, idx) =>
-                                  idx === index
-                                    ? { ...versement, montant: value }
-                                    : versement
-                                ),
-                              }))
-                            }}
-                          />
-                          {errors.versements?.[0]?.montant && <span className="text-danger">{errors.versements?.[0]?.montant}</span>}
-                        </td>
-                        <td>
-                          <Field>
-                            <Input
-                              id="preuve"
-                              type="file"
-                              name="preuve"
-                              onChange={(e) => {
-                                const value = Number(e.target.files?.[0])
-                                setData((prev) => ({
-                                  ...prev,
-                                  versements: prev.versements.map((versement, idx) =>
-                                    idx === index
-                                      ? { ...versement, preuve: isNaN(value) ? '' : value }
-                                      : versement
-                                  ),
-                                }))
-                              }}
-                            />
-                          </Field>
-                          {errors.versements?.[0]?.preuve && <span className="text-danger">{errors.versements?.[0]?.preuve}</span>}
-                        </td>
-                        <td>
-                          <button
-                            className="btn btn-sm bg-danger text-white border rounded"
-                            onClick={(e) => removeLigne(e, index)}><Trash2 /></button>
-                        </td>
-                      </tr>
-                    ))
-                  }
+                        </Field>
+                        {errors.versements?.[0]?.preuve && <span className="text-danger">{errors.versements?.[0]?.preuve}</span>}
+                      </td>
+                      <td>
+                        <button
+                          className="btn btn-sm bg-danger text-white border rounded"
+                          onClick={(e) => removeLigne(e, index)}><Trash2 /></button>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -352,6 +311,6 @@ export default function VersementRecuBonModal({ open, onOpenChange, recu, setRel
         </form>
 
       </DialogContent>
-    </Dialog >
+    </Dialog>
   )
 }

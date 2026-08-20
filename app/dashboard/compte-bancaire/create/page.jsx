@@ -34,7 +34,7 @@ import Link from "next/link";
 
 
 export default function index() {
-    const { loading, setLoading } = useApp()
+    const { user, loading, setLoading } = useApp()
     const router = useRouter()
 
     const [banques, setBanques] = useState([])
@@ -42,6 +42,11 @@ export default function index() {
     const [data, setData] = useState({ banqueId: '', intitule: '', numero: '' })
     const [errors, setErrors] = useState({ banqueId: '', intitule: '', numero: '' })
 
+    console.log("User agent's :", user)
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
+    
     // get banques
     const retriveBanques = async () => {
         try {
@@ -142,52 +147,55 @@ export default function index() {
             {/* listes des comptes */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.compteBancaire.list}><List className="mx-1" /> Liste des comptes bancaires</Link>
-                        </div>
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
-                            <div className="row">
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="intitule">Intitulé  <span className="text-danger">*</span></Label>
-                                    <Input id="intitule"
-                                        type="text"
-                                        name="intitule"
-                                        placeholder="Ex: KADJIV Sarl"
-                                        autoFocus
-                                        required
-                                        value={data.intitule}
-                                        onChange={handleChange} />
-                                    {errors.name && <span className="text-danger">{errors.intitule}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="numero">Numéro  <span className="text-danger">*</span></Label>
-                                    <Input id="numero"
-                                        type="text"
-                                        name="numero"
-                                        placeholder="Ex: 02 83 72 60 009"
-                                        required
-                                        value={data.numero}
-                                        onChange={handleChange} />
-                                    {errors.name && <span className="text-danger">{errors.numero}</span>}
-                                </div>
-                                <div className="col-md-12">
-                                    <Label htmlFor="representant_id">Choisissez une banque</Label>
-                                    <FilterSelect
-                                        options={banques?.map((b) => ({ id: b.id, label: `${b.name}` }))}
-                                        handleSelect={handleSelect}
-                                        selected={data?.banqueId}
-                                    />
-                                    {errors.banqueId && <span className="text-center">{errors.banqueId}</span>}
-                                </div>
+                    {isPermittedTo("compteBancaire.create") ?
+                        <div className="col-md-10">
+                            <div className="flex justify-content-center">
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.compteBancaire.list}><List className="mx-1" /> Liste des comptes bancaires</Link>
                             </div>
-                            <br />
-                            <div className="d-flex justify-content-center bg-light p-3">
-                                <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.compteBancaire.list))} > <X /> Retour</Button>
-                                <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
-                            </div>
-                        </form>
-                    </div>
+                            <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
+                                <div className="row">
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="intitule">Intitulé  <span className="text-danger">*</span></Label>
+                                        <Input id="intitule"
+                                            type="text"
+                                            name="intitule"
+                                            placeholder="Ex: KADJIV Sarl"
+                                            autoFocus
+                                            required
+                                            value={data.intitule}
+                                            onChange={handleChange} />
+                                        {errors.name && <span className="text-danger">{errors.intitule}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="numero">Numéro  <span className="text-danger">*</span></Label>
+                                        <Input id="numero"
+                                            type="text"
+                                            name="numero"
+                                            placeholder="Ex: 02 83 72 60 009"
+                                            required
+                                            value={data.numero}
+                                            onChange={handleChange} />
+                                        {errors.name && <span className="text-danger">{errors.numero}</span>}
+                                    </div>
+                                    <div className="col-md-12">
+                                        <Label htmlFor="representant_id">Choisissez une banque</Label>
+                                        <FilterSelect
+                                            options={banques?.map((b) => ({ id: b.id, label: `${b.name}` }))}
+                                            handleSelect={handleSelect}
+                                            selected={data?.banqueId}
+                                        />
+                                        {errors.banqueId && <span className="text-center">{errors.banqueId}</span>}
+                                    </div>
+                                </div>
+                                <br />
+                                <div className="d-flex justify-content-center bg-light p-3">
+                                    <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.compteBancaire.list))} > <X /> Retour</Button>
+                                    <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
+                                </div>
+                            </form>
+                        </div> :
+                        <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                    }
                 </div>
             </div >
         </DashboardLayourt >

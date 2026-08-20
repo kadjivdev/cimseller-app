@@ -31,13 +31,18 @@ import routes from "@/app/routes"
 import { FilterSelect } from "@/myComponents/FilterSelect";
 import Link from "next/link";
 
-
 export default function index() {
+    const { user} = useApp()
     const { loading, setLoading } = useApp()
     const router = useRouter()
 
     const [data, setData] = useState({ fullname: '', permis: '', phone: '' })
     const [errors, setErrors] = useState({ fullname: '', permis: '', phone: '' })
+
+    console.log("User agent's :", user)
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     const handleChange = (e) => {
         const { name, value, type, files } = e.target
@@ -116,6 +121,7 @@ export default function index() {
             {/* listes des agents */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
+                    {isPermittedTo("chauffeur.view") ?
                     <div className="col-md-10">
                         <div className="flex justify-content-center">
                             <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.chauffeur.list}><List className="mx-1" /> Liste des agents</Link>
@@ -165,7 +171,9 @@ export default function index() {
                                 <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
                             </div>
                         </form>
-                    </div>
+                    </div>:
+                    <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                }
                 </div>
             </div >
         </DashboardLayourt >

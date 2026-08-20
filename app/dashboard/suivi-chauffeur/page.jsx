@@ -5,23 +5,29 @@ import { useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
 import apiRoutes from "@/api/routes";
-import { List, Printer } from 'lucide-react';
+import { List, Printer, Van } from 'lucide-react';
 import { startOfMonth, endOfMonth, isWithinInterval, startOfDay, endOfDay } from "date-fns"
 import { FilterSelect } from "@/myComponents/FilterSelect";
 import { Label } from "@/components/ui/label"
 
 import { DataTable } from "./data-table"
-
+import { useApp } from "@/app/AppContext"
 
 export default function index() {
-
-    const [reload, setReload] = useState(false)
+    const { user } = useApp()
+    const [reload, setReload] = useState(0)
 
     const [fournisseurs, setFournisseurs] = useState([])
     const [chauffeurs, setChauffeurs] = useState([])
+    const [camions, setCamions] = useState([])
     const [programmations, setProgrammations] = useState([])
     const [selectedFournisseur, setSelectedFournisseur] = useState(null)
     const [selectedChauffeur, setSelectedChauffeur] = useState(null)
+    const [selectedCamion, setSelectedCamion] = useState(null)
+
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // filtres de données par poériode
     const [date, setDate] = useState({
@@ -60,6 +66,20 @@ export default function index() {
             }
         )
 
+        // Charge tous les camions
+        toast.promise(
+            () => axiosInstance.get(apiRoutes.allCamion),
+            {
+                loading: 'Chargement de tous les camions ...',
+                success: (res) => {
+                    console.log("Les camions :", res.data)
+                    setCamions(res.data || [])
+                    return 'Camions chargés!'
+                },
+                error: (err) => err?.response?.message || 'Erreur de chargement',
+            }
+        )
+
         // Charge toutes les programmations
         toast.promise(
             () => axiosInstance.get(apiRoutes.allValidatedProgrammation),
@@ -76,33 +96,24 @@ export default function index() {
         )
     }, [reload])
 
-    // Bons filtrés par période (recalculé automatiquement)
+    // Programmations filtrées par période (recalculé automatiquement)
     const filteredProgrammations = useMemo(() => {
         if (!date?.from) return programmations
 
         const from = startOfDay(date.from)
         const to = date.to ? endOfDay(date.to) : endOfDay(date.from)
 
-        let ps = programmations.filter((p) => {
+        return programmations.filter((p) => {
             const createdAt = new Date(p.createdAt)
-            console.log("Programme : ", p)
-            if (selectedFournisseur && !selectedChauffeur) {
-                console.log("selectedFournisseur && !selectedChauffeur :", selectedFournisseur && !selectedChauffeur)
-                return p.commande?.fournisseur?.id == selectedFournisseur && isWithinInterval(createdAt, { start: from, end: to })
-            } else if (!selectedFournisseur && selectedChauffeur) {
-                console.log("!selectedFournisseur && selectedChauffeur :", !selectedFournisseur && selectedChauffeur)
-                return p?.chauffeur?.id == selectedChauffeur && isWithinInterval(createdAt, { start: from, end: to })
-            } else if (selectedFournisseur && selectedChauffeur) {
-                console.log("selectedFournisseur && selectedChauffeur : ", selectedFournisseur && selectedChauffeur)
-                return (p.commande?.fournisseur?.id == selectedFournisseur) && (p?.chauffeur?.id == selectedChauffeur) && isWithinInterval(createdAt, { start: from, end: to })
-            } else {
-                return isWithinInterval(createdAt, { start: from, end: to })
-            }
-        })
 
-        console.log("filteredProgrammations")
-        return ps;
-    }, [programmations, date, selectedFournisseur, selectedChauffeur])
+            if (!isWithinInterval(createdAt, { start: from, end: to })) return false
+            if (selectedFournisseur && p.commande?.fournisseur?.id != selectedFournisseur) return false
+            if (selectedChauffeur && p?.chauffeur?.id != selectedChauffeur) return false
+            if (selectedCamion && p?.camion?.id != selectedCamion) return false
+
+            return true
+        })
+    }, [programmations, date, selectedFournisseur, selectedChauffeur, selectedCamion])
 
     // filter select
     const FournisseurfilterSelect = () => {
@@ -112,6 +123,18 @@ export default function index() {
                 options={fournisseurs?.map((fr) => ({ id: fr.id, label: `${fr.sigle}-${fr.raison_sociale}` }))}
                 handleSelect={handleFournisseurSelect}
                 selected={selectedFournisseur}
+            />
+        </>
+    }
+
+    // filter select
+    const CamionfilterSelect = () => {
+        return <>
+            <Label htmlFor="">Choisissez un Camion <span className="text-danger">*</span>  </Label>
+            <FilterSelect
+                options={camions?.map((cm) => ({ id: cm.id, label: `${cm.immatriculation} - ${cm.libelle}` }))}
+                handleSelect={handleCamionSelect}
+                selected={selectedCamion}
             />
         </>
     }
@@ -140,27 +163,35 @@ export default function index() {
         setSelectedChauffeur(chauffeurId)
     }
 
+    // handle camion selection
+    const handleCamionSelect = (camionId) => {
+        console.log("Le camion selectionné :", camionId)
+        setSelectedCamion(camionId)
+    }
+
     useEffect(() => {
         console.log("programmations :", programmations)
     }, [programmations])
 
     return <>
-        <DashboardLayourt title="Panel du suivi des Chauffeurs" icon={<List />}>
-            {/* listes des programmations de commande */}
+        <DashboardLayourt title="Panel du suivi des Chauffeurs" icon={<Van />}>
+            {/* listes des suivi chauffeur de commande */}
             <div className="container mx-auto py-10">
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-
-                        <DataTable
-                            data={filteredProgrammations}
-                            setReload={setReload}
-                            date={date}
-                            setDate={setDate}
-                            FournisseurfilterSelect={FournisseurfilterSelect}
-                            ChauffeurFilterSelect={ChauffeurFilterSelect}
-                        />
-                    </div>
-                </div>
+                {isPermittedTo("suiviChauffeur.view") ?
+                    <div className="row d-flex justify-content-center">
+                        <div className="col-md-10">
+                            <DataTable
+                                data={filteredProgrammations}
+                                date={date}
+                                setDate={setDate}
+                                FournisseurfilterSelect={FournisseurfilterSelect}
+                                ChauffeurFilterSelect={ChauffeurFilterSelect}
+                                CamionfilterSelect={CamionfilterSelect}
+                            />
+                        </div>
+                    </div> :
+                    <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                }
             </div>
         </DashboardLayourt>
     </>

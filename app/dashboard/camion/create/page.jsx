@@ -31,14 +31,20 @@ import routes from "@/app/routes"
 import { FilterSelect } from "@/myComponents/FilterSelect";
 import Link from "next/link";
 
-
 export default function index() {
+    const { user } = useApp()
+
     const { loading, setLoading } = useApp()
     const router = useRouter()
 
     const [data, setData] = useState({ marqueId: '', immatriculation: '', libelle: '' })
     const [errors, setErrors] = useState({ marqueId: '', immatriculation: '', libelle: '' })
     const [marques, setMarques] = useState([])
+
+    console.log("User agent's :", user)
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // get marques
     const retriveMarques = async () => {
@@ -143,53 +149,56 @@ export default function index() {
             {/* listes des camions */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.camion.list}><List className="mx-1" /> Liste des camions</Link>
-                        </div>
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
-                            <div className="row">
-                                <div className="col-md-12">
-                                    <Label htmlFor="marqueId">Choisissez une marque <span className="text-danger">*</span> </Label>
-                                    <FilterSelect
-                                        options={marques?.map((marque) => ({ id: marque.id, label: marque.name }))}
-                                        handleSelect={handleSelect}
-                                        selected={data?.marqueId}
-                                    />
-                                    {errors.marqueId && <span className="text-center">{errors.marqueId}</span>}
-                                </div>
-                                <Separator className="my-2" />
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="immatriculation">Immatriculation  <span className="text-danger">*</span></Label>
-                                    <Input id="immatriculation"
-                                        type="text"
-                                        name="immatriculation"
-                                        placeholder="Ex: 1AB-123-CD"
-                                        required
-                                        value={data.immatriculation}
-                                        onChange={handleChange} />
-                                    {errors.immatriculation && <span className="text-danger">{errors.immatriculation}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="libelle">Libellé <span className="text-danger">*</span>  </Label>
-                                    <Input id="libelle"
-                                        type="text"
-                                        name="libelle"
-                                        placeholder="Ex: Camion Poids lourd"
-                                        required
-                                        value={data.libelle}
-                                        value={data.libelle}
-                                        onChange={handleChange} />
-                                    {errors.libelle && <span className="text-danger">{errors.libelle}</span>}
-                                </div>
+                    {isPermittedTo("camion.create") ?
+                        <div className="col-md-10">
+                            <div className="flex justify-content-center">
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.camion.list}><List className="mx-1" /> Liste des camions</Link>
                             </div>
-                            <br />
-                            <div className="d-flex justify-content-center bg-light p-3">
-                                <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.camion.list))} > <X /> Retour</Button>
-                                <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
-                            </div>
-                        </form>
-                    </div>
+                            <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <Label htmlFor="marqueId">Choisissez une marque <span className="text-danger">*</span> </Label>
+                                        <FilterSelect
+                                            options={marques?.map((marque) => ({ id: marque.id, label: marque.name }))}
+                                            handleSelect={handleSelect}
+                                            selected={data?.marqueId}
+                                        />
+                                        {errors.marqueId && <span className="text-center">{errors.marqueId}</span>}
+                                    </div>
+                                    <Separator className="my-2" />
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="immatriculation">Immatriculation  <span className="text-danger">*</span></Label>
+                                        <Input id="immatriculation"
+                                            type="text"
+                                            name="immatriculation"
+                                            placeholder="Ex: 1AB-123-CD"
+                                            required
+                                            value={data.immatriculation}
+                                            onChange={handleChange} />
+                                        {errors.immatriculation && <span className="text-danger">{errors.immatriculation}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="libelle">Libellé <span className="text-danger">*</span>  </Label>
+                                        <Input id="libelle"
+                                            type="text"
+                                            name="libelle"
+                                            placeholder="Ex: Camion Poids lourd"
+                                            required
+                                            value={data.libelle}
+                                            value={data.libelle}
+                                            onChange={handleChange} />
+                                        {errors.libelle && <span className="text-danger">{errors.libelle}</span>}
+                                    </div>
+                                </div>
+                                <br />
+                                <div className="d-flex justify-content-center bg-light p-3">
+                                    <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.camion.list))} > <X /> Retour</Button>
+                                    <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
+                                </div>
+                            </form>
+                        </div> :
+                        <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                    }
                 </div>
             </div >
         </DashboardLayourt >

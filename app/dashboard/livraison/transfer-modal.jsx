@@ -144,7 +144,7 @@ export default function TransfertProgrammationModal({ open, onOpenChange, progra
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:max-w-[800px] sm:max-w-[480px] overflow-y-auto max-h-[90vh]">
+      <DialogContent className="md:max-w-[1000px] sm:max-w-[480px] overflow-y-auto max-h-[90vh]">
         <DialogHeader className="bg-light p-1">
           <DialogTitle>
             <PencilLine />Transfert de la programmation
@@ -157,11 +157,24 @@ export default function TransfertProgrammationModal({ open, onOpenChange, progra
 
         <form onSubmit={submitTransfertForm}>
 
-          {programmation?.transferts?.length > 0 &&
-            <div className="flex justify-content-center mb-3">
-              <span className="badge bg-success text-light  p-3">Déjà transféré vers la zone : <strong className="text-uppercase bg-light text-dark p-2 rounded shadow-sm">{programmation?.transferts?.at(-1)?.zoneDestination?.name}</strong> </span>
-            </div>
-          }
+          {programmation?.transferts?.length > 0 ? (
+            <>
+              <h5> Déjà transféré:</h5>
+              <div className="row m-3">
+                {programmation?.transferts?.map((transfert,index) => (
+                  <div className="col-md-4 border rounded p-1 m-2 shadow-sm" key={index}> <strong> {index+1}. </strong> De
+                    <span className="mx-1 badge bg-light text-dark border rounded">
+                      {transfert?.zoneSource?.name}
+                    </span>
+                    vers
+                    <span className="mx-1 badge bg-light text-dark border rounded">
+                      {transfert?.zoneDestination?.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : null}
 
           <div className="row">
             <div className="col-md-6">
@@ -229,7 +242,7 @@ export default function TransfertProgrammationModal({ open, onOpenChange, progra
             <Button
               type="submit"
               className="bg-dark text-white shadow-sm rounded"
-              disabled={programmation?.qteProgrammer ==programmation?.qteLivre}
+              disabled={programmation?.qteProgrammer == programmation?.qteLivre}
             ><SquareArrowRightEnter /> Enregistrer</Button>
           </DialogFooter>
         </form>

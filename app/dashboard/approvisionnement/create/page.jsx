@@ -30,9 +30,8 @@ import { FilterSelect } from "@/myComponents/FilterSelect";
 import { Logs, MessageSquarePlus, SquareArrowRightEnter, X } from "lucide-react";
 import Link from "next/link";
 
-
 export default function index() {
-    const { loading, setLoading } = useApp()
+    const { user, loading, setLoading } = useApp()
     const router = useRouter()
 
     const [detailRecuTypes, setDetailRecuTypes] = useState([])
@@ -41,6 +40,11 @@ export default function index() {
 
     const [data, setData] = useState({ typeDetailRecuId: '', deblocDette: false, clientId: '', compteBancaireId: '', reference: '', montant: '', date: '', preuve: '', comment: '' })
     const [errors, setErrors] = useState({ typeDetailRecuId: '', deblocDette: '', clientId: '', compteBancaireId: '', reference: '', montant: '', date: '', preuve: '', comment: '' })
+
+    console.log("User agent's :", user)
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // initialisation des données
     useEffect(() => {
@@ -192,105 +196,108 @@ export default function index() {
             {/* ajouter des approvisionnement */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <div className="flex justify-content-center">
-                            <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.approvisionnement.list}><Logs className="mx-1" /> Liste des approvisionnements</Link>
-                        </div>
-                        <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
-                            <div className="row">
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="reference">Reference  <span className="text-danger">*</span></Label>
-                                    <Input id="reference"
-                                        type="text"
-                                        name="reference"
-                                        placeholder="Ex: XXX-XXX-XXX"
-                                        autoFocus
-                                        required
-                                        value={data.reference}
-                                        onChange={handleChange} />
-                                    {errors.reference && <span className="text-danger">{errors.reference}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="montant">Montant <span className="text-danger">*</span> </Label>
-                                    <Input id="montant"
-                                        type="number"
-                                        name="montant"
-                                        placeholder="Ex: 999.999.999"
-                                        required
-                                        value={data.montant}
-                                        onChange={handleChange} />
-                                    {errors.montant && <span className="text-danger">{errors.montant}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="montant">Date <span className="text-danger">*</span> </Label>
-                                    <Input id="date"
-                                        type="date"
-                                        name="date"
-                                        required
-                                        value={data.date}
-                                        onChange={handleChange} />
-                                    {errors.date && <span className="text-danger">{errors.date}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="clientId">Client <span className="text-danger">*</span>  </Label>
-                                    <FilterSelect
-                                        options={clients?.map((clt) => ({ id: clt.id, label: clt.raison_sociale }))}
-                                        handleSelect={handleClientSelect}
-                                        selected={data?.clientId}
-                                    />
-                                    {errors.clientId && <span className="text-danger">{errors.clientId}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="clientId">Compte bancaire <span className="text-danger">*</span>  </Label>
-                                    <FilterSelect
-                                        options={compteBancaires?.map((cb) => ({ id: cb.id, label: `${cb.intitule} - ${cb.numero}` }))}
-                                        handleSelect={handleCompteBancaireSelect}
-                                        selected={data?.compteBancaireId}
-                                    />
-                                    {errors.compteBancaireId && <span className="text-danger">{errors.compteBancaireId}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="typeDetailRecuId">Type de reçu <span className="text-danger">*</span>  </Label>
-                                    <FilterSelect
-                                        options={detailRecuTypes?.map((dr) => ({ id: dr.id, label: dr.name }))}
-                                        handleSelect={handleTypeDetailRecuSelect}
-                                        selected={data?.typeDetailRecuId}
-                                    />
-                                    {errors.typeDetailRecuId && <span className="text-danger">{errors.typeDetailRecuId}</span>}
-                                </div>
-                                <div className="col-md-12 mb-2">
-                                    <Field>
-                                        <FieldLabel htmlFor="image">Preuve <span className="text-danger">*</span> </FieldLabel>
-                                        <Input
-                                            id="preuve"
-                                            type="file"
-                                            name="preuve"
+                    {isPermittedTo("approvisionnement.create") ?
+                        <div className="col-md-10">
+                            <div className="flex justify-content-center">
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.approvisionnement.list}><Logs className="mx-1" /> Liste des approvisionnements</Link>
+                            </div>
+                            <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
+                                <div className="row">
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="reference">Reference  <span className="text-danger">*</span></Label>
+                                        <Input id="reference"
+                                            type="text"
+                                            name="reference"
+                                            placeholder="Ex: XXX-XXX-XXX"
+                                            autoFocus
                                             required
-                                            onChange={(e) => handleChange(e)}
+                                            value={data.reference}
+                                            onChange={handleChange} />
+                                        {errors.reference && <span className="text-danger">{errors.reference}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="montant">Montant <span className="text-danger">*</span> </Label>
+                                        <Input id="montant"
+                                            type="number"
+                                            name="montant"
+                                            placeholder="Ex: 999.999.999"
+                                            required
+                                            value={data.montant}
+                                            onChange={handleChange} />
+                                        {errors.montant && <span className="text-danger">{errors.montant}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="montant">Date <span className="text-danger">*</span> </Label>
+                                        <Input id="date"
+                                            type="date"
+                                            name="date"
+                                            required
+                                            value={data.date}
+                                            onChange={handleChange} />
+                                        {errors.date && <span className="text-danger">{errors.date}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="clientId">Client <span className="text-danger">*</span>  </Label>
+                                        <FilterSelect
+                                            options={clients?.map((clt) => ({ id: clt.id, label: clt.raison_sociale }))}
+                                            handleSelect={handleClientSelect}
+                                            selected={data?.clientId}
                                         />
-                                    </Field>
-                                    {errors.preuve && <span className="text-danger">{errors.preuve}</span>}
+                                        {errors.clientId && <span className="text-danger">{errors.clientId}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="clientId">Compte bancaire <span className="text-danger">*</span>  </Label>
+                                        <FilterSelect
+                                            options={compteBancaires?.map((cb) => ({ id: cb.id, label: `${cb.intitule} - ${cb.numero}` }))}
+                                            handleSelect={handleCompteBancaireSelect}
+                                            selected={data?.compteBancaireId}
+                                        />
+                                        {errors.compteBancaireId && <span className="text-danger">{errors.compteBancaireId}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="typeDetailRecuId">Type de reçu <span className="text-danger">*</span>  </Label>
+                                        <FilterSelect
+                                            options={detailRecuTypes?.map((dr) => ({ id: dr.id, label: dr.name }))}
+                                            handleSelect={handleTypeDetailRecuSelect}
+                                            selected={data?.typeDetailRecuId}
+                                        />
+                                        {errors.typeDetailRecuId && <span className="text-danger">{errors.typeDetailRecuId}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Field>
+                                            <FieldLabel htmlFor="image">Preuve <span className="text-danger">*</span> </FieldLabel>
+                                            <Input
+                                                id="preuve"
+                                                type="file"
+                                                name="preuve"
+                                                required
+                                                onChange={(e) => handleChange(e)}
+                                            />
+                                        </Field>
+                                        {errors.preuve && <span className="text-danger">{errors.preuve}</span>}
+                                    </div>
+                                    <div className="col-md-12 mb-2">
+                                        <Label htmlFor="comment">Commentaire  </Label>
+                                        <Textarea
+                                            rows={1}
+                                            placeholder="Ex: Laissez un commentaire ..."
+                                            id="comment"
+                                            name="comment"
+                                            value={data.comment}
+                                            onChange={handleChange}
+                                        ></Textarea>
+                                        {errors.comment && <span className="text-danger">{errors.comment}</span>}
+                                    </div>
                                 </div>
-                                <div className="col-md-12 mb-2">
-                                    <Label htmlFor="comment">Commentaire  </Label>
-                                    <Textarea
-                                        rows={1}
-                                        placeholder="Ex: Laissez un commentaire ..."
-                                        id="comment"
-                                        name="comment"
-                                        value={data.comment}
-                                        onChange={handleChange}
-                                    ></Textarea>
-                                    {errors.comment && <span className="text-danger">{errors.comment}</span>}
+                                <br />
+                                <div className="d-flex justify-content-center bg-light p-3">
+                                    <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.approvisionnement.list))} > <X /> Retour</Button>
+                                    <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
                                 </div>
-                            </div>
-                            <br />
-                            <div className="d-flex justify-content-center bg-light p-3">
-                                <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.approvisionnement.list))} > <X /> Retour</Button>
-                                <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
-                            </div>
-                        </form>
-                    </div>
+                            </form>
+                        </div> :
+                        <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                    }
                 </div>
             </div >
         </DashboardLayourt >
