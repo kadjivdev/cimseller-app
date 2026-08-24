@@ -68,7 +68,7 @@ export default function index() {
     }, [reload])
 
     return <>
-        <DashboardLayourt title="Listes des rôles" icon={<UserKey />}>
+        <DashboardLayourt title="Liste des rôles" icon={<UserKey />}>
             {/* listes des roles */}
             <div className="container mx-auto py-10">
                 <div className="row d-flex justify-content-center">

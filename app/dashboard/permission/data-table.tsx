@@ -31,7 +31,7 @@ import { Settings2 } from "lucide-react"
 const exportColumns = [
     { label: "Nom", key: "name" as const },
     { label: "Description", key: "description" as const },
-    { label: "Crée le", key: "created_at" as const },
+    { label: "Crée le", key: "createdAt" as const },
 ]
 
 export function DataTable({ data }:any) {

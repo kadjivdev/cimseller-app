@@ -2,7 +2,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, CheckCircle, CircleCheckBig, CircleX, Eraser, Eye, FolderPlus, MoreHorizontal, PencilLine, ReceiptText, ShoppingCart, Van, X } from "lucide-react"
+import { ArrowUpDown, CheckCircle, CircleCheckBig, CircleX, Eye, MoreHorizontal, PencilLine, ReceiptText, ShoppingCart, Van, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -61,12 +61,51 @@ export type Programmation = {
 export function useColumns(
   onEdit: (programmation: Programmation) => void)
   : ColumnDef<Programmation>[] {
-  // verifier si le user a cette permission
-  // const isUserPermitted = (name:String) => {
-  //   return (rolePermissions).some(per => per.name == name);
-  // }
 
   return [
+    // 
+    {
+      id: "actions",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Actions <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const programmation = row.original
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+
+              {/* actualiser */}
+              <DropdownMenuItem
+                style={{ cursor: "pointer" }}
+                className="text-dark"
+                onSelect={(e) => {
+                  e.preventDefault()
+                  onEdit(programmation) // 👈 remonte juste du bon
+                }}
+              >
+                {(programmation?.dateSortie && programmation.bl) ?
+                <span><Eye /> Voir détail</span>:
+                <span><PencilLine /> Actualiser le bon</span>
+              }
+                
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      },
+    },
     {
       accessorKey: "id",
       header: ({ column }) => (
@@ -244,49 +283,6 @@ export function useColumns(
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => <Textarea placeholder={row.getValue("observation")} />,
-    },
-    // 
-    {
-      id: "actions",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Actions <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const programmation = row.original
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-
-              {/* actualiser */}
-              <DropdownMenuItem
-                style={{ cursor: "pointer" }}
-                className="text-dark"
-                onSelect={(e) => {
-                  e.preventDefault()
-                  onEdit(programmation) // 👈 remonte juste du bon
-                }}
-              >
-                {(programmation?.dateSortie && programmation.bl) ?
-                <span><Eye /> Voir détail</span>:
-                <span><PencilLine /> Actualiser le bon</span>
-              }
-                
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )
-      },
     },
   ]
 }

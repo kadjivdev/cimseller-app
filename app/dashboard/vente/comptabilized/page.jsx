@@ -12,14 +12,20 @@ import { Label } from "@/components/ui/label"
 
 import { DataTable } from "./data-table"
 import UpdateVenteModal from "./update-modal";
+import { useApp } from "@/app/AppContext"
 
 export default function index() {
+    const { user } = useApp()
 
     const [reload, setReload] = useState(false)
     const [open, setOpen] = useState(false)
 
     const [ventes, setVentes] = useState([])
     const [selectedVente, setSelectedVente] = useState(null)
+
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // filtres de données par poériode
     const [date, setDate] = useState({
@@ -69,17 +75,20 @@ export default function index() {
         <DashboardLayourt title="Liste des ventes envoyées à la comptabilité" icon={<HandCoins />}>
             {/* listes des ventes */}
             <div className="container mx-auto py-10">
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <DataTable
-                            data={filteredVentes}
-                            date={date}
-                            setDate={setDate}
-                            setSelectedVente={setSelectedVente}
-                            setOpen={setOpen}
-                        />
-                    </div>
-                </div>
+                {isPermittedTo("comptabilite.view") ?
+                    <div className="row d-flex justify-content-center">
+                        <div className="col-md-10">
+                            <DataTable
+                                data={filteredVentes}
+                                date={date}
+                                setDate={setDate}
+                                setSelectedVente={setSelectedVente}
+                                setOpen={setOpen}
+                            />
+                        </div>
+                    </div> :
+                    <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+                }
             </div>
         </DashboardLayourt>
 

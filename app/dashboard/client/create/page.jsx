@@ -182,7 +182,7 @@ export default function index() {
                     {isPermittedTo("client.create") ?
                         <div className="col-md-10">
                             <div className="flex justify-content-center">
-                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.client.create}><List className="mx-1" /> Listes des clients</Link>
+                                <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.client.list}><List className="mx-1" /> Listes des clients</Link>
                             </div>
                             <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
                                 <div className="row">

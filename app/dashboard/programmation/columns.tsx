@@ -2,7 +2,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, CheckCircle, CircleCheckBig, CircleX, Eraser, Eye, FolderPlus, MoreHorizontal, PencilLine, ReceiptText, ShoppingCart, Van, X } from "lucide-react"
+import { ArrowUpDown, CheckCircle, CircleCheckBig, CircleX, Eraser,MoreHorizontal, PencilLine, Van, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -73,6 +73,75 @@ export function useColumns(
   }
 
   return [
+    // 
+    {
+      id: "actions",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Actions <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const programmation = row.original
+        return (
+          (!programmation.validatedBy && programmation.statut?.id!=2) ?
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+
+                {/* modifier */}
+                {(!programmation.validatedBy && isPermittedTo("programmation.edit")) &&
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-warning"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      onEdit(programmation) // 👈 remonte juste du bon
+                    }}
+                  >
+                    <PencilLine /> Modifier
+                  </DropdownMenuItem>
+                }
+                
+                {/* valider */}
+                {((!programmation.validatedBy && isPermittedTo("programmation.edit")) && programmation.statut?.id!=2) &&
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-info"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      onAnnuler(programmation) // 👈 remonte juste la programmation
+                    }}
+                  >
+                    <X /> Annuler
+                  </DropdownMenuItem>
+                }
+
+                {/* suppression */}
+                {(!programmation.validatedBy && isPermittedTo("programmation.delete")) &&
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-danger"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      onDelete(programmation) // 👈 remonte juste de la programmation
+                    }}>
+                    <Eraser /> Supprimer
+                  </DropdownMenuItem>
+                }
+              </DropdownMenuContent>
+            </DropdownMenu> : '---'
+        )
+      },
+    },
     {
       accessorKey: "id",
       header: ({ column }) => (
@@ -306,75 +375,6 @@ export function useColumns(
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => <span className="badge border rounded text-dark"> {row.original.createdBy?.fullname || "—"} </span>,
-    },
-    // 
-    {
-      id: "actions",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Actions <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const programmation = row.original
-        return (
-          (!programmation.validatedBy && programmation.statut?.id!=2) ?
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-
-                {/* modifier */}
-                {(!programmation.validatedBy && isPermittedTo("programmation.edit")) &&
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-warning"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onEdit(programmation) // 👈 remonte juste du bon
-                    }}
-                  >
-                    <PencilLine /> Modifier
-                  </DropdownMenuItem>
-                }
-                
-                {/* valider */}
-                {((!programmation.validatedBy && isPermittedTo("programmation.edit")) && programmation.statut?.id!=2) &&
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-info"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onAnnuler(programmation) // 👈 remonte juste la programmation
-                    }}
-                  >
-                    <X /> Annuler
-                  </DropdownMenuItem>
-                }
-
-                {/* suppression */}
-                {(!programmation.validatedBy && isPermittedTo("programmation.delete")) &&
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-danger"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onDelete(programmation) // 👈 remonte juste de la programmation
-                    }}>
-                    <Eraser /> Supprimer
-                  </DropdownMenuItem>
-                }
-              </DropdownMenuContent>
-            </DropdownMenu> : '---'
-        )
-      },
     },
   ]
 }

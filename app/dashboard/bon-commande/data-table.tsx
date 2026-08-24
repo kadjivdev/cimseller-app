@@ -49,7 +49,7 @@ const exportColumns = [
     { label: "Crée par", key: "createdBy" as const },
 ]
 
-export function DataTable({ data, setReload, bons, types, status, date, setDate, totalAmount }:any) {
+export function DataTable({ data, setReload, date, setDate, totalAmount }:any) {
 
     const [open, setOpen] = useState(false)
     const [openShow, setOpenShow] = useState(false)

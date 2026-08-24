@@ -26,12 +26,14 @@ export default function UpdateUserModal({ open, onOpenChange, user, setReload })
   const router = useRouter()
 
   const [roles, setRoles] = useState([])
-  const [data, setData] = useState({ fullname: '', email: '', roleId: '', password: '', confirm_password: '' })
-  const [errors, setErrors] = useState({ fullname: '', email: '', roleId: '', password: '', confirm_password: '' })
+  const [zones, setZones] = useState([])
+  const [data, setData] = useState({ fullname: '', email: '', roleId: '', zoneId: '', password: '', confirm_password: '' })
+  const [errors, setErrors] = useState({ fullname: '', email: '', roleId: '', zoneId: '', password: '', confirm_password: '' })
 
   useEffect(() => {
     if (!user) return
-    setData({ fullname: user.fullname, email: user.email, password: '', confirm_password: '', roleId: user.role?.id })
+    console.log("Le user to update :", user)
+    setData({ fullname: user.fullname, email: user.email, password: '', confirm_password: '', roleId: user.role?.id, zoneId: user.zone?.id })
   }, [user])
 
   // Charge tous les roles
@@ -49,9 +51,22 @@ export default function UpdateUserModal({ open, onOpenChange, user, setReload })
       }
     )
 
+    // Charge toutes les zones
+    toast.promise(
+      () => axiosInstance.get(apiRoutes.allZone),
+      {
+        loading: 'Chargement des zones...',
+        success: (res) => {
+          setZones(res.data || [])
+          return 'Zones chargées!'
+        },
+        error: (err) => err?.message || 'Erreur de chargement',
+      }
+    )
+
     // initialisation des erreurs
     setErrors({
-      fullname: '', email: '', roleId: '', password: '', confirm_password: ''
+      fullname: '', email: '', roleId: '', zoneId: '', password: '', confirm_password: ''
     })
   }, [open])
 
@@ -59,6 +74,34 @@ export default function UpdateUserModal({ open, onOpenChange, user, setReload })
     const { name, value } = e.target
     setData((prev) => ({ ...prev, [name]: value }))
   }
+
+
+  // handle role selection
+  const handleSelect = (role_id) => {
+    console.log("Le role selectionné :", role_id)
+    setData((prev) => ({ ...prev, roleId: role_id }))
+  }
+
+  // handle zone select
+  const handleZoneSelect = (zoneId) => {
+    console.log("Le zone selectionné :", zoneId)
+    setData((prev) => ({ ...prev, zoneId }))
+    setData({ ...data, zoneId })
+  }
+
+  // gestion des consoles
+  useEffect(() => {
+    console.log("Role  :", roles)
+  }, [roles])
+
+  useEffect(() => {
+    console.log("Data to submit :", data)
+  }, [data])
+
+  useEffect(() => {
+    console.log("Les erreures :", errors)
+  }, [errors])
+
 
   // submission
   const submitUpdateForm = async (e) => {
@@ -107,10 +150,10 @@ export default function UpdateUserModal({ open, onOpenChange, user, setReload })
                 confirm_password: confirm_password?._errors[0],
                 roleId: roleId?._errors[0],
               })
-              return err.response.data?.message || 'Erreurs de validation, vérifiez le formulaire.'
+              return err.response.data?.error || 'Erreurs de validation, vérifiez le formulaire.'
             }
 
-            return err?.response?.data?.message || err?.message || "Erreur de mise à jour de l'utilisateur"
+            return err?.response?.data?.error || err?.message || "Erreur de mise à jour de l'utilisateur"
           },
         }
       )
@@ -119,26 +162,6 @@ export default function UpdateUserModal({ open, onOpenChange, user, setReload })
       console.log("Erreur catchée :", error)
     }
   }
-
-  // handle role selection
-  const handleSelect = (role_id) => {
-    console.log("Le role selectionné :", role_id)
-    setData((prev) => ({ ...prev, roleId: role_id }))
-  }
-
-  // gestion des consoles
-  useEffect(() => {
-    console.log("Role  :", roles)
-  }, [roles])
-
-  useEffect(() => {
-    console.log("Data to submit :", data)
-  }, [data])
-
-  useEffect(() => {
-    console.log("Les erreures :", errors)
-  }, [errors])
-
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -204,13 +227,25 @@ export default function UpdateUserModal({ open, onOpenChange, user, setReload })
 
         <div className="row">
           <div className="col-md-12">
-            <Label htmlFor="role_id">Choisissez un rôle</Label>
+            <Label htmlFor="role_id">Choisissez un rôle <span className="text-danger">*</span></Label>
             <FilterSelect
               options={roles?.map((role) => ({ id: role.id, label: role.name }))}
               handleSelect={handleSelect}
               selected={data?.roleId}
             />
-            {errors.roleId && <span className="text-center">{errors.roleId}</span>}
+            {errors.roleId && <span className="text-danger">{errors.roleId}</span>}
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-md-12">
+            <Label htmlFor="role_id">Choisissez une zone <span className="text-danger">*</span> </Label>
+            <FilterSelect
+              options={zones?.map((z) => ({ id: z.id, label: `${z.name}` }))}
+              handleSelect={handleZoneSelect}
+              selected={data?.zoneId}
+            />
+            {errors.zoneId && <span className="text-danger">{errors.zoneId}</span>}
           </div>
         </div>
 

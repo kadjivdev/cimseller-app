@@ -20,43 +20,55 @@ import { FilterSelect } from "@/myComponents/FilterSelect"
 export default function UpdateVenteModal({ open, onOpenChange, vente, setReload }) {
   const router = useRouter()
 
-  const [data, setData] = useState({ aib: 0, tva: 0, ttcPrice: 0, usinePrice: 0, marge: 0, })
-  const [errors, setErrors] = useState({ aib: '', tva: '', ttcPrice: '', usinePrice: '', marge: '' })
+  const [data, setData] = useState({ usinePrice: 0, unitPriceHT: 0, unitPriceAib: 0, unitPriceTva: 0, unitPriceTtc: 0, unitPriceMarge: 0 })
+  const [errors, setErrors] = useState({ unitPriceHT: '', unitPriceAib: '', unitPriceTva: '', unitPriceTtc: '', unitPriceMarge: '' })
 
-  const [totaux, setTotaux] = useState({ usinePrixHT: 0, margePrice: 0, htPrice: 0, bruitPrice: 0, netHorsTaxe: 0, tvaPrice: 0, aibPrice: 0, prixTTC: 0 })
-
-  const aibs = [
-    { label: 'AIB Inclus (PI/1.18)', value: 1.18 },
-    { label: 'AIB Inclus (PI/1.19)', value: 1.19 },
-    { label: 'AIB Inclus (PI/1.23)', value: 1.23 },
-  ]
+  const [totaux, setTotaux] = useState({ priceHT: 0, priceAib: 0, priceTva: 0, priceTtc: 0, price118: 0, priceMarge: 0 })
 
   useEffect(() => {
     if (!vente || !vente?.venteComptability) return
-    setData({ aib: 0, tva: 1.18, ttcPrice: 0, usinePrice: 0, marge: 0, })
-    setTotaux({ usinePrixHT: 0, margePrice: 0, htPrice: 0, bruitPrice: 0, netHorsTaxe: 0, tvaPrice: 0, aibPrice: 0, prixTTC: 0 })
+    console.log("Vente de useEffect :", vente)
 
-    handleAibSelect(1.18)
-    operation()
-  }, [vente])
+    let unitePrice = data.unitPriceTtc > 0 ?
+      data.unitPriceTtc : vente?.unitePrice
+
+    const unitPriceHT = unitePrice / 1.19
+    const unitPriceAib = unitPriceHT / 100
+    const unitPriceTva = unitPriceHT * 18 / 100
+    const unitPriceTtc = unitPriceHT + unitPriceAib + unitPriceTva
+
+    setData((prev) => ({
+      ...prev,
+      usinePrice: vente?.unitePrice,
+      unitPriceHT, unitPriceAib, unitPriceTva, unitPriceTtc,
+      // unitPriceMarge:0
+    }))
+
+    setTotaux({
+      priceHT: unitPriceHT * vente?.qteTotal,
+      priceAib: unitPriceAib * vente?.qteTotal,
+      priceTva: unitPriceTva * vente?.qteTotal,
+      priceTtc: unitPriceTtc * vente?.qteTotal,
+      price118: unitPriceHT * 1.18,
+      priceMarge: data.unitPriceMarge * vente?.qteTotal,
+    })
+    console.log("unitPriceMarge in data:", data.unitPriceMarge)
+
+  }, [vente, data.unitPriceTtc, data.unitPriceMarge])
 
   const handleChange = (e) => {
     e.preventDefault()
     const { name, value } = e.target
 
-    if (name != "aib" && data.aib == 0) {
-      toast.error("Choisissez un AIB")
-      return
-    }
-
     setData((prev) => ({
       ...prev,
       [name]: Number(value)
     }))
-
-    // le détails
-    operation()
   }
+
+  useEffect(() => {
+    console.log("updated data :", data)
+  }, [data])
 
   function operation() {
 
@@ -128,14 +140,6 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
       }), [])
   }
 
-  // handle aib selection
-  const handleAibSelect = (value) => {
-    console.log("L'aib selectionné :", value)
-    setData((prev) => ({ ...prev, aib: value }))
-
-    operation()
-  }
-
   // submission
   const updateVenteForm = async (e) => {
     e.preventDefault()
@@ -146,7 +150,7 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
     }
 
     console.log("combinedData :", combinedData)
-    // return
+
     try {
       await toast.promise(
         axiosInstance.put(apiRoutes.updateComptabilities(vente?.venteComptability?.id), combinedData),
@@ -194,7 +198,7 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
         </DialogHeader>
 
         <div className="row">
-          <div className="col-md-3">
+          <div className="col-md-4 border rounded">
             <div className="border rounded">
               <table className="table table-sm p-2">
                 <tbody>
@@ -234,35 +238,10 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
               </table>
             </div>
           </div>
-          <div className="col-md-6 border rounded">
+          <div className="col-md-4 border rounded">
             <form onSubmit={updateVenteForm}>
               <div className="row">
-                <div className="col-md-6">
-                  <div className="mb-2">
-                    <Label htmlFor="aib">AIB <span className="text-danger">*</span>  </Label>
-                    <FilterSelect
-                      options={aibs?.map((aib) => ({ id: aib.value, label: `${aib.label}` }))}
-                      handleSelect={handleAibSelect}
-                      selected={data?.aib}
-                    />
-                    {errors?.aib && <span className="text-danger">{errors?.aib}</span>}
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="mb-2">
-                    <Label htmlFor="ttcPrice">Prix TTC <span className="text-danger">*</span>  </Label>
-                    <Input id="ttcPrice"
-                      type="number"
-                      name="ttcPrice"
-                      placeholder="Ex: 75000"
-                      required
-                      min={1}
-                      value={data.ttcPrice}
-                      onChange={handleChange} />
-                    {errors?.ttcPrice && <span className="text-danger">{errors?.ttcPrice}</span>}
-                  </div>
-                </div>
-                <div className="col-md-6">
+                <div className="col-md-12">
                   <div className="mb-2">
                     <Label htmlFor="usinePrice">Prix Usine <span className="text-danger">*</span>  </Label>
                     <Input id="usinePrice"
@@ -272,37 +251,68 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
                       required
                       min={1}
                       value={data.usinePrice}
+                      readOnly
                       onChange={handleChange} />
                     {errors?.usinePrice && <span className="text-danger">{errors?.usinePrice}</span>}
                   </div>
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-12">
                   <div className="mb-2">
-                    <Label htmlFor="tva">TVA <span className="text-danger">*</span>  </Label>
-                    <Input id="tva"
+                    <Label htmlFor="unitPriceHT">Prix HT unitaire <span className="text-danger">*</span>  </Label>
+                    <Input id="unitPriceHT"
                       type="number"
-                      name="tva"
+                      name="unitPriceHT"
+                      placeholder="Ex: 75000"
+                      required
+                      min={1}
+                      value={data.unitPriceHT}
+                      readOnly
+                      onChange={handleChange} />
+                    {errors?.unitPriceHT && <span className="text-danger">{errors?.unitPriceHT}</span>}
+                  </div>
+                </div>
+                <div className="col-md-12">
+                  <div className="mb-2">
+                    <Label htmlFor="unitPriceTtc">Prix TTC <span className="text-danger">*</span>  </Label>
+                    <Input id="unitPriceTtc"
+                      type="number"
+                      name="unitPriceTtc"
+                      placeholder="Ex: 75000"
+                      required
+                      min={1}
+                      value={data.unitPriceTtc}
+                      onChange={handleChange} />
+                    {errors?.unitPriceTtc && <span className="text-danger">{errors?.unitPriceTtc}</span>}
+                  </div>
+                </div>
+                <div className="col-md-12">
+                  <div className="mb-2">
+                    <Label htmlFor="unitPriceTva">TVA <span className="text-danger">*</span>  </Label>
+                    <Input id="unitPriceTva"
+                      type="number"
+                      name="unitPriceTva"
                       placeholder="Ex: 18/100"
                       required
                       min={1}
-                      max={data?.tva}
-                      value={data.tva}
+                      max={data?.unitPriceTva}
+                      value={data.unitPriceTva}
+                      readOnly
                       onChange={handleChange} />
-                    {errors?.tva && <span className="text-danger">{errors?.tva}</span>}
+                    {errors?.unitPriceTva && <span className="text-danger">{errors?.unitPriceTva}</span>}
                   </div>
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-12">
                   <div className="mb-2">
-                    <Label htmlFor="marge">Marge <span className="text-danger">*</span>  </Label>
-                    <Input id="marge"
+                    <Label htmlFor="unitPriceMarge">Marge <span className="text-danger">*</span>  </Label>
+                    <Input id="unitPriceMarge"
                       type="number"
-                      name="marge"
+                      name="unitPriceMarge"
                       placeholder="Ex: 10000"
                       required
                       min={0}
-                      value={data.marge}
+                      value={data.unitPriceMarge}
                       onChange={handleChange} />
-                    {errors?.marge && <span className="text-danger">{errors?.marge}</span>}
+                    {errors?.unitPriceMarge && <span className="text-danger">{errors?.unitPriceMarge}</span>}
                   </div>
                 </div>
               </div>
@@ -315,41 +325,33 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
               </DialogFooter>
             </form>
           </div>
-          <div className="col-md-3">
+          <div className="col-md-4 border rounded">
             <div className="border rounded">
               <table className="table table-sm pt-1">
                 <tbody>
                   <tr>
-                    <th>Prix Usine Hors Taxe:</th>
-                    <td>{totaux.usinePrixHT?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
-                  </tr>
-                  <tr>
-                    <th>Prix Marge:</th>
-                    <td >{totaux.margePrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
-                  </tr>
-                  <tr>
                     <th>Prix Hors Taxe :</th>
-                    <td>{totaux.htPrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
+                    <td>{totaux.priceHT?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
                   </tr>
                   <tr>
-                    <th>Prix Bruite :</th>
-                    <td >{totaux.bruitPrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
+                    <th>Prix Aib :</th>
+                    <td >{totaux.priceAib?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
                   </tr>
                   <tr>
-                    <th>Net Hors Taxe :</th>
-                    <td >{totaux.netHorsTaxe?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
+                    <th>Prix Tva :</th>
+                    <td >{totaux.priceTva?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
                   </tr>
                   <tr>
-                    <th>TVA :</th>
-                    <td >{totaux.tvaPrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
+                    <th>Prix 1.18 :</th>
+                    <td >{totaux.price118?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
                   </tr>
                   <tr>
-                    <th>AIB :</th>
-                    <td >{totaux.aibPrice?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
+                    <th>Prix marge :</th>
+                    <td >{totaux.priceMarge?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</td>
                   </tr>
                   <tr>
                     <th>TTC :</th>
-                    <td><span className="badge bg-success">{totaux.prixTTC?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</span></td>
+                    <td><span className="badge bg-success">{totaux.priceTtc?.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}</span></td>
                   </tr>
                 </tbody>
               </table>

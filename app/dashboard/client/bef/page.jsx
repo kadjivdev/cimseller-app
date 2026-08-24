@@ -11,6 +11,8 @@ import { CircleCheckBig, KeyRound, List } from 'lucide-react';
 
 import { columns } from "../columns"
 import { DataTable } from "../data-table"
+import { useApp } from "@/app/AppContext"
+
 
 import {
     Table,
@@ -23,12 +25,17 @@ import {
 } from "@/components/ui/table"
 
 export default function index() {
+    const { user } = useApp()
+
     const [zones, setZones] = useState([])
     const [status, setStatus] = useState([])
 
     const [clients, setClients] = useState([])
     const [reload, setReload] = useState(false)
 
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // initialisation
     useEffect(() => {
@@ -75,19 +82,22 @@ export default function index() {
 
 
     return <>
-        <DashboardLayourt title="Liste des Clients befs" icon={ <KeyRound />}>
+        <DashboardLayourt title="Liste des Clients befs" icon={<KeyRound />}>
             {/* listes des befs */}
-            <div className="container mx-auto py-10">
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <DataTable
-                            data={clients}
-                            setReload={setReload}
-                            zones={zones}
-                            status={status} />
+            {isPermittedTo("client.view") ?
+                <div className="container mx-auto py-10">
+                    <div className="row d-flex justify-content-center">
+                        <div className="col-md-10">
+                            <DataTable
+                                data={clients}
+                                setReload={setReload}
+                                zones={zones}
+                                status={status} />
+                        </div>
                     </div>
-                </div>
-            </div>
+                </div> :
+                <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+            }
         </DashboardLayourt>
     </>
 }

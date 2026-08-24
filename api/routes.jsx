@@ -116,6 +116,7 @@ const apiRoutes = {
   // vente comptabilitz's routes
   allComptabilities: `comptabilities`,
   createComptabilities: `comptabilities`,
+  createManyComptabilities: `comptabilities/many`,
   updateComptabilities: (id) => (`comptabilities/${id}`),
   validateComptabilities: (id) => (`comptabilities/${id}`),
   deleteComptabilities: (id) => (`comptabilities/${id}`),

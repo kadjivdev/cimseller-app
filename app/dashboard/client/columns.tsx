@@ -2,7 +2,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Eraser, Eye, ListOrdered, MoreHorizontal, PencilLine, Pointer } from "lucide-react"
+import { ArrowUpDown, Eraser, ListOrdered, MoreHorizontal, PencilLine } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenuSeparator,
@@ -12,7 +12,6 @@ import {
   DropdownMenuItem,
   DropdownMenu,
 } from "@/components/ui/dropdown-menu"
-import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export type Client = {
@@ -80,7 +79,7 @@ export function useColumns(
       cell: ({ row }) => {
         let client = row.original
         return <>
-          <span className="badge bg-light text-danger border">{row.getValue("approvisionnementAmount")?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span> <br />
+          <span className="badge bg-light text-danger border">{(Number(row.getValue("approvisionnementAmount")))?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span> <br />
           <button
             className="btn-sm bg-dark px-2 mt-1 text-white rounded border shadow-sm"
             onClick={(e) => {
@@ -102,7 +101,7 @@ export function useColumns(
       cell: ({ row }) => {
         let client = row.original
         return <>
-          <span className="badge bg-light text-warning border">{row.getValue("reglementAmount")?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span> <br />
+          <span className="badge bg-light text-warning border">{(Number(row.getValue("reglementAmount")))?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span> <br />
           <button
             className="btn-sm bg-dark px-2 mt-1 text-white rounded border shadow-sm"
             onClick={(e) => {
@@ -124,7 +123,7 @@ export function useColumns(
       cell: ({ row }) => {
         let client = row.original
         return <>
-          <span className="badge bg-light text-warning border">{row.getValue("venteAmount")?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span> <br />
+          <span className="badge bg-light text-warning border">{(Number(row.getValue("venteAmount")))?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span> <br />
           <button
             className="btn-sm bg-dark px-2 mt-1 text-white rounded border shadow-sm"
             onClick={(e) => {
@@ -143,7 +142,7 @@ export function useColumns(
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light text-success text-lg border">{row.getValue('solde').toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span>,
+      cell: ({ row }) => <span className="badge bg-light text-success text-lg border">{(Number(row.getValue('solde'))).toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span>,
     },
     {
       accessorKey: "zone",
@@ -177,7 +176,7 @@ export function useColumns(
       <div className="d-flex justify-content-center">
           <Avatar onClick={(e)=>handleProfil(row.original)} className="shadow-sm" style={{cursor:'pointer'}}>
             <AvatarImage
-              src={row.original?.profil}
+              src={row.original?.profil as string}
               alt="@shadcn"
               className="grayscale"
             />

@@ -123,7 +123,7 @@ export function DataTable({ data, setReload }: DataTableProps) {
                             <TableActions
                                 data={data}
                                 columns={exportColumns}
-                                filename="utilisateurs"
+                                filename="agents"
                             />
                         </div>
                     </div>

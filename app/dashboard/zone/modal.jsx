@@ -105,7 +105,7 @@ export default function UpdateZoneModal({ open, onOpenChange, zone, setReload, r
         <DialogHeader>
           <DialogTitle>
             <PencilLine /> Modifier la zone
-            <span className="badge bg-light rounded border text-dark">{zone?.name}</span>
+            <span className="badge bg-dark rounded border text-white">{zone?.name}</span>
           </DialogTitle>
           <DialogDescription>
             Remplissez les informations pour modifier cette zone.

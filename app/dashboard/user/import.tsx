@@ -18,7 +18,7 @@ import routes from "@/app/routes"
 import { Import, SquareArrowRightEnter, X } from "lucide-react";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 
-export default function ImportUserModal({ open, onOpenChange, setReload }:{open:boolean,onOpenChange:boolean,setReload:any}) {
+export default function ImportUserModal({ open, onOpenChange, setReload }:any) {
 
   const router = useRouter()
 

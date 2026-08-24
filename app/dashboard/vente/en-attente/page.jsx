@@ -11,8 +11,11 @@ import { FilterSelect } from "@/myComponents/FilterSelect";
 import { Label } from "@/components/ui/label"
 
 import { DataTable } from "./data-table"
+import { useApp } from "@/app/AppContext"
+
 
 export default function index() {
+    const { user } = useApp()
 
     const [reload, setReload] = useState(0)
     const [open, setOpen] = useState(false)
@@ -20,6 +23,10 @@ export default function index() {
 
     const [ventes, setVentes] = useState([])
     const [selectedVente, setSelectedVente] = useState(null)
+
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     // filtres de données par poériode
     const [date, setDate] = useState({
@@ -63,20 +70,22 @@ export default function index() {
     return <>
         <DashboardLayourt title="Liste des ventes en attente" icon={<CircleDotDashed />}>
             {/* listes des ventes de commande */}
-            <div className="container mx-auto py-10">
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <DataTable
-                            data={filteredVentes}
-                            setReload={setReload}
-                            date={date}
-                            setDate={setDate}
-                            setReload={setReload}
-                        />
+            {isPermittedTo("vente.view") ?
+                <div className="container mx-auto py-10">
+                    <div className="row d-flex justify-content-center">
+                        <div className="col-md-10">
+                            <DataTable
+                                data={filteredVentes}
+                                setReload={setReload}
+                                date={date}
+                                setDate={setDate}
+                                setReload={setReload}
+                            />
+                        </div>
                     </div>
-                </div>
-            </div>
+                </div> :
+                <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+            }
         </DashboardLayourt>
-
     </>
 }

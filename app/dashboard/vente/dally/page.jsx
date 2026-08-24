@@ -11,10 +11,15 @@ import { FilterSelect } from "@/myComponents/FilterSelect";
 import { Label } from "@/components/ui/label"
 
 import { DataTable } from "./data-table"
+import { useApp } from "@/app/AppContext"
 
 export default function index() {
-
+    const { user } = useApp()
     const [ventes, setVentes] = useState([])
+
+    const isPermittedTo = (name) => {
+        return user?.role?.permissions?.some((pr) => pr.name == name)
+    }
 
     //Initialization des données
     useEffect(() => {
@@ -37,15 +42,18 @@ export default function index() {
     return <>
         <DashboardLayourt title="Liste des ventes journalières" icon={<CalendarCheck />}>
             {/* listes des ventes journalière */}
-            <div className="container mx-auto py-10">
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-10">
-                        <DataTable
-                            data={ventes}
-                        />
+            {isPermittedTo("vente.view") ?
+                <div className="container mx-auto py-10">
+                    <div className="row d-flex justify-content-center">
+                        <div className="col-md-10">
+                            <DataTable
+                                data={ventes}
+                            />
+                        </div>
                     </div>
-                </div>
-            </div>
+                </div> :
+                <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
+            }
         </DashboardLayourt>
     </>
 }

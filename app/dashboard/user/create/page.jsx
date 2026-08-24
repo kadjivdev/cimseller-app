@@ -37,8 +37,9 @@ export default function index() {
     const router = useRouter()
 
     const [roles, setRoles] = useState([])
-    const [data, setData] = useState({ fullname: '', email: '', roleId: '', password: '', confirm_password: '' })
-    const [errors, setErrors] = useState({ fullname: '', email: '', roleId: '', password: '', confirm_password: '' })
+    const [zones, setZones] = useState([])
+    const [data, setData] = useState({ fullname: '', email: '', roleId: '', zoneId: '', password: '', confirm_password: '' })
+    const [errors, setErrors] = useState({ fullname: '', email: '', roleId: '', zoneId: '', password: '', confirm_password: '' })
     const [reload, setReload] = useState(false)
 
     const isPermittedTo = (name) => {
@@ -60,9 +61,22 @@ export default function index() {
             }
         )
 
+        // Charge toutes les zones
+        toast.promise(
+            () => axiosInstance.get(apiRoutes.allZone),
+            {
+                loading: 'Chargement des zones...',
+                success: (res) => {
+                    setZones(res.data || [])
+                    return 'Zones chargées!'
+                },
+                error: (err) => err?.message || 'Erreur de chargement',
+            }
+        )
+
         // initialisation des erreurs
         setErrors({
-            fullname: '', email: '', roleId: '', password: '', confirm_password: ''
+            fullname: '', email: '', roleId: '', zoneId: '', password: '', confirm_password: ''
         })
     }, [reload])
 
@@ -94,13 +108,14 @@ export default function index() {
 
                         if (err?.response?.status === 402) {
                             const validationErrors = err.response.data?.errors
-                            const { fullname, email, password, confirm_password, roleId } = validationErrors
+                            const { fullname, email, password, confirm_password, roleId, zoneId } = validationErrors
                             setErrors({
                                 fullname: fullname?._errors[0],
                                 email: email?._errors[0],
                                 password: password?._errors[0],
                                 confirm_password: confirm_password?._errors[0],
                                 roleId: roleId?._errors[0],
+                                zoneId: zoneId?._errors[0]
                             })
                             return err.response.data?.message || 'Erreurs de validation, vérifiez le formulaire.'
                         }
@@ -119,6 +134,13 @@ export default function index() {
         console.log("Le role selectionné :", role_id)
         setData((prev) => ({ ...prev, roleId: role_id }))
         setData({ ...data, roleId: role_id })
+    }
+
+    // handle zone select
+    const handleZoneSelect = (zoneId) => {
+        console.log("Le zone selectionné :", zoneId)
+        setData((prev) => ({ ...prev, zoneId }))
+        setData({ ...data, zoneId })
     }
 
     // gestion des consoles
@@ -194,13 +216,24 @@ export default function index() {
 
                                 <div className="row">
                                     <div className="col-md-12">
-                                        <Label htmlFor="role_id">Choisissez un rôle</Label>
+                                        <Label htmlFor="role_id">Choisissez un rôle <span className="text-danger">*</span> </Label>
                                         <FilterSelect
                                             options={roles?.map((role) => ({ id: role.id, label: role.name }))}
                                             handleSelect={handleSelect}
                                             selected={data?.roleId}
                                         />
-                                        {errors.roleId && <span className="text-center">{errors.roleId}</span>}
+                                        {errors.roleId && <span className="text-danger">{errors.roleId}</span>}
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <Label htmlFor="role_id">Choisissez une zone <span className="text-danger">*</span> </Label>
+                                        <FilterSelect
+                                            options={zones?.map((z) => ({ id: z.id, label: `${z.name}` }))}
+                                            handleSelect={handleZoneSelect}
+                                            selected={data?.zoneId}
+                                        />
+                                        {errors.zoneId && <span className="text-danger">{errors.zoneId}</span>}
                                     </div>
                                 </div>
                                 <br />

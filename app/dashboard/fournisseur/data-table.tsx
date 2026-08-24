@@ -40,7 +40,7 @@ const exportColumns = [
     { label: "Adresse", key: "adresse" as const },
 ]
 
-export function DataTable({ data, setReload }) {
+export function DataTable({ data, setReload }:any) {
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
     const [selectedFournisseur, setSelectedFournisseur] = useState<Fournisseur | null>(null)

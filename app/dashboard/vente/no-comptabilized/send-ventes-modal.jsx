@@ -13,24 +13,23 @@ import apiRoutes from "@/api/routes"
 import { useRouter } from "next/navigation"
 import { PencilLine, Send, X } from "lucide-react";
 
-export default function UpdateVenteModal({ open, onOpenChange, vente, setReload }) {
+export default function SendVentesModal({ open, onOpenChange,setReload }) {
   const router = useRouter()
 
-  // submission
-  const updateVenteForm = async (e) => {
+  const createMany = async (e) => {
     e.preventDefault()
 
     try {
       await toast.promise(
-        axiosInstance.post(apiRoutes.createComptabilities, { venteId: vente?.id }),
+        axiosInstance.post(apiRoutes.createManyComptabilities),
         {
-          loading: `Envoie en comptabilité de la vente ${vente?.code} ...`,
+          loading: `Envoie en comptabilité de toutes les ventes ...`,
           success: async (res) => {
             console.log("Response de mise à jour à succès:", res.data)
 
-            setReload((prev) => prev + 1)
+            setReload(true)
             onOpenChange(false)
-            return `Vente envoyée à la comptabilité avec succès!`
+            return `Ventes envoyée à la comptabilité avec succès!`
           },
           error: (err) => {
             console.log("Erreur complète :", err.response?.data)
@@ -48,15 +47,14 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
       <DialogContent className="md:max-w-[800px] sm:max-w-[480px] overflow-y-auto max-h-[90vh]">
         <DialogHeader className="bg-light p-1">
           <DialogTitle>
-            <PencilLine />Envoie à comptabiliser de la vente
-            <span className="badge mx-1 bg-dark rounded border text-white"> {vente?.code}</span>
+            <PencilLine />Envoie à comptabiliser de toutes les ventes.
           </DialogTitle>
           <DialogDescription>
             L'envoie à la comptabilité sera définitif et irréversible!
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={updateVenteForm}>
+        <form onSubmit={createMany}>
           <DialogFooter className="flex justify-content-center">
             <Button className="shadow-sm rounded bg-dark text-white" variant="outline" onClick={(e) => { e.preventDefault(), onOpenChange(false) }}><X /> Annuler</Button>
             <Button

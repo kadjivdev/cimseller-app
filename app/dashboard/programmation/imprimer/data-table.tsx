@@ -30,7 +30,6 @@ import { Settings2 } from "lucide-react"
 
 // modals
 import { DatePickerRange } from "@/myComponents/DatePickerRange"
-import { Label } from "@/components/ui/label"
 
 const exportColumns = [
     { label: "Code ", key: "code" as const },
@@ -44,7 +43,7 @@ const exportColumns = [
     { label: "Crée par", key: "createdBy" as const },
 ]
 
-export function DataTable({ data, date, setDate }) {
+export function DataTable({ data, date, setDate }:any) {
 
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])

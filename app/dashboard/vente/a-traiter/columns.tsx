@@ -81,31 +81,28 @@ export type Vente = {
     sender: {
       fullname: String,
     },
+    
     treatedAt:string,
     comptabilizedAt: string
   }
-
 }
 
 export function useColumns(setOpen:any,setSelectedVente:any)
   : ColumnDef<Vente>[] {
-  // verifier si le user a cette permission
-  // const isUserPermitted = (name:String) => {
-  //   return (rolePermissions).some(per => per.name == name);
-  // }
 
   const onEdit = (vente:any)=>{
+    console.log("Vente selected :",vente)
+
     setOpen(true)
     setSelectedVente(vente)
   }
 
   return [
     
-    // 
     {
       id: "actions",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded " variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Actions <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),

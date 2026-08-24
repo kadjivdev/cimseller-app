@@ -91,7 +91,7 @@ export function useColumns(): ColumnDef<Recu>[] {
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.tonnage ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(Number(row.original.tonnage) ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
       accessorKey: "montant",
@@ -173,7 +173,7 @@ export function useColumns(): ColumnDef<Recu>[] {
               <DropdownMenuSeparator />
 
               {/* modifier */}
-              <DropdownMenuItem
+              {/* <DropdownMenuItem
                 style={{ cursor: "pointer" }}
                 className="text-warning"
                 onSelect={(e) => {
@@ -182,7 +182,7 @@ export function useColumns(): ColumnDef<Recu>[] {
                 }}
               >
                 <PencilLine /> Les versements
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         )

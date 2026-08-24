@@ -12,11 +12,13 @@ import { Label } from "@/components/ui/label"
 
 import { DataTable } from "./data-table"
 import UpdateVenteModal from "./update-modal";
+import SendVentesModal from "./send-ventes-modal";
 
 export default function index() {
 
-    const [reload, setReload] = useState(false)
+    const [reload, setReload] = useState(0)
     const [open, setOpen] = useState(false)
+    const [openMany, setOpenMany] = useState(false)
 
     const [ventes, setVentes] = useState([])
     const [selectedVente, setSelectedVente] = useState(null)
@@ -44,7 +46,6 @@ export default function index() {
 
     //Initialization des données
     useEffect(() => {
-        // Charge des ventes
         toast.promise(
             () => axiosInstance.get(apiRoutes.allNoComptabilizedVente),
             {
@@ -59,11 +60,9 @@ export default function index() {
         )
     }, [reload])
 
-
     useEffect(() => {
         console.log("La vente selectiuonnée :", selectedVente)
     }, [selectedVente])
-
 
     return <>
         <DashboardLayourt title="Liste des ventes à comptabiliser" icon={<Send />}>
@@ -77,6 +76,8 @@ export default function index() {
                             setDate={setDate}
                             setSelectedVente={setSelectedVente}
                             setOpen={setOpen}
+
+                            setOpenMany={setOpenMany}
                         />
                     </div>
                 </div>
@@ -88,6 +89,13 @@ export default function index() {
             open={open}
             onOpenChange={setOpen}
             vente={selectedVente}
+            setReload={setReload}
+        />
+
+        {/* Envoie en bloc à la comptabilité */}
+        <SendVentesModal
+            open={openMany}
+            onOpenChange={setOpenMany}
             setReload={setReload}
         />
     </>

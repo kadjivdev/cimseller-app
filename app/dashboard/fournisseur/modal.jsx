@@ -14,7 +14,6 @@ import { toast } from "sonner"
 import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
 import { useRouter } from "next/navigation"
-import routes from "@/app/routes"
 import { PencilLine, SquareArrowRightEnter, X } from "lucide-react";
 
 export default function UpdateFournisseurModal({ open, onOpenChange, fournisseur, setReload }) {

@@ -1,26 +1,18 @@
 "use client"
 
 import {
-  Dialog, DialogContent, DialogDescription,
+  Dialog, DialogContent,
   DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
-import { toast } from "sonner"
-import axiosInstance from "@/api/axios"
-import apiRoutes from "@/api/routes"
 import { useRouter } from "next/navigation"
-import routes from "@/app/routes"
-import { PencilLine, SquareArrowRightEnter, X } from "lucide-react";
-import { FilterSelect } from "@/myComponents/FilterSelect"
-import { Field, FieldLabel } from "@/components/ui/field"
+import { PencilLine, X } from "lucide-react";
 
 
-export default function ProfilClientModal({ open, onOpenChange, client, setReload }) {
+export default function ProfilClientModal({ open, onOpenChange, client }) {
   const router = useRouter()
 
   useEffect(() => {

@@ -17,8 +17,9 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useColumns } from "./columns"
-import { TableActions } from "./tableActions"
+import { useColumns, Vente } from "./columns"
+import { TableActions } from "@/myComponents/TableActions"
+import { getStandardVenteExportColumns } from "@/lib/venteExportColumns"
 import { Card } from "@/components/ui/card"
 import {
     DropdownMenu,
@@ -30,17 +31,7 @@ import { Settings2 } from "lucide-react"
 
 import { DatePickerRange } from "@/myComponents/DatePickerRange"
 
-const exportColumns = [
-    { label: "Code ", key: "code" as const },
-    { label: "Fournisseur", key: "fournisseur" as const },
-    { label: "Montant", key: "montant" as const },
-    { label: "Type", key: "type" as const },
-    { label: "Statut", key: "statut" as const },
-    { label: "Validé le", key: "validatedAt" as const },
-    { label: "Validé par", key: "validatedBy" as const },
-    { label: "Crée le", key: "createdAt" as const },
-    { label: "Crée par", key: "createdBy" as const },
-]
+const exportColumns = getStandardVenteExportColumns<Vente>()
 
 export function DataTable({ data}:any) {
 

@@ -18,7 +18,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useColumns, Vente } from "./columns"
-import { TableActions } from "./tableActions"
+import { TableActions } from "@/myComponents/TableActions"
+import { getStandardVenteExportColumns } from "@/lib/venteExportColumns"
 import { Card } from "@/components/ui/card"
 import {
     DropdownMenu,
@@ -26,31 +27,18 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Settings2 } from "lucide-react"
+import { Send, Settings2 } from "lucide-react"
 
 // modals
-import UpdateVenteModal from "./update-modal"
-
 import { DatePickerRange } from "@/myComponents/DatePickerRange"
 
-const exportColumns = [
-    { label: "Code ", key: "code" as const },
-    { label: "Fournisseur", key: "fournisseur" as const },
-    { label: "Montant", key: "montant" as const },
-    { label: "Type", key: "type" as const },
-    { label: "Statut", key: "statut" as const },
-    { label: "Validé le", key: "validatedAt" as const },
-    { label: "Validé par", key: "validatedBy" as const },
-    { label: "Crée le", key: "createdAt" as const },
-    { label: "Crée par", key: "createdBy" as const },
-]
+const exportColumns = getStandardVenteExportColumns<Vente>()
 
-export function DataTable({ data, date, setDate,setSelectedVente ,setOpen}:any) {
+export function DataTable({ data, date, setDate,setSelectedVente ,setOpen,setOpenMany}:any) {
 
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // ✅ Nouveau
-
     const columns = useColumns(setOpen,setSelectedVente) // 👈 passe les callbacks
 
     const table = useReactTable({
@@ -66,11 +54,15 @@ export function DataTable({ data, date, setDate,setSelectedVente ,setOpen}:any) 
         getPaginationRowModel: getPaginationRowModel(),
     })
 
+    const sendVentes = ()=>{
+        setOpenMany(true)
+        console.log("Envoie des ventes à la comptabilité :")
+    }
+
     return (
         <>
             <Card className="p-2">
                 <div className="space-y-4">
-
                     {/* Filtre par période */}
                     <DatePickerRange
                         date={date}
@@ -118,6 +110,14 @@ export function DataTable({ data, date, setDate,setSelectedVente ,setOpen}:any) 
                                 filename="ventes"
                             />
                         </div>
+                    </div>
+
+                    {/* envoie en bloc */}
+                    <div className="d-flex justify-content-center">
+                        <button className="btn btn-sm shadow-sm align-items-center bg-success border rounded text-white"
+                        onClick={sendVentes}>
+                            <Send/> Envoyer toutes les ventes à la comptabilité
+                        </button>
                     </div>
 
                     {/* Table */}

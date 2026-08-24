@@ -21,6 +21,9 @@ export type Representant = {
   phone: string
   email: string
   createdAt: string
+  zones:{
+    name:string
+  }[]
 }
 
 // export type Name:String
@@ -80,7 +83,7 @@ export function useColumns(onEdit: (representant: Representant) => void, onDelet
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <Textarea placeholder={row.original.zones?.length>0?row.original.zones?.map((z)=> z.name):'--'}/>,
+      cell: ({ row }) => <Textarea>{row.original.zones?.length>0?row.original.zones?.map((z)=> z.name):'--'}</Textarea>,
     },
     {
       accessorKey: "createdAt",

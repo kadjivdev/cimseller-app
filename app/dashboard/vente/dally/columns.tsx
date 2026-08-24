@@ -71,12 +71,7 @@ export type Vente = {
   validatedAt: string
 }
 
-export function useColumns(
-  onEdit: (vente: Vente) => void,
-  onDelete: (vente: Vente) => void,
-  onValid: (vente: Vente) => void,
-  onShowReglements: (vente: Vente)=>void)
-  : ColumnDef<Vente>[] {
+export function useColumns(): ColumnDef<Vente>[] {
   // verifier si le user a cette permission
   // const isUserPermitted = (name:String) => {
   //   return (rolePermissions).some(per => per.name == name);

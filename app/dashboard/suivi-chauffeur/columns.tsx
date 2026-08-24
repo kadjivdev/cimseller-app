@@ -2,7 +2,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, CheckCircle, CircleCheckBig, CircleX, Eraser, Eye, FolderPlus, MoreHorizontal, PencilLine, ReceiptText, ShoppingCart, Van, X } from "lucide-react"
+import { ArrowUpDown, CheckCircle, CircleCheckBig, CircleX, Van, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 export type Programmation = {
@@ -91,10 +91,7 @@ export type Programmation = {
 
 export function useColumns()
   : ColumnDef<Programmation>[] {
-  // verifier si le user a cette permission
-  // const isUserPermitted = (name:String) => {
-  //   return (rolePermissions).some(per => per.name == name);
-  // }
+ 
 
   return [
     {
@@ -331,7 +328,7 @@ export function useColumns()
                 {programmation?.ventes?.map((vente) => {
                     const text = `Client: ${vente?.commandeClient?.client?.raison_sociale} | Vente: ${vente?.code} | Qte Vendue: ${vente.qteTotal}`
                     return (
-                        <span key={vente.id} className="badge rounded border text-dark">
+                        <span key={vente.id as number} className="badge rounded border text-dark">
                             {text}
                         </span>
                     )

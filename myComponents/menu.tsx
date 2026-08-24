@@ -9,14 +9,15 @@ import {
 } from "@/components/ui/collapsible"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import routes from "@/app/routes"
-import NavLink from "@/components/NavLink"
 import { useEffect, useState } from "react"
 import { useApp } from "@/app/AppContext"
+// import NavLink from "@/components/NavLink"
+import Link from "next/link"
 
 type FileTreeItem = { name: string, url: String, icon: Object } | { name: string; items: FileTreeItem[] }
 
 export function Menu() {
-  const [openItems, setOpenItems] = useState(() => {
+  const [openItems, setOpenItems] = useState<Record<string, boolean>>(() => {
     if (typeof window === "undefined") return {};
     return JSON.parse(localStorage.getItem("menu-open") || "{}");
   });
@@ -26,7 +27,7 @@ export function Menu() {
   console.log("Menu user :",user)
 
   const isPermittedTo = (name:string)=>{
-    return user.role?.permissions?.some((pr:any)=>pr.name==name)
+    return user?.role?.permissions?.some((pr:any)=>pr.name==name)
   }
 
   useEffect(() => {
@@ -77,7 +78,7 @@ export function Menu() {
     ] : []),
     
     // Nav de sorties
-    ...(isPermittedTo('suiviSortie.view')?
+    ...((isPermittedTo('suiviSortie.view') || isPermittedTo('livraison.view') || isPermittedTo('livraison.view'))?
   [
     {
       name: "SORTIES",
@@ -126,67 +127,54 @@ export function Menu() {
   ...(isPermittedTo('vente.view')? [
     {
         name: "VENTES",
-        items: [
-          isPermittedTo('vente.view') && {
-            name: "Ventes",
-            url: routes.vente.list,
-            icon: <ShoppingCart />,
-            items: [
-              {
-                name: "Liste",
-                url: routes.vente.list,
-                icon: <ListTree />,
-              },
-              {
-                name: "En attente",
-                url: routes.vente.enAttente,
-                icon: <CircleDotDashed />,
-              },
-              {
-                name: "Journalières",
-                url: routes.vente.journalier,
-                icon: <CalendarCheck2 />,
-              },
-              isPermittedTo('comptabilizedVente.view') && {
-                name: "A comptabiliser",
-                url: routes.vente.aComptabiliser,
-                icon: <HandCoins />,
-              }
-            ].filter(Boolean)
-          },
-        ].filter(Boolean),
+        url: routes.vente.list,
+          icon: <ShoppingCart />,
+          items: [
+            {
+              name: "Liste",
+              url: routes.vente.list,
+              icon: <ListTree />,
+            },
+            {
+              name: "En attente",
+              url: routes.vente.enAttente,
+              icon: <CircleDotDashed />,
+            },
+            {
+              name: "Journalières",
+              url: routes.vente.journalier,
+              icon: <CalendarCheck2 />,
+            },
+            isPermittedTo('comptabilizedVente.view') && {
+              name: "A comptabiliser",
+              url: routes.vente.aComptabiliser,
+              icon: <HandCoins />,
+            }
+          ].filter(Boolean),
       },
   ]:[]),  
 
     // nav de comptabilite
-    ...(isPermittedTo('vente.view')? [
+    ...(isPermittedTo('comptabilite.view')? [
       {
         name: "COMPTABILITE",
         items: [
-          // nav de comptabilites
-          isPermittedTo('comptabilite.view') && {
-            name: "Comptabilités",
+          {
+            name: "Liste ventes",
             url: routes.comptabilite.list,
-            icon: <HandCoins />,
-            items: [
-              {
-                name: "Liste ventes",
-                url: routes.comptabilite.list,
-                icon: <ListTree />,
-              },
-              {
-                name: "A traiter",
-                url: routes.comptabilite.aTraiter,
-                icon: <PencilLine />,
-              },
-              {
-                name: "Exporter ventes ",
-                url: routes.comptabilite.traiter,
-                icon: <Download />,
-              },
-            ]
+            icon: <ListTree />,
           },
-        ].filter(Boolean)
+          {
+            name: "A traiter",
+            url: routes.comptabilite.aTraiter,
+            icon: <PencilLine />,
+          },
+          {
+            name: "Exporter ventes ",
+            url: routes.comptabilite.traiter,
+            icon: <Download />,
+          },
+        ]
       },
     ]:[]),
 
@@ -238,38 +226,31 @@ export function Menu() {
       {
         name: "CLIENTS",
         items: [
-          isPermittedTo('client.view') && {
-            name: "Clients",
+          isPermittedTo('client.create') && {
+            name: "Create",
+            url: routes.client.create,
+            icon: <FolderPlus />,
+          },
+          {
+            name: "Liste",
             url: routes.client.list,
             icon: <Users />,
-            items: [
-              isPermittedTo('client.create') && {
-                name: "Create",
-                url: routes.client.create,
-                icon: <FolderPlus />,
-              },
-              {
-                name: "Liste",
-                url: routes.client.list,
-                icon: <Users />,
-              },
-              {
-                name: "Actifs",
-                url: routes.client.actif,
-                icon: <CircleCheckBig />,
-              },
-              {
-                name: "Inactifs",
-                url: routes.client.inactif,
-                icon: <ListTree />,
-              },
-              {
-                name: "Befs",
-                url: routes.client.bef,
-                icon: <KeyRound />,
-              }
-            ].filter(Boolean)
           },
+          {
+            name: "Actifs",
+            url: routes.client.actif,
+            icon: <CircleCheckBig />,
+          },
+          {
+            name: "Inactifs",
+            url: routes.client.inactif,
+            icon: <ListTree />,
+          },
+          {
+            name: "Befs",
+            url: routes.client.bef,
+            icon: <KeyRound />,
+          }
         ].filter(Boolean),
       },
     ]:[]),
@@ -546,16 +527,14 @@ isPermittedTo('zone.view'))?[
       )
     }
     return (
-      <NavLink
+      <Link
         key={fileItem.name}
-        variant="link"
-        href={fileItem.url}
-        size="sm"
+        href={fileItem.url as string}
         className="w-full justify-start gap-2 text-foreground d-flex text-dark"
       >
-        <small className="text-xm" style={{ fontSize: 10 }}> {fileItem.icon}</small>
+        <small className="text-xm" style={{ fontSize: 10 }}> {fileItem.icon as string}</small>
         <span>{fileItem.name}</span>
-      </NavLink>
+      </Link>
     )
   }
 

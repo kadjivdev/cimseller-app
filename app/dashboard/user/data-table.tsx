@@ -39,7 +39,8 @@ import ImportUserModal from "./import"
 const exportColumns = [
     { label: "Nom Complet", key: "fullname" as const },
     { label: "Email", key: "email" as const },
-    { label: "Rôle", key: "role" as const },
+    { label: "Rôle", key: "role.name" as const },
+    { label: "Zone", key: "zone.name" as const },
     { label: "Crée le", key: "createdAt" as const },
 ]
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import {
     flexRender,
     getCoreRowModel,
@@ -50,7 +50,7 @@ const exportColumns = [
     { label: "Crée par", key: "createdBy" as const },
 ]
 
-export function DataTable({ data, setReload, clients, detailRecuTypes, compteBancaires, date, setDate, totalAmount }) {
+export function DataTable({ data, setReload, date, setDate, totalAmount }:any) {
 
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)

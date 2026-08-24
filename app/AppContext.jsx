@@ -4,32 +4,27 @@ import React, { createContext, useState, useCallback, useEffect } from 'react';
 import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
 
-// Créer le contexte
 export const AppContext = createContext();
 
-// Provider component
 export const AppProvider = ({ children }) => {
 
     const [user, setUser] = useState(null);
-    const [permissions, setPermissions] = useState(null);
     const [loading, setLoading] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [initialized, setInitialized] = useState(false); // 👈 Nouveau
+    const [initialized, setInitialized] = useState(false);
 
     useEffect(() => {
         const storedUser = window.localStorage.getItem("user");
-        const storedPermissions = window.localStorage.getItem("permissions");
 
-        if (storedUser || storedPermissions) {
+        if (storedUser) {
             try {
                 setUser(JSON.parse(storedUser));
-                setPermissions(JSON.parse(storedPermissions))
                 setIsAuthenticated(true);
             } catch (error) {
                 console.warn("Impossible de parser l'utilisateur en localStorage", error);
             }
         }
-        setInitialized(true); // 👈 Toujours déclenché, même si pas d'user
+        setInitialized(true);
     }, []);
 
     // Login
@@ -41,13 +36,12 @@ export const AppProvider = ({ children }) => {
                 { email, password }
             );
             const userData = response.data?.user || response.data;
-            const allPermissions = response.data?.permissions ||[];
 
-            // setUser(userData)
-            // setIsAuthenticated(true)
+            // ✅ mise à jour effective du state, plus commentée
+            setUser(userData)
+            setIsAuthenticated(true)
 
             window.localStorage.setItem("user", JSON.stringify(userData))
-            window.localStorage.setItem("permissions", JSON.stringify(allPermissions))
 
             return { success: true, status: response.status, message: response.message };
         } catch (error) {
@@ -67,8 +61,9 @@ export const AppProvider = ({ children }) => {
                     errorMessage = "Le serveur rejete votre requête";
                     break;
             }
-
             throw new Error(errorMessage);
+        } finally {
+            setLoading(false) // ✅ manquait, laissait loading bloqué à true après succès
         }
     }, []);
 
@@ -81,11 +76,9 @@ export const AppProvider = ({ children }) => {
             window.localStorage.removeItem("user")
             return { success: true, status: response.status, message: response.message };
         } catch (error) {
-
             let errorStatus = error.response?.status;
             let errorMessage = '';
 
-            console.log("error :", error)
             if (errorStatus === 500) {
                 errorMessage = error || 'Erreur côté serveur';
             } else if (errorStatus === 401) {
@@ -94,7 +87,6 @@ export const AppProvider = ({ children }) => {
                 errorMessage = error || 'Erreur de déconnexion';
             }
 
-            console.log('Erreur from logout in AppContext:', errorMessage);
             throw new Error(errorMessage)
         }
     }, []);
@@ -104,15 +96,11 @@ export const AppProvider = ({ children }) => {
         setLoading(true);
         try {
             const response = await axiosInstance.post(apiRoutes.createUser, userData);
-
             return { success: true, status: response.status, data: response.data };
         } catch (error) {
             const errorMessage = error.response?.data?.message || 'Erreur d\'inscription';
             const errorStatus = error.response?.status;
             const errors = error.response?.data?.errors;
-
-            // console.log('Erreur lors de la création de l\'utilisateur :', error.response);
-            // console.log('Erreur status:', errorStatus);
             return { success: false, status: errorStatus, error: errorMessage, errors: errors };
         } finally {
             setLoading(false);
@@ -124,8 +112,7 @@ export const AppProvider = ({ children }) => {
         loading,
         isAuthenticated,
         setLoading,
-        permissions,
-        initialized, // 👈 Exposé
+        initialized,
 
         login,
         logout,
@@ -139,10 +126,8 @@ export const AppProvider = ({ children }) => {
     );
 };
 
-// Hook personnalisé pour utiliser le contexte
 export const useApp = () => {
     const context = React.useContext(AppContext);
-
     if (!context) {
         throw new Error('useApp doit être utilisé à l\'intérieur d\'un AppProvider');
     }

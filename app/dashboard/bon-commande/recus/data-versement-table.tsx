@@ -29,9 +29,6 @@ import {
 import { Settings2 } from "lucide-react"
 
 // modals
-import VersementRecuBonModal from "./versements-modal"
-import { DatePickerRange } from "@/myComponents/DatePickerRange"
-
 const exportColumns = [
     { label: "Code ", key: "code" as const },
     { label: "Fournisseur", key: "fournisseur" as const },
@@ -44,7 +41,7 @@ const exportColumns = [
     { label: "Crée par", key: "createdBy" as const },
 ]
 
-export function DataVersementTable({ data }) {
+export function DataVersementTable({ data }:any) {
 
     const [open, setOpen] = useState(false)
     const [selectedRecu, setSelectedRecu] = useState<Recu | null>(null)

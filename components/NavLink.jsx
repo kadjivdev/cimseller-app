@@ -1,30 +1,53 @@
-// components/NavLink.jsx
+// components/RouteLoadingToast.jsx
 "use client"
 
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { useEffect, useRef } from "react"
 import { toast } from "sonner"
 
-export default function NavLink({ href, children, ...props }) {
+export default function RouteLoadingToast() {
   const pathname = usePathname()
   const toastIdRef = useRef(null)
+  const timeoutRef = useRef(null)
 
-  // ferme le toast dès que la nouvelle page est effectivement affichée
-  useEffect(() => {
+  const dismiss = () => {
     if (toastIdRef.current) {
       toast.dismiss(toastIdRef.current)
       toastIdRef.current = null
     }
-  }, [pathname])
-
-  const handleClick = () => {
-    toastIdRef.current = toast.loading("Chargement de la page ...")
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
   }
 
-  return (
-    <Link href={href} onClick={handleClick} {...props}>
-      {children}
-    </Link>
-  )
+  useEffect(() => {
+    const handleClick = (e) => {
+      const anchor = e.target.closest('a')
+      if (!anchor) return
+      const href = anchor.getAttribute('href')
+      if (!href || href.startsWith('http') || href.startsWith('#')) return
+
+      dismiss() // ferme un toast précédent s'il traîne encore
+
+      toastIdRef.current = toast.loading("Chargement de la page ...")
+
+      timeoutRef.current = setTimeout(() => {
+        dismiss() // filet de sécurité
+      }, 4000)
+    }
+
+    document.addEventListener('click', handleClick)
+    return () => {
+      document.removeEventListener('click', handleClick)
+      dismiss() // ✅ nettoyage si le composant se démonte
+    }
+  }, [])
+
+  // fermeture normale dès que la route change réellement
+  useEffect(() => {
+    dismiss()
+  }, [pathname])
+
+  return null
 }

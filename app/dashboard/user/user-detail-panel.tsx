@@ -1,5 +1,5 @@
 // user-detail-panel.tsx
-export function UserDetailPanel({ user }) {
+export function UserDetailPanel({ user }:any) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
       <div>

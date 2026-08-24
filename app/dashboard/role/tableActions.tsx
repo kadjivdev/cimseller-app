@@ -7,9 +7,14 @@ import * as XLSX from "xlsx"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
 
+function getNestedValue<T>(obj: T, path: string): any {
+  return path.split(".").reduce((acc: any, part) => acc?.[part], obj)
+}
+
 type TableActionsProps<T> = {
   data: T[]
-  columns: { label: string; key: keyof T }[]
+  // columns: { label: string; key: keyof T }[]
+  columns: { label: string; key: string }[] // string, pas keyof T
   filename?: string
 }
 
@@ -20,9 +25,11 @@ export function TableActions<T extends object>({
 }: TableActionsProps<T>) {
 
   // ─── Export Excel ───────────────────────────────────────────
-  const exportExcel = () => {
+   const exportExcel = () => {
     const rows = data.map((row) =>
-      Object.fromEntries(columns.map(({ label, key }) => [label, row[key]]))
+      Object.fromEntries(
+        columns.map(({ label, key }) => [label, getNestedValue(row, key) ?? "—"])
+      )
     )
     const ws = XLSX.utils.json_to_sheet(rows)
     const wb = XLSX.utils.book_new()
@@ -35,7 +42,9 @@ export function TableActions<T extends object>({
     const doc = new jsPDF()
     autoTable(doc, {
       head: [columns.map((c) => c.label)],
-      body: data.map((row) => columns.map(({ key }) => String(row[key] ?? ""))),
+      body: data.map((row) =>
+        columns.map(({ key }) => String(getNestedValue(row, key) ?? "—"))
+      ),
     })
     doc.save(`${filename}.pdf`)
   }

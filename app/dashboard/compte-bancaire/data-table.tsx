@@ -39,7 +39,7 @@ const exportColumns = [
     { label: "Crée le", key: "createdAt" as const },
 ]
 
-export function DataTable({ data, setReload,banques }) {
+export function DataTable({ data, setReload,banques }:any) {
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
     const [selectedCompteBancaire, setSelectedCompteBancaire] = useState<CompteBancaire | null>(null)

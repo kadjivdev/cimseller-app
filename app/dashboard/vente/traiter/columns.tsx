@@ -76,22 +76,22 @@ export type Vente = {
     treatedAt:string,
     comptabilizedAt: string
 
-    tva :number
-    aib: number
-    ttcPrice :number 
-    marge: number
-    usinePrixHT :number
-    margePrice :number
-    htPrice: number
-    bruitPrice : number
-    netHorsTaxe :number
-    tvaPrice :number
-    aibPrice : number
-    prixTTC:number
+    unitPriceHT:Number,
+    unitPriceAib:Number,
+    unitPriceTva:Number,
+    unitPriceMarge:Number,
+    unitPriceTtc:Number,
+
+    priceHT:Number,
+    priceAib:Number,
+    priceTva:Number,
+    price118:Number,
+    priceMarge:Number,
+    priceTtc:Number,
   }
 }
 
-export function useColumns()
+export function useColumns(setOpen:any,setSelectedVente:any)
   : ColumnDef<Vente>[] {
   // verifier si le user a cette permission
   // const isUserPermitted = (name:String) => {
@@ -256,125 +256,110 @@ export function useColumns()
       // ✅ Ajouter cell
       cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.montant ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
+
+    // les unitaires
      {
-      accessorKey: "tva",
+      accessorKey: "unitPriceAib",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          TVA <ArrowUpDown className="ml-2 h-4 w-4" />
+          AIB unitaire <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.tva ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.unitPriceAib ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
      {
-      accessorKey: "aib",
+      accessorKey: "unitPriceTva",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          AIB <ArrowUpDown className="ml-2 h-4 w-4" />
+          TVA Unitaire <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.aib ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.unitPriceTva ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
+    
      {
-      accessorKey: "ttcPrice",
+      accessorKey: "unitPriceMarge",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Prix TTC <ArrowUpDown className="ml-2 h-4 w-4" />
+          Marge unitaire <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.ttcPrice ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.unitPriceMarge ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
      {
-      accessorKey: "marge",
+      accessorKey: "unitPriceTtc",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Marge <ArrowUpDown className="ml-2 h-4 w-4" />
+          Prix TTC unitaire <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.marge ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.unitPriceTtc ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
+    
+    // les totaux
      {
-      accessorKey: "usinePriceHT",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Prix Usine HT <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.usinePrixHT ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
-    },
-     {
-      accessorKey: "margePrice",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Prix marge <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.margePrice ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
-    },
-     {
-      accessorKey: "htPrice",
+      accessorKey: "priceHT",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Prix HT <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.htPrice ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.priceHT ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
-     {
-      accessorKey: "bruitPrice",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Prix Bruite <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.bruitPrice ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
-    },
-     {
-      accessorKey: "netHorsTaxe",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Net Hors Taxe <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.netHorsTaxe ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
-    },
-     {
-      accessorKey: "tvaPrice",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Prix TVA <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.tvaPrice ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
-    },
-     {
-      accessorKey: "aibPrice",
+    {
+      accessorKey: "priceAib",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Prix AIB <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.aibPrice ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.priceAib ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+    },
+    {
+      accessorKey: "priceTva",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Prix TVA <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.priceTva ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
      {
-      accessorKey: "prixTTC",
+      accessorKey: "priceMarge",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Prix marge <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.priceMarge ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+    },
+    {
+      accessorKey: "price118",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Prix 1.18 <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.price118 ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+    },
+     {
+      accessorKey: "priceTtc",
       header: ({ column }) => (
         <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Prix TTC <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.prixTTC ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.venteComptability?.priceTtc ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
       accessorKey: "type_facture",

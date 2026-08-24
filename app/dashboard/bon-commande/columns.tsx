@@ -12,8 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Textarea } from "@/components/ui/textarea"
-import Link from "next/link"
+import { useApp } from "@/app/AppContext"
 
 export type Bon = {
   id: number
@@ -63,12 +62,127 @@ export function useColumns(
   handleRecu: (bon: Bon) => void,
   handleAccuse: (bon: Bon) => void)
   : ColumnDef<Bon>[] {
-  // verifier si le user a cette permission
-  // const isUserPermitted = (name:String) => {
-  //   return (rolePermissions).some(per => per.name == name);
-  // }
+
+  const { user} = useApp()
+  const isPermittedTo = (name:string) => {
+      return user?.role?.permissions?.some((pr:any) => pr.name == name)
+  }
 
   return [
+    {
+      id: "actions",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Actions <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const bon = row.original
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+
+              {/* modifier */}
+              {(!bon.validatedBy && isPermittedTo("commande.edit")) &&
+                <DropdownMenuItem
+                  style={{ cursor: "pointer" }}
+                  className="text-warning"
+                  onSelect={(e) => {
+                    e.preventDefault()
+                    onEdit(bon) // 👈 remonte juste du bon
+                  }}
+                >
+                  <PencilLine /> Modifier
+                </DropdownMenuItem>
+              }
+
+              {bon?.commandeDetails?.[0]?.qteCommande > 0 && (
+
+                <>
+                  {/* show */}
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-info"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      onShow(bon) // 👈 remonte juste du bon
+                    }}
+                  >
+                    <Eye /> Voir
+                  </DropdownMenuItem>
+
+                  {/* Reçus */}
+                  {isPermittedTo("reçu.edit") && 
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-dark"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      handleRecu(bon) // 👈 remonte juste du bon
+                    }}
+                  >
+                    <ReceiptText /> Reçus
+                  </DropdownMenuItem>
+                  }
+                  
+
+                  {/* Accusés */}
+                  {isPermittedTo("accuse.edit") &&
+                    <DropdownMenuItem
+                      style={{ cursor: "pointer" }}
+                      className="text-dark"
+                      onSelect={(e) => {
+                        e.preventDefault()
+                        handleAccuse(bon) // 👈 remonte juste du bon
+                      }}
+                    >
+                      <FolderPlus /> Accusés
+                    </DropdownMenuItem>
+                  }                  
+
+                  {/* valider */}
+                  {(!bon.validatedBy && isPermittedTo("commande.validate")) &&
+                    <DropdownMenuItem
+                      style={{ cursor: "pointer" }}
+                      className="text-success"
+                      onSelect={(e) => {
+                        e.preventDefault()
+                        onValid(bon) // 👈 remonte juste de l'approvisionnement
+                      }}
+                    >
+                      <CircleCheckBig /> Valider
+                    </DropdownMenuItem>
+                  }
+
+                  {/* suppression */}
+                  {(!bon.validatedBy && isPermittedTo("commande.delete")) &&
+                    <DropdownMenuItem
+                      style={{ cursor: "pointer" }}
+                      className="text-danger"
+                      onSelect={(e) => {
+                        e.preventDefault()
+                        onDelete(bon) // 👈 remonte juste de l'approvisionnement
+                      }}>
+                      <Eraser /> Supprimer
+                    </DropdownMenuItem>
+                  }
+                </>
+              )
+              }
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      },
+    },
     {
       accessorKey: "id",
       header: ({ column }) => (
@@ -119,7 +233,7 @@ export function useColumns(
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.qteCommander ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(Number(row.original.qteCommander)  ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
       accessorKey: "montant",
@@ -139,7 +253,7 @@ export function useColumns(
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.qteProgrammer ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(Number(row.original.qteProgrammer) ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
       accessorKey: "qtevendu",
@@ -149,7 +263,7 @@ export function useColumns(
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.qteVendu ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(Number(row.original.qteVendu) ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
       accessorKey: "stock",
@@ -280,116 +394,6 @@ export function useColumns(
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => <span className="badge border rounded text-dark"> {row.original.createdBy?.fullname || "—"} </span>,
-    },
-    // 
-    {
-      id: "actions",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Actions <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const bon = row.original
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-
-              {/* modifier */}
-              {!bon.validatedBy &&
-                <DropdownMenuItem
-                  style={{ cursor: "pointer" }}
-                  className="text-warning"
-                  onSelect={(e) => {
-                    e.preventDefault()
-                    onEdit(bon) // 👈 remonte juste du bon
-                  }}
-                >
-                  <PencilLine /> Modifier
-                </DropdownMenuItem>
-              }
-
-              {bon?.commandeDetails?.[0]?.qteCommande > 0 && (
-
-                <>
-                  {/* show */}
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-info"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      onShow(bon) // 👈 remonte juste du bon
-                    }}
-                  >
-                    <Eye /> Voir
-                  </DropdownMenuItem>
-
-                  {/* Reçus */}
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-dark"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      handleRecu(bon) // 👈 remonte juste du bon
-                    }}
-                  >
-                    <ReceiptText /> Reçus
-                  </DropdownMenuItem>
-
-                  {/* Accusés */}
-                  <DropdownMenuItem
-                    style={{ cursor: "pointer" }}
-                    className="text-dark"
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      handleAccuse(bon) // 👈 remonte juste du bon
-                    }}
-                  >
-                    <FolderPlus /> Accusés
-                  </DropdownMenuItem>
-
-                  {/* valider */}
-                  {!bon.validatedBy &&
-                    <DropdownMenuItem
-                      style={{ cursor: "pointer" }}
-                      className="text-success"
-                      onSelect={(e) => {
-                        e.preventDefault()
-                        onValid(bon) // 👈 remonte juste de l'approvisionnement
-                      }}
-                    >
-                      <CircleCheckBig /> Valider
-                    </DropdownMenuItem>
-                  }
-
-                  {/* suppression */}
-                  {!bon.validatedBy &&
-                    <DropdownMenuItem
-                      style={{ cursor: "pointer" }}
-                      className="text-danger"
-                      onSelect={(e) => {
-                        e.preventDefault()
-                        onDelete(bon) // 👈 remonte juste de l'approvisionnement
-                      }}>
-                      <Eraser /> Supprimer
-                    </DropdownMenuItem>
-                  }
-                </>
-              )
-              }
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )
-      },
     },
   ]
 }

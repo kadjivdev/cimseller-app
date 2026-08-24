@@ -42,7 +42,7 @@ const exportColumns = [
     { label: "Validée le", key: "validatedAt" as const },
 ]
 
-export function DataTable({ data }) {
+export function DataTable({ data }:any) {
    
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])

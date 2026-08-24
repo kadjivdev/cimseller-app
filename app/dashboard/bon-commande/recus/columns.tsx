@@ -43,6 +43,46 @@ export function useColumns(
   // }
 
   return [
+    
+    // 
+    {
+      id: "actions",
+      header: ({ column }) => (
+        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Actions <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const recu = row.original
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+
+              {/* modifier */}
+              <DropdownMenuItem
+                style={{ cursor: "pointer" }}
+                className="text-success"
+                onSelect={(e) => {
+                  e.preventDefault()
+                  handleVersement(recu) // 👈 remonte juste du recu
+                }}
+              >
+                <HandCoins /> Versements
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      },
+    },
     {
       accessorKey: "id",
       header: ({ column }) => (
@@ -103,7 +143,7 @@ export function useColumns(
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(row.original.tonnage ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(Number(row.original.tonnage) ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
       accessorKey: "montant",
@@ -123,7 +163,7 @@ export function useColumns(
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.original?.preuve ? <Link href={row.original?.preuve} target="_blank" className="badge bg-light border text-dark"> <Eye /> </Link> : "--",
+      cell: ({ row }) => row.original?.preuve ? <Link href={row.original?.preuve as string} target="_blank" className="badge bg-light border text-dark"> <Eye /> </Link> : "--",
     },
     {
       accessorKey: "date",
@@ -170,45 +210,6 @@ export function useColumns(
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => <span className="badge border rounded text-dark"> {row.original.createdBy?.fullname || "—"} </span>,
-    },
-    // 
-    {
-      id: "actions",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Actions <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const recu = row.original
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-
-              {/* modifier */}
-              <DropdownMenuItem
-                style={{ cursor: "pointer" }}
-                className="text-success"
-                onSelect={(e) => {
-                  e.preventDefault()
-                  handleVersement(recu) // 👈 remonte juste du recu
-                }}
-              >
-                <HandCoins /> Versements
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )
-      },
     },
   ]
 }

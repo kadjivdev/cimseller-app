@@ -71,8 +71,8 @@ export function DataTable({ data, setReload, zones, status }:any) {
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // ✅ Nouveau
 
     console.log("User agent's :", user)
-    const isPermittedTo = (name) => {
-        return user?.role?.permissions?.some((pr) => pr.name == name)
+    const isPermittedTo = (name:string) => {
+        return user?.role?.permissions?.some((pr:any) => pr.name == name)
     }
 
     // 
@@ -254,7 +254,6 @@ export function DataTable({ data, setReload, zones, status }:any) {
                 open={openProfil}
                 onOpenChange={setOpenProfil}
                 client={selectedClient}
-                setReload={setReload}
             />
 
             {/* Importation de comptes */}
