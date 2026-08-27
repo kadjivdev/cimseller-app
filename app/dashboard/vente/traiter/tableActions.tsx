@@ -45,11 +45,11 @@ export function TableActions<T extends object>({
 
   return (
     <div className="flex items-center gap-2">
-      <Button variant="outline" size="sm" onClick={exportExcel}
+      {/* <Button variant="outline" size="sm" onClick={exportExcel}
         className="text-green-700 border-green-300 hover:bg-green-50 rounded shadow">
         <FileSpreadsheet className="mr-2 h-4 w-4" />
         Excel
-      </Button>
+      </Button> */}
 
       <Button variant="outline" size="sm" onClick={exportPDF}
         className="text-red-700 border-red-300 hover:bg-red-50 rounded shadow">

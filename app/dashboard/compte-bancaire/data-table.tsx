@@ -2,18 +2,18 @@
 
 import { useState } from "react"
 import {
-    flexRender,
-    getCoreRowModel,
-    getSortedRowModel,
-    getFilteredRowModel,
+    VisibilityState, // ✅ Import
     getPaginationRowModel,
+    getFilteredRowModel,
+    getSortedRowModel,
+    getCoreRowModel,
     useReactTable,
     SortingState,
-    VisibilityState, // ✅ Import
+    flexRender,
 } from "@tanstack/react-table"
 import {
-    Table, TableBody, TableCell,
     TableHead, TableHeader, TableRow,
+    Table, TableBody, TableCell,
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -21,16 +21,18 @@ import { useColumns, CompteBancaire } from "../compte-bancaire/columns"
 import { TableActions } from "./tableActions"
 import { Card } from "@/components/ui/card"
 import {
-    DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuTrigger,
+    DropdownMenu,
 } from "@/components/ui/dropdown-menu"
 import { Settings2 } from "lucide-react"
 
 // modals
 import UpdateCompteBancaireModal from "./modal"
 import DeleteCompteBancaireModal from "./delete-modal"
+
+import {MyPagination} from "@/components/MyPagination"
 
 const exportColumns = [
     { label: "Intitulé ", key: "intitule" as const },
@@ -157,20 +159,8 @@ export function DataTable({ data, setReload,banques }:any) {
                         </Table>
                     </div>
 
-                    {/* Pagination */}
-                    <div className="flex items-center justify-between">
-                        <p className="text-sm text-muted-foreground">
-                            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                        </p>
-                        <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-                                Previous
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                                Next
-                            </Button>
-                        </div>
-                    </div>
+                    {/* ── Pagination avec numéros de page ── */}
+                    <MyPagination table={table}/>
                 </div>
             </Card>
 

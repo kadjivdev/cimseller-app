@@ -28,6 +28,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Settings2 } from "lucide-react"
+import { MyPagination } from "@/components/MyPagination"
 
 // modals
 
@@ -139,19 +140,7 @@ export function DataTable({ data, setSelectedVente ,setOpen}:any) {
                     </div>
 
                     {/* Pagination */}
-                    <div className="flex items-center justify-between">
-                        <p className="text-sm text-muted-foreground">
-                            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                        </p>
-                        <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-                                Previous
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                                Next
-                            </Button>
-                        </div>
-                    </div>
+                    <MyPagination table={table}/>
                 </div>
             </Card>
         </>

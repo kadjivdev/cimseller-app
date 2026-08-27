@@ -33,6 +33,7 @@ import UpdateReglementModal from "./modal"
 import DeleteReglementModal from "./delete-modal"
 import ValidReglementModal from "./valid-modal"
 import { DatePickerRange } from "@/myComponents/DatePickerRange"
+import { MyPagination } from "@/components/MyPagination"
 
 const exportColumns = [
     { label: "Code ", key: "code" as const },
@@ -105,7 +106,7 @@ export function DataTable({ data, setReload, date, setDate, totalAmount }:any) {
                     />
 
                     {/* Total amount */}
-                    <h3 className="">Montant total: <span className="badge bg-dark border text-light rounded">$ {totalAmount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} </span></h3>
+                    <h3 className="">Montant total: <span className="badge bg-dark border text-light rounded">cfa {totalAmount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} </span></h3>
                     {/* ── HEADER ── */}
                     <div className="flex items-center justify-between gap-4 no-print bg-dark p-2 rounded">
                         <Input
@@ -186,19 +187,7 @@ export function DataTable({ data, setReload, date, setDate, totalAmount }:any) {
                     </div>
 
                     {/* Pagination */}
-                    <div className="flex items-center justify-between">
-                        <p className="text-sm text-muted-foreground">
-                            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                        </p>
-                        <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-                                Previous
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                                Next
-                            </Button>
-                        </div>
-                    </div>
+                   <MyPagination table={table}/>
                 </div>
             </Card>
 

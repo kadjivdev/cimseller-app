@@ -37,6 +37,7 @@ import ShowApprovisionnements from "./approvisionnement/showApprovisionnements"
 import ShowReglements from "./reglement/showReglements"
 import ShowVentes from "./vente/showVentes"
 import { useApp } from "@/app/AppContext"
+import { MyPagination } from "@/components/MyPagination"
 
 const exportColumns = [
     { label: "Raison sociale ", key: "raison_sociale" as const },
@@ -217,19 +218,7 @@ export function DataTable({ data, setReload, zones, status }:any) {
                     </div>
 
                     {/* Pagination */}
-                    <div className="flex items-center justify-between">
-                        <p className="text-sm text-muted-foreground">
-                            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                        </p>
-                        <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-                                Previous
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                                Next
-                            </Button>
-                        </div>
-                    </div>
+                   <MyPagination table={table}/>
                 </div>
             </Card>
 

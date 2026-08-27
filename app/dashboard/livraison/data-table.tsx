@@ -33,6 +33,7 @@ import DeliveryProgrammationModal from "./delivery-modal"
 import TransferProgrammationModal from "./transfer-modal"
 import CloseProgrammationModal from "./close-modal"
 import { DatePickerRange } from "@/myComponents/DatePickerRange"
+import { MyPagination } from "@/components/MyPagination"
 
 const exportColumns = [
     { label: "Code ", key: "code" as const },
@@ -180,19 +181,7 @@ export function DataTable({ data, date, setDate, handleBonSelect }:any) {
                     </div>
 
                     {/* Pagination */}
-                    <div className="flex items-center justify-between">
-                        <p className="text-sm text-muted-foreground">
-                            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                        </p>
-                        <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-                                Previous
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                                Next
-                            </Button>
-                        </div>
-                    </div>
+                    <MyPagination table={table}/>
                 </div>
             </Card>
 

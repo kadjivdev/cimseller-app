@@ -38,7 +38,7 @@ export function useColumns(onEdit: (representant: Representant) => void, onDelet
     {
       accessorKey: "id",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 border rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           N° <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -48,7 +48,7 @@ export function useColumns(onEdit: (representant: Representant) => void, onDelet
     {
       accessorKey: "nom",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 border rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Nom <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -58,7 +58,7 @@ export function useColumns(onEdit: (representant: Representant) => void, onDelet
     {
       accessorKey: "prenom",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 border rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Prénom <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -68,7 +68,7 @@ export function useColumns(onEdit: (representant: Representant) => void, onDelet
     {
       accessorKey: "phone",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 border rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Téléphone <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -78,17 +78,20 @@ export function useColumns(onEdit: (representant: Representant) => void, onDelet
     {
       accessorKey: "zone",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 border rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Zones <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <Textarea>{row.original.zones?.length>0?row.original.zones?.map((z)=> z.name):'--'}</Textarea>,
+      cell: ({ row }) => <p 
+        className="border rounded shadow-sm" 
+        style={{ height: 50, overflowY: "auto" }}
+      >{row.original.zones?.length>0?row.original.zones?.map((z)=> z.name):'--'}</p>,
     },
     {
       accessorKey: "createdAt",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 border rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),

@@ -91,6 +91,7 @@ const apiRoutes = {
   allNoComptabilizedVente: `ventes/no-comptabilized`,
   allNoTraitedVente: `ventes/no-traited`,
   allTraitedVente: `ventes/traited`,
+  exportVente: `ventes/export`,
   createVente: `ventes`,
   updateVente: (id) => (`ventes/${id}`),
   validateVente: (id) => (`ventes/${id}`),

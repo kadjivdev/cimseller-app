@@ -112,7 +112,7 @@ export default function index() {
         return <>
             <Label htmlFor="">Choisissez un Camion <span className="text-danger">*</span>  </Label>
             <FilterSelect
-                options={camions?.map((cm) => ({ id: cm.id, label: `${cm.immatriculation} - ${cm.libelle}` }))}
+                options={camions?.map((cm) => ({ id: cm.id, label: `${cm.immatriculation}` }))}
                 handleSelect={handleCamionSelect}
                 selected={selectedCamion}
             />

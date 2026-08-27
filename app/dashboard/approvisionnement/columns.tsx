@@ -50,194 +50,14 @@ export type Approvisionnement = {
 }
 
 export function useColumns(onEdit: (approvisionnement: Approvisionnement) => void, onDelete: (approvisionnement: Approvisionnement) => void, onValid: (approvisionnement: Approvisionnement) => void): ColumnDef<Approvisionnement>[] {
-  // verifier si le user a cette permission
-  // const isUserPermitted = (name:String) => {
-  //   return (rolePermissions).some(per => per.name == name);
-  // }
-
+  
   return [
-    {
-      accessorKey: "id",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          N° <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => {
-        return row.getValue("id") || "—"
-      },
-    },
-    {
-      accessorKey: "code",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Code <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border text-dark">{row.getValue("code") || "—"}</span>,
-    },
-    {
-      accessorKey: "reference",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Reference <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border text-dark">{row.getValue("reference") || "—"}</span>,
-    },
-    {
-      accessorKey: "client",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Client <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border text-dark">{row.original?.client?.raison_sociale || "—"}</span>,
-    },
-    {
-      accessorKey: "montant",
-      header: ({ column }) => (
-        <Button className="w-100 rounded bg-success text-white" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Montant <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-success"> {row.original.montant?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
-    },
-    {
-      accessorKey: "date",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Date <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => {
-        const date = row.getValue("date") as string
-        return date
-          ? new Date(date).toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-          : "—"
-      },
-    },
-    {
-      accessorKey: "preuve",
-      header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Preuve <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => row.original?.preuve? <div className="d-flex justify-content-center"> <Link className="text-dark" target="_blank" href={row.original?.preuve}><Eye/></Link></div>:'--',
-    },
-    {
-      accessorKey: "type",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Type reçu <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => row.original.typeDetailRecu?.name || "—",
-    },
-    {
-      accessorKey: "compte",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Compte <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => `${row.original.compteBancaire?.intitule} - ${row.original.compteBancaire?.numero}` || "—",
-    },
-    {
-      accessorKey: "comment",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Commentaire <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <Textarea defaultValue={row.getValue("comment") || "—"} rows={1}></Textarea>,
-    },
-    {
-      accessorKey: "validationComment",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Commentaire de validation <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <Textarea defaultValue={row.getValue("validationComment") || "—"} rows={1}></Textarea>,
-    },
-    {
-      accessorKey: "validatedAt",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Validé le <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => {
-        const date = row.getValue("validatedAt") as string
-        return date
-          ? new Date(date).toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-          : "—"
-      },
-    },
-    {
-      accessorKey: "validatedBy",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Validé par <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border rounded text-dark"> {row.original.validatedBy?.fullname || "—"} </span>,
-    },
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Formater la date
-      cell: ({ row }) => {
-        const date = row.getValue("createdAt") as string
-        return new Date(date).toLocaleDateString("fr-FR", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        })
-      },
-    },
-    {
-      accessorKey: "createdBy",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Crée par <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border rounded text-dark"> {row.original.createdBy?.fullname || "—"} </span>,
-    },
+    
     // 
     {
       id: "actions",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Actions <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -247,7 +67,7 @@ export function useColumns(onEdit: (approvisionnement: Approvisionnement) => voi
           !approvisionnement.validatedBy ?
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded">
+                <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
                   <span className="sr-only">Open menu</span>
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
@@ -295,6 +115,183 @@ export function useColumns(onEdit: (approvisionnement: Approvisionnement) => voi
             </DropdownMenu> : '--'
         )
       },
+    },
+    {
+      accessorKey: "id",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          N° <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => {
+        return row.getValue("id") || "—"
+      },
+    },
+    {
+      accessorKey: "code",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Code <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge border text-dark">{row.getValue("code") || "—"}</span>,
+    },
+    {
+      accessorKey: "reference",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Reference <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge border text-dark">{row.getValue("reference") || "—"}</span>,
+    },
+    {
+      accessorKey: "client",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Client <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge border text-dark">{row.original?.client?.raison_sociale || "—"}</span>,
+    },
+    {
+      accessorKey: "montant",
+      header: ({ column }) => (
+        <Button className="w-100 rounded bg-success text-white" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Montant <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge bg-light border text-success"> {row.original.montant?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+    },
+    {
+      accessorKey: "date",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Date <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => {
+        const date = row.getValue("date") as string
+        return date
+          ? new Date(date).toLocaleDateString("fr-FR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+          : "—"
+      },
+    },
+    {
+      accessorKey: "preuve",
+      header: ({ column }) => (
+        <Button className="w-100 shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Preuve <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.original?.preuve? <div className="d-flex justify-content-center"> <Link className="text-dark" target="_blank" href={row.original?.preuve}><Eye/></Link></div>:'--',
+    },
+    {
+      accessorKey: "type",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Type reçu <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.original.typeDetailRecu?.name || "—",
+    },
+    {
+      accessorKey: "compte",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Compte <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => `${row.original.compteBancaire?.intitule} - ${row.original.compteBancaire?.numero}` || "—",
+    },
+    {
+      accessorKey: "comment",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Commentaire <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <Textarea defaultValue={row.getValue("comment") || "—"} rows={1}></Textarea>,
+    },
+    {
+      accessorKey: "validationComment",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Commentaire de validation <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <Textarea defaultValue={row.getValue("validationComment") || "—"} rows={1}></Textarea>,
+    },
+    {
+      accessorKey: "validatedAt",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Validé le <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => {
+        const date = row.getValue("validatedAt") as string
+        return date
+          ? new Date(date).toLocaleDateString("fr-FR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+          : "—"
+      },
+    },
+    {
+      accessorKey: "validatedBy",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Validé par <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge border rounded text-dark"> {row.original.validatedBy?.fullname || "—"} </span>,
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Formater la date
+      cell: ({ row }) => {
+        const date = row.getValue("createdAt") as string
+        return new Date(date).toLocaleDateString("fr-FR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        })
+      },
+    },
+    {
+      accessorKey: "createdBy",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Crée par <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge border rounded text-dark"> {row.original.createdBy?.fullname || "—"} </span>,
     },
   ]
 }

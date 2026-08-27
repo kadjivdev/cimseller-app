@@ -2,41 +2,44 @@
 
 import { useEffect, useState } from "react"
 import {
-    flexRender,
-    getCoreRowModel,
-    getSortedRowModel,
-    getFilteredRowModel,
+    VisibilityState, // ✅ Import
     getPaginationRowModel,
+    getFilteredRowModel,
+    getSortedRowModel,
+    getCoreRowModel,
     useReactTable,
     SortingState,
-    VisibilityState, // ✅ Import
+    flexRender,
 } from "@tanstack/react-table"
 import {
-    Table, TableBody, TableCell,
     TableHead, TableHeader, TableRow,
+    Table, TableBody, TableCell,
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useColumns, Vente } from "./columns"
-import { TableActions } from "@/myComponents/TableActions"
+import { TableActions } from "./tableActions"
 import { getTraiterVenteExportColumns } from "@/lib/venteExportColumns"
 import { Card } from "@/components/ui/card"
 import {
-    DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuTrigger,
+    DropdownMenu,
 } from "@/components/ui/dropdown-menu"
-import { Settings2 } from "lucide-react"
+import { FolderUp, Settings2 } from "lucide-react"
 
 // modals
 
 import { DatePickerRange } from "@/myComponents/DatePickerRange"
+import ExportVentesModal from "./export-ventes-modal";
+import { MyPagination } from "@/components/MyPagination"
 
-const exportColumns = getTraiterVenteExportColumns<Vente>()
+const exportColumns = getTraiterVenteExportColumns<any>()
 
-export function DataTable({ data, date, setDate,setSelectedVente ,setOpen}:any) {
+export function DataTable({ data, date, setDate,setReload}:any) {
 
+    const [exportBoolean,setExportBoolean] =useState(false)
     const [globalFilter, setGlobalFilter] = useState("")
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // ✅ Nouveau
@@ -56,6 +59,11 @@ export function DataTable({ data, date, setDate,setSelectedVente ,setOpen}:any) 
         getPaginationRowModel: getPaginationRowModel(),
     })
 
+    // 
+    const exportVentes = ()=>{
+        setExportBoolean(true)
+    }
+
     return (
         <>
             <Card className="p-2">
@@ -66,6 +74,17 @@ export function DataTable({ data, date, setDate,setSelectedVente ,setOpen}:any) 
                         date={date}
                         setDate={setDate}
                     />
+
+                    {/*  */}
+                    <div className="d-flex justify-content-center">
+                        <button 
+                            className="btn btn-sm shadow-sm bg-success border rounded text-white d-flex align-items-center gap-2"
+                            onClick={exportVentes}
+                        >
+                            <FolderUp size={16} /> Exporter toutes les ventes traitées
+                        </button>
+                    </div>
+
 
                     {/* ── HEADER ── */}
                     <div className="flex items-center justify-between gap-4 no-print bg-dark p-2 rounded">
@@ -147,21 +166,16 @@ export function DataTable({ data, date, setDate,setSelectedVente ,setOpen}:any) 
                     </div>
 
                     {/* Pagination */}
-                    <div className="flex items-center justify-between">
-                        <p className="text-sm text-muted-foreground">
-                            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                        </p>
-                        <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-                                Previous
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                                Next
-                            </Button>
-                        </div>
-                    </div>
+                    <MyPagination table={table}/>
                 </div>
             </Card>
+
+            {/* Export des ventes traitées */}
+            <ExportVentesModal
+                open={exportBoolean}
+                onOpenChange={setExportBoolean}
+                setReload={setReload}
+            />
         </>
     )
 }

@@ -27,83 +27,15 @@ export type CompteBancaire = {
 // export type Name:String
 
 export function useColumns(onEdit: (compteBancaire: CompteBancaire) => void, onDelete: (compteBancaire: CompteBancaire) => void): ColumnDef<CompteBancaire>[] {
-  // verifier si le user a cette permission
-  // const isUserPermitted = (name:String) => {
-  //   return (rolePermissions).some(per => per.name == name);
-  // }
+  
 
   return [
-    {
-      accessorKey: "id",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          N° <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("id") || "—",
-    },
-    {
-      accessorKey: "numero",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Numéro <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("numero") || "—",
-    },
-    {
-      accessorKey: "banque",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Banque <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border rounded text-dark">{row.original.banque?.name || '--'} </span>,
-
-    },
-    {
-      accessorKey: "intitule",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Intitulé <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("intitule") || "—",
-    },
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Formater la date
-      cell: ({ row }) => {
-        const date = row.getValue("createdAt") as string
-        if (!date) {
-          return new Date().toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-        } else {
-          return new Date(date).toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-        }
-      },
-    },
+    
     // 
     {
       id: "actions",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Actions <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -112,7 +44,7 @@ export function useColumns(onEdit: (compteBancaire: CompteBancaire) => void, onD
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded">
+              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -145,6 +77,72 @@ export function useColumns(onEdit: (compteBancaire: CompteBancaire) => void, onD
             </DropdownMenuContent>
           </DropdownMenu>
         )
+      },
+    },
+    {
+      accessorKey: "id",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          N° <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.getValue("id") || "—",
+    },
+    {
+      accessorKey: "numero",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Numéro <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.getValue("numero") || "—",
+    },
+    {
+      accessorKey: "banque",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Banque <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge border rounded text-dark">{row.original.banque?.name || '--'} </span>,
+
+    },
+    {
+      accessorKey: "intitule",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Intitulé <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.getValue("intitule") || "—",
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Formater la date
+      cell: ({ row }) => {
+        const date = row.getValue("createdAt") as string
+        if (!date) {
+          return new Date().toLocaleDateString("fr-FR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+        } else {
+          return new Date(date).toLocaleDateString("fr-FR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+        }
       },
     },
   ]

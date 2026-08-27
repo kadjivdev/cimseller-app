@@ -31,6 +31,7 @@ import { Send, Settings2 } from "lucide-react"
 
 // modals
 import { DatePickerRange } from "@/myComponents/DatePickerRange"
+import { MyPagination } from "@/components/MyPagination"
 
 const exportColumns = getStandardVenteExportColumns<Vente>()
 
@@ -114,11 +115,11 @@ export function DataTable({ data, date, setDate,setSelectedVente ,setOpen,setOpe
 
                     {/* envoie en bloc */}
                     <div className="d-flex justify-content-center">
-                        <button className="btn btn-sm shadow-sm align-items-center bg-success border rounded text-white"
+                        <button className="btn btn-sm shadow-sm bg-success border rounded text-white d-flex align-items-center gap-2"
                         onClick={sendVentes}>
                             <Send/> Envoyer toutes les ventes à la comptabilité
                         </button>
-                    </div>
+                    </div> 
 
                     {/* Table */}
                     <div className="rounded-md border">
@@ -157,19 +158,7 @@ export function DataTable({ data, date, setDate,setSelectedVente ,setOpen,setOpe
                     </div>
 
                     {/* Pagination */}
-                    <div className="flex items-center justify-between">
-                        <p className="text-sm text-muted-foreground">
-                            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                        </p>
-                        <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-                                Previous
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                                Next
-                            </Button>
-                        </div>
-                    </div>
+                   <MyPagination table={table}/>
                 </div>
             </Card>
         </>

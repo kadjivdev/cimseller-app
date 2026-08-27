@@ -13,7 +13,6 @@ import { Label } from "@/components/ui/label"
 import { DataTable } from "./data-table"
 import { useApp } from "@/app/AppContext"
 
-
 export default function index() {
     const { user } = useApp()
 

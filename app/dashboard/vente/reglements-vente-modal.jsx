@@ -12,19 +12,12 @@ import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
-import { useRouter } from "next/navigation"
-import routes from "@/app/routes"
-import { PencilLine, SquareArrowRightEnter, X } from "lucide-react";
-import { Field } from "@/components/ui/field"
-import { FilterSelect } from "@/myComponents/FilterSelect";
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+import { PencilLine} from "lucide-react";
 
 import { DataTable } from "./reglement/data-table"
 
 export default function ReglementsVenteModal({ open, onOpenChange, vente }) {
-  const router = useRouter()
-
+ 
   const [reglements, setReglements] = useState([])
 
   // initialisation des erreurs

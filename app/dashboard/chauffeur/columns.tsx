@@ -30,77 +30,12 @@ export function useColumns(onEdit: (chauffeur: Chauffeur) => void, onDelete: (ch
   // }
 
   return [
-    {
-      accessorKey: "id",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          N° <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("id") || "—",
-    },
-    {
-      accessorKey: "fullname",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Nom complet <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("fullname") || "—",
-    },
-    {
-      accessorKey: "phone",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Téléphone <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("phone") || "—",
-    },
-    {
-      accessorKey: "permis",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Permis <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => row.original.permis ? <Link className="shadow-sm border rounded text-dark" href={row.original.permis} target="_blank"><Eye /></Link> : "—",
-    },
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      
-      // ✅ Formater la date
-      cell: ({ row }) => {
-        const date = row.getValue("createdAt") as string
-        if (!date) {
-          return new Date().toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-        } else {
-          return new Date(date).toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-        }
-      },
-    },
+    
     // 
     {
       id: "actions",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded shadow-sm border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Actions <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -109,7 +44,7 @@ export function useColumns(onEdit: (chauffeur: Chauffeur) => void, onDelete: (ch
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded">
+              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -142,6 +77,72 @@ export function useColumns(onEdit: (chauffeur: Chauffeur) => void, onDelete: (ch
             </DropdownMenuContent>
           </DropdownMenu>
         )
+      },
+    },
+    {
+      accessorKey: "id",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          N° <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.getValue("id") || "—",
+    },
+    {
+      accessorKey: "fullname",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Nom complet <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.getValue("fullname") || "—",
+    },
+    {
+      accessorKey: "phone",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Téléphone <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.getValue("phone") || "—",
+    },
+    {
+      accessorKey: "permis",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Permis <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.original.permis ? <Link className="shadow-sm border rounded text-dark" href={row.original.permis} target="_blank"><Eye /></Link> : "—",
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm border" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      
+      // ✅ Formater la date
+      cell: ({ row }) => {
+        const date = row.getValue("createdAt") as string
+        if (!date) {
+          return new Date().toLocaleDateString("fr-FR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+        } else {
+          return new Date(date).toLocaleDateString("fr-FR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+        }
       },
     },
   ]

@@ -2,18 +2,18 @@
 
 import { useState } from "react"
 import {
-    flexRender,
-    getCoreRowModel,
-    getSortedRowModel,
-    getFilteredRowModel,
+    VisibilityState, // ✅ Import
     getPaginationRowModel,
+    getFilteredRowModel,
+    getSortedRowModel,
+    getCoreRowModel,
     useReactTable,
     SortingState,
-    VisibilityState, // ✅ Import
+    flexRender,
 } from "@tanstack/react-table"
 import {
-    Table, TableBody, TableCell,
     TableHead, TableHeader, TableRow,
+    Table, TableBody, TableCell,
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -21,12 +21,12 @@ import { useColumns, Produit } from "../produit/columns"
 import { TableActions } from "./tableActions"
 import { Card } from "@/components/ui/card"
 import {
-    DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuTrigger,
+    DropdownMenu,
 } from "@/components/ui/dropdown-menu"
-import { Settings2 } from "lucide-react"
+import { ArrowLeft, ArrowRight, Settings2 } from "lucide-react"
 
 // modals
 import UpdateProduitModal from "./modal"
@@ -39,6 +39,30 @@ const exportColumns = [
     { label: "Image", key: "image" as const },
     { label: "Crée le", key: "createdAt" as const },
 ]
+
+// ✅ Génère la liste des pages à afficher avec ellipses
+function getPageNumbers(current: number, total: number): (number | "ellipsis")[] {
+    const delta = 1 // nombre de pages visibles autour de la page courante
+    const range: (number | "ellipsis")[] = []
+    const rangeStart = Math.max(1, current - delta)
+    const rangeEnd = Math.min(total, current + delta)
+
+    if (rangeStart > 1) {
+        range.push(1)
+        if (rangeStart > 2) range.push("ellipsis")
+    }
+
+    for (let i = rangeStart; i <= rangeEnd; i++) {
+        range.push(i)
+    }
+
+    if (rangeEnd < total) {
+        if (rangeEnd < total - 1) range.push("ellipsis")
+        range.push(total)
+    }
+
+    return range
+}
 
 export function DataTable({ data, setReload }:any) {
     const [open, setOpen] = useState(false)
@@ -74,6 +98,11 @@ export function DataTable({ data, setReload }:any) {
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+
+    const currentPage = table.getState().pagination.pageIndex + 1
+    const pageCount = table.getPageCount()
+    const pageNumbers = getPageNumbers(currentPage, pageCount)
+
 
     return (
         <>
@@ -158,20 +187,51 @@ export function DataTable({ data, setReload }:any) {
                         </Table>
                     </div>
 
-                    {/* Pagination */}
-                    <div className="flex items-center justify-between">
-                        <p className="text-sm text-muted-foreground">
-                            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                        </p>
-                        <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-                                Previous
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                                Next
-                            </Button>
-                        </div>
+                                   {/* ── Pagination avec numéros de page ── */}
+                <div className="flex items-center justify-between">
+                    <p className="text-sm text-muted-foreground">
+                        Page {currentPage} sur {pageCount}
+                    </p>
+                    <div className="flex items-center gap-1">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="rounded shadow-sm border"
+                            onClick={() => table.previousPage()}
+                            disabled={!table.getCanPreviousPage()}
+                        >
+                            <ArrowLeft />
+                        </Button>
+
+                        {pageNumbers.map((page, idx) =>
+                            page === "ellipsis" ? (
+                                <span key={`ellipsis-${idx}`} className="px-2 text-muted-foreground select-none">
+                                    …
+                                </span>
+                            ) : (
+                                <Button
+                                    key={page}
+                                    variant={page === currentPage ? "default" : "outline"}
+                                    size="sm"
+                                    className={`w-9 rounded border ${page===currentPage?'bg-dark text-white':''}`}
+                                    onClick={() => table.setPageIndex(page - 1)}
+                                >
+                                    {page}
+                                </Button>
+                            )
+                        )}
+
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="border rounded whadow-sm"
+                            onClick={() => table.nextPage()}
+                            disabled={!table.getCanNextPage()}
+                        >
+                            <ArrowRight />
+                        </Button>
                     </div>
+                </div>
                 </div>
             </Card>
 

@@ -91,18 +91,14 @@ export type Vente = {
   }
 }
 
-export function useColumns(setOpen:any,setSelectedVente:any)
+export function useColumns()
   : ColumnDef<Vente>[] {
-  // verifier si le user a cette permission
-  // const isUserPermitted = (name:String) => {
-  //   return (rolePermissions).some(per => per.name == name);
-  // }
 
   return [
     {
       accessorKey: "id",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           N° <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -114,7 +110,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "code",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Code <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -124,7 +120,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "sender",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Envoyé par <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -134,7 +130,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "createdAt",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Envoyé le <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -151,7 +147,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "treatedAt",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Traitée le <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -170,7 +166,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "produit",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Produit <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -180,7 +176,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "commande_client",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Client <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -190,7 +186,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "date",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Date <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -209,7 +205,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "unitePrice",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Prix unitaire <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -219,7 +215,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "qteTotal",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
          Quantité totale<ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -229,7 +225,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "remise",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
          Remise <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -239,7 +235,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "transport",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
          Transport <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -249,7 +245,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "montant",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Montant <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -261,7 +257,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
      {
       accessorKey: "unitPriceAib",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           AIB unitaire <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -271,7 +267,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
      {
       accessorKey: "unitPriceTva",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           TVA Unitaire <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -282,7 +278,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
      {
       accessorKey: "unitPriceMarge",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Marge unitaire <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -292,7 +288,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
      {
       accessorKey: "unitPriceTtc",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Prix TTC unitaire <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -304,7 +300,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
      {
       accessorKey: "priceHT",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Prix HT <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -314,7 +310,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "priceAib",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Prix AIB <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -324,7 +320,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "priceTva",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Prix TVA <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -334,7 +330,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
      {
       accessorKey: "priceMarge",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Prix marge <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -344,7 +340,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "price118",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Prix 1.18 <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -354,7 +350,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
      {
       accessorKey: "priceTtc",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Prix TTC <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -364,7 +360,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "type_facture",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Type facture <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -374,7 +370,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
     {
       accessorKey: "createdBy",
       header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Crée par <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),

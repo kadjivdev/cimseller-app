@@ -111,16 +111,16 @@ export function useColumns()
       // ✅ Ajouter cell
       cell: ({ row }) => <span className="badge border text-dark">{`${row.original?.produit?.name}` || "—"}</span>,
     },
-    {
-      accessorKey: "commande_client",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Commande Client <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge border text-dark">{row.original?.commandeClient?.client?.raison_sociale || "—"}</span>,
-    },
+    // {
+    //   accessorKey: "commande_client",
+    //   header: ({ column }) => (
+    //     <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+    //       Commande Client <ArrowUpDown className="ml-2 h-4 w-4" />
+    //     </Button>
+    //   ),
+    //   // ✅ Ajouter cell
+    //   cell: ({ row }) => <span className="badge border text-dark">{row.original?.commandeClient?.client?.raison_sociale || "—"}</span>,
+    // },
     {
       accessorKey: "date",
       header: ({ column }) => (

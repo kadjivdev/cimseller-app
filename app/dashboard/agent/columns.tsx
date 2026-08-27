@@ -30,76 +30,12 @@ export function useColumns(onEdit: (agent: Agent) => void, onDelete: (agent: Age
   // }
 
   return [
-    {
-      accessorKey: "id",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          N° <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("id") || "—",
-    },
-    {
-      accessorKey: "nom",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Nom <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("nom") || "—",
-    },
-    {
-      accessorKey: "prenom",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Prénom <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("prenom") || "—",
-    },
-    {
-      accessorKey: "phone",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Téléphone <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("phone") || "—",
-    },
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => (
-        <Button className="w-100 rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Formater la date
-      cell: ({ row }) => {
-        const date = row.getValue("createdAt") as string
-        if (!date) {
-          return new Date().toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-        } else {
-          return new Date(date).toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })
-        }
-      },
-    },
+    
     // 
     {
       id: "actions",
       header: ({ column }) => (
-        <Button className="w-100" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button className="w-100 shadow-sm border rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Actions <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -108,7 +44,7 @@ export function useColumns(onEdit: (agent: Agent) => void, onDelete: (agent: Age
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded">
+              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -141,6 +77,71 @@ export function useColumns(onEdit: (agent: Agent) => void, onDelete: (agent: Age
             </DropdownMenuContent>
           </DropdownMenu>
         )
+      },
+    },
+    {
+      accessorKey: "id",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm border rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          N° <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.getValue("id") || "—",
+    },
+    {
+      accessorKey: "nom",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm border rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Nom <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.getValue("nom") || "—",
+    },
+    {
+      accessorKey: "prenom",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm border rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Prénom <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.getValue("prenom") || "—",
+    },
+    {
+      accessorKey: "phone",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm border rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Téléphone <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.getValue("phone") || "—",
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <Button className="w-100 rounded shadow-sm border rounded" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Crée le <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Formater la date
+      cell: ({ row }) => {
+        const date = row.getValue("createdAt") as string
+        if (!date) {
+          return new Date().toLocaleDateString("fr-FR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+        } else {
+          return new Date(date).toLocaleDateString("fr-FR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+        }
       },
     },
   ]

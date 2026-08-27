@@ -39,6 +39,7 @@ export default function index() {
     const [compteBancaires, setCompteBancaires] = useState([])
     const [selectedClient, setSelectedClient] = useState(null)
     const [selectedVente, setSelectedVente] = useState(null)
+    const [showForm, setShowForm] = useState(true)
 
     const [data, setData] = useState({ typeDetailRecuId: '', venteId: '', deblocDette: false, clientId: '', compteBancaireId: '', reference: '', montant: '', date: '', preuve: '', comment: '' })
     const [errors, setErrors] = useState({ typeDetailRecuId: '', venteId: '', deblocDette: '', clientId: '', compteBancaireId: '', reference: '', montant: '', date: '', preuve: '', comment: '' })
@@ -142,9 +143,7 @@ export default function index() {
                     if (vente?.montant > res.data?.solde) {
                         toast.warning(`Le montant ${vente?.montant?.toLocaleString({ minimumFractionDigits: 2 })} de la vente dépasse le solde ${res.data?.solde?.toLocaleString({ minimumFractionDigits: 2 })} du client`)
 
-                        // redirection
-                        router.push(routes.reglement.list)
-                        router.refresh()
+                        setShowForm(false)
                         return
                     }
 
@@ -262,7 +261,7 @@ export default function index() {
                             <div className="flex justify-content-center">
                                 <Link className="btn btn-md border shadow-sm rounded p-1 d-flex w-50 justify-content-center align-items-center mb-2" href={routes.reglement.list}><Logs className="mx-1" /> Liste des règlements</Link>
                             </div>
-                            <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
+                            {showForm && <form onSubmit={submitForm} className="shadow-sm border rounded p-2 bg-white">
                                 <div className="row">
                                     <div className="col-md-12 mb-2">
                                         <Label htmlFor="venteId">Vente <span className="text-danger">*</span>  </Label>
@@ -387,11 +386,13 @@ export default function index() {
                                     </div>
                                 </div>
                                 <br />
-                                <div className="d-flex justify-content-center bg-light p-3">
-                                    <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.reglement.list))} > <X /> Retour</Button>
-                                    <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
-                                </div>
-                            </form>
+                                {data &&
+                                    <div className="d-flex justify-content-center bg-light p-3">
+                                        <Button className="shadow-sm rounded mx-1" variant="outline" onClick={(e) => (e.preventDefault(), router.push(routes.reglement.list))} > <X /> Retour</Button>
+                                        <Button type="submit" className="bg-dark text-white shadow-sm rounded"><SquareArrowRightEnter /> Enregistrer</Button>
+                                    </div>
+                                }
+                            </form>}
                         </div> :
                         <p className="text-center text-danger">Vous n'êtes pas autorisé.e à acceder à cette page.</p>
                     }

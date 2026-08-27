@@ -14,7 +14,7 @@ import { DataTable } from "./data-table"
 
 export default function index() {
 
-    const [reload, setReload] = useState(false)
+    const [reload, setReload] = useState(0)
     const [open, setOpen] = useState(false)
 
     const [ventes, setVentes] = useState([])
@@ -74,8 +74,7 @@ export default function index() {
                             data={filteredVentes}
                             date={date}
                             setDate={setDate}
-                            setSelectedVente={setSelectedVente}
-                            setOpen={setOpen}
+                            setReload={setReload}
                         />
                     </div>
                 </div>
