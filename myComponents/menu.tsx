@@ -1,4 +1,4 @@
-import { Accessibility, BaggageClaim, BanknoteArrowDown, BanknoteArrowUp, Bold, BookIcon, CalendarCheck2, ChevronRightIcon, CircleArrowOutUpRight, CircleCheckBig, CircleDotDashed, Download, FileIcon, FileText, FolderIcon, FolderPlus, HandCoins, HatGlasses, KeyRound, Landmark, LayoutDashboardIcon, ListTree, Lock, MapPinHouse, PackageSearch, PencilLine, ReceiptText, ShoppingCart, SquareMenu, Tally4, TruckElectric, Users, Van } from "lucide-react"
+import { Accessibility, BaggageClaim, BanknoteArrowDown, BanknoteArrowUp, Bold, BookIcon, CalendarCheck2, ChevronRightIcon, CircleArrowOutUpRight, CircleCheckBig, CircleDotDashed, Download, FileIcon, FileText, FolderIcon, FolderPlus, HandCoins, HatGlasses, KeyRound, Landmark, LayoutDashboardIcon, LayoutList, Lock, MapPinHouse, PackageSearch, PencilLine, ReceiptText, ShoppingCart, SquareMenu, Tally4, TruckElectric, Users, Van } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -58,19 +58,19 @@ export function Menu() {
             url: routes.bonCommande.list,
             icon: <BaggageClaim />,
             items: [
-              isPermittedTo("commande.create") && { name: "Create", url: routes.bonCommande.create, icon: <FolderPlus /> },
-              isPermittedTo("commande.view") && { name: "Liste", url: routes.bonCommande.list, icon: <ListTree /> },
-              isPermittedTo("reçu.view") && { name: "Reçus", url: routes.bonCommande.recu, icon: <ReceiptText /> },
-              isPermittedTo("accuse.view") && { name: "Accuses", url: routes.bonCommande.accuse, icon: <FileText /> }
+              isPermittedTo("commande.create") && { name: "Create", url: routes.bonCommande.create, icon: <FolderPlus size={20} /> },
+              isPermittedTo("commande.view") && { name: "Liste", url: routes.bonCommande.list, icon: <LayoutList size={20} /> },
+              isPermittedTo("reçu.view") && { name: "Reçus", url: routes.bonCommande.recu, icon: <ReceiptText size={20}/> },
+              isPermittedTo("accuse.view") && { name: "Accuses", url: routes.bonCommande.accuse, icon: <FileText size={20}/> }
             ].filter(Boolean)
           },
           isPermittedTo("programmation.view") &&
           {
             name: "Programmations",
             url: routes.programmation.list,
-            icon: <Van />,
+            icon: <Van size={20}/>,
             items: [
-              { name: "Liste", icon: <ListTree />, url: routes.programmation.list }
+              { name: "Liste", icon: <LayoutList size={20} />, url: routes.programmation.list }
             ]
           }
         ].filter(Boolean),
@@ -86,11 +86,11 @@ export function Menu() {
         isPermittedTo('suiviSortie.view') && {
           name: "Suivi sorties",
           url: routes.suiviSortie.list,
-          icon: <Accessibility />,
+          icon: <Accessibility size={20}/>,
           items: [
             isPermittedTo('suiviSortie.view') && {
               name: "Liste",
-              icon: <ListTree />,
+              icon: <LayoutList size={20} />,
               url: routes.suiviSortie.list,
             }
           ].filter(Boolean)
@@ -98,11 +98,11 @@ export function Menu() {
         isPermittedTo('suiviChauffeur.view') && {
           name: "Suivi chauffeurs",
           url: routes.suiviChauffeur.list,
-          icon: <CircleArrowOutUpRight />,
+          icon: <CircleArrowOutUpRight size={20}/>,
           items: [
             isPermittedTo('suiviChauffeur.view') && {
               name: "Liste",
-              icon: <ListTree />,
+              icon: <LayoutList size={20} />,
               url: routes.suiviChauffeur.list,
             }
           ].filter(Boolean)
@@ -110,11 +110,11 @@ export function Menu() {
         isPermittedTo('livraison.view') && {
           name: "Livraisons",
           url: routes.livraison.list,
-          icon: <TruckElectric />,
+          icon: <TruckElectric size={20}/>,
           items: [
             isPermittedTo('livraison.view') && {
               name: "Liste",
-              icon: <ListTree />,
+              icon: <LayoutList size={20} />,
               url: routes.livraison.list,
             }
           ].filter(Boolean)
@@ -128,27 +128,27 @@ export function Menu() {
     {
         name: "VENTES",
         url: routes.vente.list,
-          icon: <ShoppingCart />,
+          icon: <ShoppingCart size={20}/>,
           items: [
             {
               name: "Liste",
               url: routes.vente.list,
-              icon: <ListTree />,
+              icon: <LayoutList size={20} />,
             },
             {
               name: "En attente",
               url: routes.vente.enAttente,
-              icon: <CircleDotDashed />,
+              icon: <CircleDotDashed size={20}/>,
             },
             {
               name: "Journalières",
               url: routes.vente.journalier,
-              icon: <CalendarCheck2 />,
+              icon: <CalendarCheck2 size={20}/>,
             },
             isPermittedTo('comptabilizedVente.view') && {
               name: "A comptabiliser",
               url: routes.vente.aComptabiliser,
-              icon: <HandCoins />,
+              icon: <HandCoins size={20}/>,
             }
           ].filter(Boolean),
       },
@@ -162,17 +162,17 @@ export function Menu() {
           {
             name: "Liste ventes",
             url: routes.comptabilite.list,
-            icon: <ListTree />,
+            icon: <LayoutList size={20} />,
           },
           {
             name: "A traiter",
             url: routes.comptabilite.aTraiter,
-            icon: <PencilLine />,
+            icon: <PencilLine size={20}/>,
           },
           {
             name: "Exporter ventes ",
             url: routes.comptabilite.traiter,
-            icon: <Download />,
+            icon: <Download size={20}/>,
           },
         ]
       },
@@ -186,34 +186,34 @@ export function Menu() {
           isPermittedTo('approvisionnement.view') && {
             name: "Approvisionnements",
             url: routes.approvisionnement.list,
-            icon: <BanknoteArrowUp />,
+            icon: <BanknoteArrowUp size={20}/>,
             items: [
               isPermittedTo('approvisionnement.create') && {
                 name: "Create",
                 url: routes.approvisionnement.create,
-                icon: <FolderPlus />,
+                icon: <FolderPlus size={20} />,
               },
               isPermittedTo('approvisionnement.view') && {
                 name: "Liste",
                 url: routes.approvisionnement.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               }
             ].filter(Boolean)
           },
           isPermittedTo('reglement.view') && {
             name: "Reglements",
             url: routes.reglement.list,
-            icon: <BanknoteArrowDown />,
+            icon: <BanknoteArrowDown size={20}/>,
             items: [
               isPermittedTo('reglement.create') && {
                 name: "Create",
                 url: routes.reglement.create,
-                icon: <FolderPlus />,
+                icon: <FolderPlus size={20} />,
               },
               isPermittedTo('reglement.view') && {
                 name: "Liste",
                 url: routes.reglement.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               }
             ].filter(Boolean)
           },
@@ -229,27 +229,27 @@ export function Menu() {
           isPermittedTo('client.create') && {
             name: "Create",
             url: routes.client.create,
-            icon: <FolderPlus />,
+            icon: <FolderPlus size={20} />,
           },
           {
             name: "Liste",
             url: routes.client.list,
-            icon: <Users />,
+            icon: <Users size={20}/>,
           },
           {
             name: "Actifs",
             url: routes.client.actif,
-            icon: <CircleCheckBig />,
+            icon: <CircleCheckBig size={20}/>,
           },
           {
             name: "Inactifs",
             url: routes.client.inactif,
-            icon: <ListTree />,
+            icon: <LayoutList size={20} />,
           },
           {
             name: "Befs",
             url: routes.client.bef,
-            icon: <KeyRound />,
+            icon: <KeyRound size={20}/>,
           }
         ].filter(Boolean),
       },
@@ -268,170 +268,170 @@ isPermittedTo('zone.view'))?[
           isPermittedTo('fournisseur.view') && {
             name: "Fournisseurs",
             url: routes.fournisseur.list,
-            icon: <Tally4 />,
+            icon: <Tally4 size={20}/>,
             items: [
               isPermittedTo('fournisseur.create') && {
                 name: "Create",
                 url: routes.fournisseur.create,
-                icon: <FolderPlus />,
+                icon: <FolderPlus size={20} />,
               },
               isPermittedTo('fournisseur.view') && {
                 name: "Liste",
                 url: routes.fournisseur.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               },
             ].filter(Boolean)
           },
           isPermittedTo('avaliseur.view') && {
             name: "Avaliseurs",
             url: routes.avaliseur.list,
-            icon: <Users />,
+            icon: <Users size={20}/>,
             items: [
               isPermittedTo('avaliseur.create') && {
                 name: "Create",
                 url: routes.avaliseur.create,
-                icon: <FolderPlus />,
+                icon: <FolderPlus size={20} />,
               },
               isPermittedTo('avaliseur.view') && {
                 name: "Liste",
                 url: routes.avaliseur.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               },
             ].filter(Boolean)
           },
           isPermittedTo('camion.view') && {
             name: "Camions",
             url: routes.camion.list,
-            icon: <Van />,
+            icon: <Van size={20}/>,
             items: [
               isPermittedTo('camion.view') && {
                 name: "Create",
                 url: routes.camion.create,
-                icon: <FolderPlus />,
+                icon: <FolderPlus size={20} />,
               },
               isPermittedTo('camion.view') && {
                 name: "Liste",
                 url: routes.camion.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               },
             ].filter(Boolean)
           },
           isPermittedTo('chauffeur.view') && {
             name: "Chauffeurs",
             url: routes.chauffeur.list,
-            icon: <Users />,
+            icon: <Users size={20}/>,
             items: [
               isPermittedTo('chauffeur.view') && {
                 name: "Create",
                 url: routes.chauffeur.create,
-                icon: <FolderPlus />,
+                icon: <FolderPlus size={20} />,
               },
               isPermittedTo('chauffeur.view') && {
                 name: "Liste",
                 url: routes.chauffeur.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               },
             ].filter(Boolean)
           },
           isPermittedTo('agent.view') && {
             name: "Agents",
             url: routes.agent.list,
-            icon: <HatGlasses />,
+            icon: <HatGlasses size={20}/>,
             items: [
               isPermittedTo('agent.create') && {
                 name: "Create",
                 url: routes.agent.create,
-                icon: <FolderPlus />,
+                icon: <FolderPlus size={20} />,
               },
               isPermittedTo('agent.view') && {
                 name: "Liste",
                 url: routes.agent.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               },
             ].filter(Boolean)
           },
           isPermittedTo('banque.view') && {
             name: "Banques",
             url: routes.banque.list,
-            icon: <Landmark />,
+            icon: <Landmark size={20}/>,
             items: [
               isPermittedTo('banque.view') && {
                 name: "Create",
                 url: routes.banque.create,
-                icon: <FolderPlus />,
+                icon: <FolderPlus size={20} />,
               },
               isPermittedTo('banque.view') && {
                 name: "Liste",
                 url: routes.banque.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               },
             ].filter(Boolean)
           },
           isPermittedTo('compteBancaire.view') && {
             name: "Compte Bancaires",
             url: routes.compteBancaire.list,
-            icon: <Landmark />,
+            icon: <Landmark size={20}/>,
             items: [
               isPermittedTo('compteBancaire.create') && {
                 name: "Create",
                 url: routes.compteBancaire.create,
-                icon: <FolderPlus />,
+                icon: <FolderPlus size={20} />,
               },
               isPermittedTo('compteBancaire.view') && {
                 name: "Liste",
                 url: routes.compteBancaire.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               },
             ].filter(Boolean)
           },
           isPermittedTo('produit.view') && {
             name: "Produits",
             url: routes.produit.list,
-            icon: <PackageSearch />,
+            icon: <PackageSearch size={20}/>,
             items: [
               isPermittedTo('produit.create') && {
                 name: "Create",
                 url: routes.produit.create,
-                icon: <FolderPlus />,
+                icon: <FolderPlus size={20} />,
               },
               isPermittedTo('produit.view') && {
                 name: "Liste",
                 url: routes.produit.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               },
             ].filter(Boolean)
           },
           isPermittedTo('representant.view') && {
             name: "Representants",
             url: routes.representant.list,
-            icon: <MapPinHouse />,
+            icon: <MapPinHouse size={20}/>,
             items: [
               isPermittedTo('representant.create') && {
                 name: "Create",
                 url: routes.representant.create,
-                icon: <FolderPlus />,
+                icon: <FolderPlus size={20} />,
               },
               isPermittedTo('representant.view') && {
                 name: "Liste",
                 url: routes.representant.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               },
             ].filter(Boolean)
           },
           isPermittedTo('zone.view') && {
             name: "Zones",
             url: routes.zone.list,
-            icon: <MapPinHouse />,
+            icon: <MapPinHouse size={20}/>,
             items: [
               isPermittedTo('zone.create') && {
                 name: "Create",
                 url: routes.zone.create,
-                icon: <FolderPlus />,
+                icon: <FolderPlus size={20} />,
               },
               isPermittedTo('zone.view') && {
                 name: "Liste",
                 url: routes.zone.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               },
             ].filter(Boolean)
           },
@@ -447,46 +447,46 @@ isPermittedTo('zone.view'))?[
           isPermittedTo('user.view') && {
             name: "Utilisateurs",
             url: routes.user.list,
-            icon: <Users />,
+            icon: <Users size={20}/>,
             items: [
               isPermittedTo('user.create') && {
                 name: "Create",
                 url: routes.user.create,
-                icon: <FolderPlus />,
+                icon: <FolderPlus size={20} />,
               },
               isPermittedTo('user.view') && {
                 name: "Liste",
                 url: routes.user.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               },
             ].filter(Boolean)
           },
           isPermittedTo('role.view') &&{
             name: "Rôles",
             url: routes.role.list,
-            icon: <Lock />,
+            icon: <Lock size={20}/>,
             items: [
               isPermittedTo('role.view') && {
                 name: "Create",
                 url: routes.role.create,
-                icon: <FolderPlus />,
+                icon: <FolderPlus size={20} />,
               },
               isPermittedTo('role.view') && {
                 name: "Liste",
                 url: routes.role.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               },
             ].filter(Boolean)
           },
           isPermittedTo('permission.view') && {
             name: "Permissions",
             url: routes.permission.list,
-            icon: <KeyRound />,
+            icon: <KeyRound size={20}/>,
             items: [
               isPermittedTo('permission.view') && {
                 name: "Liste",
                 url: routes.permission.list,
-                icon: <ListTree />,
+                icon: <LayoutList size={20} />,
               },
             ].filter(Boolean)
           }
