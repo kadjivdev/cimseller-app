@@ -185,7 +185,6 @@ export default function index() {
                                             placeholder="Ex: Camion Poids lourd"
                                             required
                                             value={data.libelle}
-                                            value={data.libelle}
                                             onChange={handleChange} />
                                         {errors.libelle && <span className="text-danger">{errors.libelle}</span>}
                                     </div>
