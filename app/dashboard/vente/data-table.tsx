@@ -38,7 +38,7 @@ import ReglementsVenteModal from "./reglements-vente-modal"
 import { DatePickerRange } from "@/myComponents/DatePickerRange"
 import { MyPagination } from "@/components/MyPagination"
 
-const exportColumns = getStandardVenteExportColumns<Vente>()
+const exportColumns = getStandardVenteExportColumns<any>()
 
 export function DataTable({ data, date, setDate,selectedProgrammation, handleProgrammationSelect }:any) {
 

@@ -29,10 +29,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Settings2 } from "lucide-react"
 
-import { DatePickerRange } from "@/myComponents/DatePickerRange"
 import { MyPagination } from "@/components/MyPagination"
 
-const exportColumns = getStandardVenteExportColumns<Vente>()
+const exportColumns = getStandardVenteExportColumns<any>()
 
 export function DataTable({ data}:any) {
 

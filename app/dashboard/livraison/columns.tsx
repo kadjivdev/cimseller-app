@@ -90,7 +90,7 @@ export function useColumns(
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
+              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-warning text-white">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -116,6 +116,7 @@ export function useColumns(
                 }</DropdownMenuItem>
 
                 {/* transferer le bon */}
+                {user.role?.id!=5 && // les vendeurs ne doivente pas transferer les bons
                 <DropdownMenuItem
                     style={{ cursor: "pointer" }}
                     className="text-warning"
@@ -130,6 +131,7 @@ export function useColumns(
                       <><ArrowRight /> Transferer </>
                     }
                 </DropdownMenuItem>
+                }
               </>
             }
             </DropdownMenuContent>
@@ -146,7 +148,7 @@ export function useColumns(
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => {
-        return row.getValue("id") || "—"
+        return row.index + 1
       },
     },
     {

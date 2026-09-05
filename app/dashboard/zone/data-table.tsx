@@ -31,36 +31,13 @@ import { ArrowLeft, ArrowRight, Settings2 } from "lucide-react"
 // modals
 import UpdateZoneModal from "./modal"
 import DeleteZoneModal from "./delete-modal"
+import { MyPagination } from "@/components/MyPagination"
 
 const exportColumns = [
     { label: "Nom ", key: "name" as const },
     { label: "Descriprion", key: "description" as const },
     { label: "Crée le", key: "createdAt" as const },
 ]
-
-// ✅ Génère la liste des pages à afficher avec ellipses
-function getPageNumbers(current: number, total: number): (number | "ellipsis")[] {
-    const delta = 1 // nombre de pages visibles autour de la page courante
-    const range: (number | "ellipsis")[] = []
-    const rangeStart = Math.max(1, current - delta)
-    const rangeEnd = Math.min(total, current + delta)
-
-    if (rangeStart > 1) {
-        range.push(1)
-        if (rangeStart > 2) range.push("ellipsis")
-    }
-
-    for (let i = rangeStart; i <= rangeEnd; i++) {
-        range.push(i)
-    }
-
-    if (rangeEnd < total) {
-        if (rangeEnd < total - 1) range.push("ellipsis")
-        range.push(total)
-    }
-
-    return range
-}
 
 export function DataTable({ data, setReload,representants }:any) {
     const [open, setOpen] = useState(false)
@@ -96,10 +73,6 @@ export function DataTable({ data, setReload,representants }:any) {
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-
-     const currentPage = table.getState().pagination.pageIndex + 1
-    const pageCount = table.getPageCount()
-    const pageNumbers = getPageNumbers(currentPage, pageCount)
 
     return (
         <>
@@ -185,50 +158,7 @@ export function DataTable({ data, setReload,representants }:any) {
                     </div>
 
                    {/* ── Pagination avec numéros de page ── */}
-                <div className="flex items-center justify-between">
-                    <p className="text-sm text-muted-foreground">
-                        Page {currentPage} sur {pageCount}
-                    </p>
-                    <div className="flex items-center gap-1">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="rounded shadow-sm border"
-                            onClick={() => table.previousPage()}
-                            disabled={!table.getCanPreviousPage()}
-                        >
-                            <ArrowLeft />
-                        </Button>
-
-                        {pageNumbers.map((page, idx) =>
-                            page === "ellipsis" ? (
-                                <span key={`ellipsis-${idx}`} className="px-2 text-muted-foreground select-none">
-                                    …
-                                </span>
-                            ) : (
-                                <Button
-                                    key={page}
-                                    variant={page === currentPage ? "default" : "outline"}
-                                    size="sm"
-                                    className={`w-9 rounded border ${page===currentPage?'bg-dark text-white':''}`}
-                                    onClick={() => table.setPageIndex(page - 1)}
-                                >
-                                    {page}
-                                </Button>
-                            )
-                        )}
-
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="border rounded whadow-sm"
-                            onClick={() => table.nextPage()}
-                            disabled={!table.getCanNextPage()}
-                        >
-                            <ArrowRight />
-                        </Button>
-                    </div>
-                </div>
+                    <MyPagination table={table}/>
                 </div>
             </Card>
 

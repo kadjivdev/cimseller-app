@@ -46,6 +46,7 @@ export type Bon = {
   reference: string
   qteCommander: string
   qteProgrammer: string
+  qteVendue:string
   qteVendu: string
   montant: Number
   stock: Number
@@ -81,7 +82,7 @@ export function useColumns(
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
+              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-warning text-white">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -191,9 +192,7 @@ export function useColumns(
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => {
-        return row.getValue("id") || "—"
-      },
+      cell: ({ row }) => row.index + 1,
     },
     {
       accessorKey: "code",
@@ -263,7 +262,7 @@ export function useColumns(
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(Number(row.original.qteVendu) ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
+      cell: ({ row }) => <span className="badge bg-light border text-dark"> {(Number(row.original.qteVendue) ?? 0)?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"} </span>,
     },
     {
       accessorKey: "stock",

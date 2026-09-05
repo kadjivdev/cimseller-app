@@ -25,8 +25,8 @@ export function DatePickerRange({ date, setDate }) {
     }
 
     return (
-        <Field className="mx-auto w-50 text-center bg-dark text-white p-3 rounded">
-            <FieldLabel htmlFor="date-picker-range" className="text-lg">Filtre par période d'insersion</FieldLabel>
+        <Field className="mx-auto w-50 text-center p-3 rounded">
+            {/* <FieldLabel htmlFor="date-picker-range" className="text-lg">Filtre par période d'insersion</FieldLabel> */}
             <Popover>
                 <PopoverTrigger asChild className="text-center">
                     <Button

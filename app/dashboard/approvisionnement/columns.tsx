@@ -2,7 +2,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, CircleCheckBig, CircleX, Eraser, Eye, MoreHorizontal, PencilLine } from "lucide-react"
+import { ArrowUpDown, CircleCheckBig, Eraser, Eye, MoreHorizontal, PencilLine } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -67,7 +67,7 @@ export function useColumns(onEdit: (approvisionnement: Approvisionnement) => voi
           !approvisionnement.validatedBy ?
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
+                <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-warning text-white">
                   <span className="sr-only">Open menu</span>
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
@@ -125,7 +125,7 @@ export function useColumns(onEdit: (approvisionnement: Approvisionnement) => voi
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => {
-        return row.getValue("id") || "—"
+        return row.index + 1
       },
     },
     {

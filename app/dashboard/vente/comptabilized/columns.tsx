@@ -93,11 +93,7 @@ export type Vente = {
 
 export function useColumns(setOpen:any,setSelectedVente:any)
   : ColumnDef<Vente>[] {
-  // verifier si le user a cette permission
-  // const isUserPermitted = (name:String) => {
-  //   return (rolePermissions).some(per => per.name == name);
-  // }
-
+  
   return [
     {
       accessorKey: "id",
@@ -108,7 +104,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => {
-        return row.getValue("id") || "—"
+        return row.index + 1
       },
     },
     {

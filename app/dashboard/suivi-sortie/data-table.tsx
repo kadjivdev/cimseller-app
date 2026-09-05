@@ -35,17 +35,21 @@ import { MyPagination } from "@/components/MyPagination"
 
 const exportColumns = [
     { label: "Code ", key: "code" as const },
-    { label: "Fournisseur", key: "fournisseur" as const },
-    { label: "Montant", key: "montant" as const },
-    { label: "Type", key: "type" as const },
-    { label: "Statut", key: "statut" as const },
+    { label: "Camion", key: "camion" , accessor:(row:any)=>row.camion?.immatriculation?? "__" },
+    { label: "Chauffeur", key: "chauffeur" , accessor:(row:any)=>row.chauffeur?.fullname?? "__" },
+    { label: "Avaliseur", key: "avaliseur" , accessor:(row:any)=>row.avaliseur?.fullname?? "__" },
+    { label: "Qte Programmée", key: "qteProgrammer" as const },
+    { label: "Qte Vendue", key: "qteVendue" as const },
+    { label: "Zone", key: "zone" , accessor:(row:any)=>row.zone?.name?? "__" },
+    { label: "Bl", key: "bl" as const },
+    { label: "Statut", key: "statut" , accessor:(row:any)=>row.statut?.name?? "__" },
     { label: "Validé le", key: "validatedAt" as const },
     { label: "Validé par", key: "validatedBy" as const },
     { label: "Crée le", key: "createdAt" as const },
-    { label: "Crée par", key: "createdBy" as const },
+    { label: "Crée par", key: "createdBy", accessor:(row:any)=>row.createdBy?.fullname?? "__" },
 ]
 
-export function DataTable({ data, setReload, date, setDate, handleBonSelect }:any) {
+export function DataTable({ data, date, setDate, handleBonSelect }:any) {
 
     const [open, setOpen] = useState(false)
     const [selectedProgrammation, setSelectedProgrammation] = useState<Programmation | null>(null)
@@ -125,7 +129,7 @@ export function DataTable({ data, setReload, date, setDate, handleBonSelect }:an
                             <TableActions
                                 data={data}
                                 columns={exportColumns}
-                                filename="utilisateurs"
+                                filename="suivi-sortie"
                             />
                         </div>
                     </div>

@@ -33,7 +33,7 @@ export function resolveExportValue(obj: unknown, path: string): string {
 
 export type ExportColumn<T> = {
   label: string
-  key?: string
+  key: string
   getValue?: (row: T) => string | number
 }
 

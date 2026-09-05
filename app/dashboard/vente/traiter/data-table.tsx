@@ -35,7 +35,32 @@ import { DatePickerRange } from "@/myComponents/DatePickerRange"
 import ExportVentesModal from "./export-ventes-modal";
 import { MyPagination } from "@/components/MyPagination"
 
-const exportColumns = getTraiterVenteExportColumns<any>()
+const exportColumns = getTraiterVenteExportColumns()
+
+const getNestedSearchText = (value: unknown): string[] => {
+    if (value == null) return []
+    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+        return [String(value)]
+    }
+    if (Array.isArray(value)) {
+        return value.flatMap((item) => getNestedSearchText(item))
+    }
+    if (typeof value === "object") {
+        return Object.values(value as Record<string, unknown>).flatMap((item) => getNestedSearchText(item))
+    }
+    return []
+}
+
+const globalSearchFilter = (row: any, columnId: string, filterValue: unknown) => {
+    const keyword = String(filterValue ?? "").trim().toLowerCase()
+    if (!keyword) return true
+
+    const searchableText = getNestedSearchText(row.original)
+        .join(" ")
+        .toLowerCase()
+
+    return searchableText.includes(keyword)
+}
 
 export function DataTable({ data, date, setDate,setReload}:any) {
 
@@ -53,6 +78,7 @@ export function DataTable({ data, date, setDate,setReload}:any) {
         onSortingChange: setSorting,
         onGlobalFilterChange: setGlobalFilter,
         onColumnVisibilityChange: setColumnVisibility, // ✅ Ajouté
+        globalFilterFn: globalSearchFilter,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),

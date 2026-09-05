@@ -1,32 +1,26 @@
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 
+const MAX_VISIBLE = 10
 
-// ✅ Génère la liste des pages à afficher avec ellipses
-function getPageNumbers(current,total) {
-    const delta = 1 // nombre de pages visibles autour de la page courante
-    const range = []
-    const rangeStart = Math.max(1, current - delta)
-    const rangeEnd = Math.min(total, current + delta)
-
-    if (rangeStart > 1) {
-        range.push(1)
-        if (rangeStart > 2) range.push("ellipsis")
+// Génère une fenêtre de max 10 pages autour de la page courante
+function getPageNumbers(current, total, maxVisible = MAX_VISIBLE) {
+    if (total <= maxVisible) {
+        return Array.from({ length: total }, (_, i) => i + 1)
     }
 
-    for (let i = rangeStart; i <= rangeEnd; i++) {
-        range.push(i)
+    let start = Math.max(1, current - Math.floor(maxVisible / 2))
+    let end = start + maxVisible - 1
+
+    if (end > total) {
+        end = total
+        start = end - maxVisible + 1
     }
 
-    if (rangeEnd < total) {
-        if (rangeEnd < total - 1) range.push("ellipsis")
-        range.push(total)
-    }
-
-    return range
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i)
 }
 
-export function MyPagination({table}) {
+export function MyPagination({ table }) {
     const currentPage = table.getState().pagination.pageIndex + 1
     const pageCount = table.getPageCount()
     const pageNumbers = getPageNumbers(currentPage, pageCount)
@@ -47,28 +41,22 @@ export function MyPagination({table}) {
                     <ArrowLeft />
                 </Button>
 
-                {pageNumbers.map((page, idx) =>
-                    page === "ellipsis" ? (
-                        <span key={`ellipsis-${idx}`} className="px-2 text-muted-foreground select-none">
-                            …
-                        </span>
-                    ) : (
-                        <Button
-                            key={page}
-                            variant={page === currentPage ? "default" : "outline"}
-                            size="sm"
-                            className={`w-9 rounded border ${page === currentPage ? 'bg-dark text-white' : ''}`}
-                            onClick={() => table.setPageIndex(page - 1)}
-                        >
-                            {page}
-                        </Button>
-                    )
-                )}
+                {pageNumbers.map((page) => (
+                    <Button
+                        key={page}
+                        variant={page === currentPage ? "default" : "outline"}
+                        size="sm"
+                        className={`w-9 rounded border ${page === currentPage ? 'bg-warning text-white' : ''}`}
+                        onClick={() => table.setPageIndex(page - 1)}
+                    >
+                        {page}
+                    </Button>
+                ))}
 
                 <Button
                     variant="outline"
                     size="sm"
-                    className="border rounded whadow-sm"
+                    className="border rounded shadow-sm"
                     onClick={() => table.nextPage()}
                     disabled={!table.getCanNextPage()}
                 >

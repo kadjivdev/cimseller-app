@@ -43,7 +43,7 @@ export function useColumns(onEdit: (representant: Representant) => void, onDelet
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("id") || "—",
+      cell: ({ row }) => row.index + 1,
     },
     {
       accessorKey: "nom",

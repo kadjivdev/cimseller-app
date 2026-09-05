@@ -38,17 +38,17 @@ import { MyPagination } from "@/components/MyPagination"
 const exportColumns = [
     { label: "Code ", key: "code" as const },
     { label: "Reference", key: "reference" as const },
-    { label: "Vente", key: "vente" as const },
-    { label: "Client", key: "client" as const },
+    { label: "Vente", key: "vente" , accessor:(row:any)=>row.vente?.code??"__" },
+    { label: "Client", key: "client" , accessor:(row:any)=>row.client?.raison_sociale??"__"},
     { label: "Montant", key: "montant" as const },
-    { label: "Type", key: "type" as const },
-    { label: "Compte bancaire", key: "compte" as const },
+    { label: "Type", key: "type" ,accessor:(row:any)=>row.typeDetailRecu?.name??"__" },
+    { label: "Compte bancaire", key: "compte" , accessor:(row:any)=>row.compteBancaire?.intitule??"__" },
     { label: "Commentaire", key: "comment" as const },
     { label: "Commentaire de validation", key: "validationComment" as const },
     { label: "Validé le", key: "validatedAt" as const },
-    { label: "Validé par", key: "validatedBy" as const },
+    { label: "Validé par", key: "validatedBy" , accessor:(row:any)=>row.validatedBy?.fullname??"__" },
     { label: "Crée le", key: "createdAt" as const },
-    { label: "Crée par", key: "createdBy" as const },
+    { label: "Crée par", key: "createdBy" , accessor:(row:any)=>row.createdBy?.fullname??"__" },
 ]
 
 export function DataTable({ data, setReload, date, setDate, totalAmount }:any) {
@@ -106,7 +106,7 @@ export function DataTable({ data, setReload, date, setDate, totalAmount }:any) {
                     />
 
                     {/* Total amount */}
-                    <h3 className="">Montant total: <span className="badge bg-dark border text-light rounded">cfa {totalAmount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} </span></h3>
+                    <h3 className="">Montant total: <span className="badge bg-dark border text-light rounded"> {totalAmount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} FCFA</span></h3>
                     {/* ── HEADER ── */}
                     <div className="flex items-center justify-between gap-4 no-print bg-dark p-2 rounded">
                         <Input
@@ -145,7 +145,7 @@ export function DataTable({ data, setReload, date, setDate, totalAmount }:any) {
                             <TableActions
                                 data={data}
                                 columns={exportColumns}
-                                filename="utilisateurs"
+                                filename="reglements"
                             />
                         </div>
                     </div>

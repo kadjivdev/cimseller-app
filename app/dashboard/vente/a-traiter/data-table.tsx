@@ -32,7 +32,7 @@ import { MyPagination } from "@/components/MyPagination"
 
 // modals
 
-const exportColumns = getATraiterVenteExportColumns<Vente>()
+const exportColumns = getATraiterVenteExportColumns<any>()
 
 export function DataTable({ data, setSelectedVente ,setOpen}:any) {
 

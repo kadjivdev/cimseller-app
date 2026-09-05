@@ -532,7 +532,7 @@ isPermittedTo('zone.view'))?[
         href={fileItem.url as string}
         className="w-full justify-start gap-2 text-foreground d-flex text-dark"
       >
-        <small className="text-xm" style={{ fontSize: 10 }}> {fileItem.icon as string}</small>
+        <small className="text-xm text-warning" style={{ fontSize: 10 }}> {fileItem.icon as string}</small>
         <span>{fileItem.name}</span>
       </Link>
     )
@@ -541,11 +541,11 @@ isPermittedTo('zone.view'))?[
   return (
     <Card className="gap-2 overflow-y-auto max-h-[90vh]" size="sm">
       <CardHeader>
-        <Tabs defaultValue="explorer">
+        {/* <Tabs defaultValue="explorer">
           <TabsList className="w-full">
             <TabsTrigger value="explorer"><SquareMenu /> Menu</TabsTrigger>
           </TabsList>
-        </Tabs>
+        </Tabs> */}
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-1">

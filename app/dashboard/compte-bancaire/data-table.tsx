@@ -37,7 +37,7 @@ import {MyPagination} from "@/components/MyPagination"
 const exportColumns = [
     { label: "Intitulé ", key: "intitule" as const },
     { label: "Numéro", key: "numero" as const },
-    { label: "Banque", key: "banque" as const },
+    { label: "Banque", key: "banque" , accessor: (row:any)=>row.banque?.name ?? "—" },
     { label: "Crée le", key: "createdAt" as const },
 ]
 

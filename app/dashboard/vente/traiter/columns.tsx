@@ -104,7 +104,7 @@ export function useColumns()
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => {
-        return row.getValue("id") || "—"
+        return row.index + 1
       },
     },
     {

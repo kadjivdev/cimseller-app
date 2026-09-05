@@ -123,7 +123,7 @@ export function DataTable({ data, setReload, date, setDate, totalAmount }:any) {
                     />
 
                     {/* Total amount */}
-                    <h3 className="">Montant total: <span className="badge bg-dark border text-light rounded">cfa {totalAmount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} </span></h3>
+                    <h3 className="">Montant total: <span className="badge bg-dark border text-light rounded"> {totalAmount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} FCFA</span></h3>
                     {/* ── HEADER ── */}
                     <div className="flex items-center justify-between gap-4 no-print bg-dark p-2 rounded">
                         <Input

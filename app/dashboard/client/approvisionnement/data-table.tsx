@@ -26,17 +26,16 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Import, Settings2 } from "lucide-react"
+import { Settings2 } from "lucide-react"
 import { MyPagination } from "@/components/MyPagination"
-
 
 const exportColumns = [
     { label: "Code ", key: "code" as const },
     { label: "Reference ", key: "reference" as const },
     { label: "Montant ", key: "montant" as const },
     { label: "Date", key: "date" as const },
-    { label: "Type", key: "type" as const },
-    { label: "Compte", key: "compte" as const },
+    { label: "Type", key: "type", accessor:(row:any)=>row.typeDetailRecu?.name??"__" },
+    { label: "Compte", key: "compte" , accessor:(row:any)=>row.compteBancaire?.intitule??"__" },
     { label: "Commentaire", key: "comment" as const },
     { label: "Crée le", key: "createdAt" as const },
     { label: "Validée le", key: "validatedAt" as const },

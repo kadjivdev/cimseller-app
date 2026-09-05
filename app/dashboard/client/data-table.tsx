@@ -41,9 +41,8 @@ import { MyPagination } from "@/components/MyPagination"
 
 const exportColumns = [
     { label: "Raison sociale ", key: "raison_sociale" as const },
-    { label: "Zone ", key: "zone" as const },
-    { label: "Statut ", key: "statut" as const },
-    { label: "Profil", key: "profil" as const },
+    { label: "Zone ", key: "zone" , accessor:(row:any)=>row.zone?.name ?? "--"},
+    { label: "Statut ", key: "statut" , accessor:(row:any)=>row.statut?.name ?? "--" },
     { label: "Montant approvisionné", key: "approvisionnementAmount" as const },
     { label: "Vente validée", key: "venteAmount" as const },
     { label: "Montant réglé", key: "reglementAmount" as const },

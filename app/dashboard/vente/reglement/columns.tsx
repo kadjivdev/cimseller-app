@@ -8,40 +8,40 @@ import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
 
 export type Approvisionnement = {
-  id: number
-  client: {
-    id: Number,
-    raison_sociale: String,
+  id?: number
+  client?: {
+    id?: number
+    raison_sociale?: string
   }
-  vente: {
-    id: Number,
-    code: String,
+  vente?: {
+    id?: number
+    code?: string
   }
-  compteBancaire: {
-    id: Number,
-    numero: String,
-    intitule: String,
+  compteBancaire?: {
+    id?: number
+    numero?: string
+    intitule?: string
   }
-  typeDetailRecu: {
-    id: Number,
-    name: String,
+  typeDetailRecu?: {
+    id?: number
+    name?: string
   }
-  createdBy: {
-    id: Number,
-    fullname: String,
+  createdBy?: {
+    id?: number
+    fullname?: string
   }
-  validatedBy: {
-    id: Number,
-    fullname: String,
+  validatedBy?: {
+    id?: number
+    fullname?: string
   }
-  code: string
-  reference: string
-  montant: Number
-  date: Number
-  preuve: string
-  comment: string
-  createdAt: string
-  validatedAt: string
+  code?: string
+  reference?: string
+  montant?: number
+  date?: string | null
+  preuve?: string | null
+  comment?: string | null
+  createdAt?: string | null
+  validatedAt?: string | null
 }
 
 export function useColumns(): ColumnDef<Approvisionnement>[] {
@@ -60,7 +60,7 @@ export function useColumns(): ColumnDef<Approvisionnement>[] {
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => {
-        return row.getValue("id") || "—"
+        return row.index + 1
       },
     },
     {

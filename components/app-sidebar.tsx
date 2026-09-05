@@ -33,8 +33,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <Sidebar
         collapsible="offcanvas"
         {...props}
-        className="shadow-sm border" style={{ width: '50vh' }} >
-        <SidebarHeader className="border-bottom rounded shadow-sm">
+        className="shadow-sm border bg-dark rounded" style={{ width: '50vh' }} >
+        <SidebarHeader className="border-bottom shadow-sm bg-dark">
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
@@ -53,7 +53,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <Menu />
         </SidebarContent>
 
-        <SidebarFooter className="border-top shadow-sm">
+        <SidebarFooter className="border-top shadow-sm bg-warning">
           <NavUser user={data.user} />
         </SidebarFooter>
       </Sidebar>

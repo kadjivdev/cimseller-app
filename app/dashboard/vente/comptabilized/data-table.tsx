@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import {
     flexRender,
     getCoreRowModel,
@@ -30,12 +30,11 @@ import {
 import { Settings2 } from "lucide-react"
 
 // modals
-import UpdateVenteModal from "./update-modal"
 
 import { DatePickerRange } from "@/myComponents/DatePickerRange"
 import { MyPagination } from "@/components/MyPagination"
 
-const exportColumns = getComptabilizedVenteExportColumns<Vente>()
+const exportColumns = getComptabilizedVenteExportColumns<any>()
 
 export function DataTable({ data, date, setDate,setSelectedVente ,setOpen}:any) {
 

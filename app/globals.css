@@ -141,3 +141,31 @@
     display: none;
   }
 }
+
+#dashbordContent {
+  background-image: url("/logo-bw-dark.png")!important;
+  background-repeat: no-repeat!important;
+  background-size: cover!important;
+  background-position: fixed!important;
+}
+
+.btn{
+  background-color: transparent!important;
+  border: #cbb77d solid 2px!important;
+  color: #cbb77d!important;
+}
+
+.btn:hover{
+  background-color: #000!important;
+  border: #fff solid 2px!important;
+  color: #fff!important;
+  transition-duration: 0.5;
+}
+
+.text-warning{
+  color: #cbb77d!important;
+}
+/* fcba03 */
+.bg-warning{
+ background-color: #c9ac55!important;
+}

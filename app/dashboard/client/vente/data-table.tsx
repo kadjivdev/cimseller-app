@@ -34,14 +34,13 @@ import { MyPagination } from "@/components/MyPagination"
 
 const exportColumns = [
     { label: "Code ", key: "code" as const },
-    { label: "Fournisseur", key: "fournisseur" as const },
     { label: "Montant", key: "montant" as const },
-    { label: "Type", key: "type" as const },
-    { label: "Statut", key: "statut" as const },
+    { label: "Type", key: "type", accessor:(row:any)=>row.type?.name??"__" },
+    { label: "Statut", key: "statut" ,accessor:(row:any)=>row.statut?.name ?? "__" },
     { label: "Validé le", key: "validatedAt" as const },
-    { label: "Validé par", key: "validatedBy" as const },
+    { label: "Validé par", key: "validatedBy",accessor:(row:any)=>row.validatedBy?.fullname ?? "__"},
     { label: "Crée le", key: "createdAt" as const },
-    { label: "Crée par", key: "createdBy" as const },
+    { label: "Crée par", key: "createdBy" ,accessor:(row:any)=>row.createdBy?.fullname ?? "__" },
 ]
 
 export function DataTable({ data, date, setDate}:any) {

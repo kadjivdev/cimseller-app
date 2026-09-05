@@ -289,7 +289,7 @@ export default function UpdateProgrammationModal({ open, onOpenChange, programma
               <div className="mb-2">
                 <Label htmlFor="camionId">Choisissez un camion <span className="text-danger">*</span>  </Label>
                 <FilterSelect
-                  options={camions?.map((cm) => ({ id: cm.id, label: `${cm.immatriculation} - ${cm.libelle}` }))}
+                  options={camions?.map((cm) => ({ id: cm.id, label: `${cm.immatriculation}` }))}
                   handleSelect={handleCamionSelect}
                   selected={data?.camionId}
                 />

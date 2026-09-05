@@ -36,7 +36,7 @@ import { MyPagination } from "@/components/MyPagination"
 const exportColumns = [
     { label: "Immatriculation", key: "immatriculation" as const },
     { label: "Libelle", key: "libelle" as const },
-    { label: "Marque", key: "marque.name" as const },
+    { label: "Marque", key: "marque", accessor:(row:any)=>row.marque?.name??"—"},
     { label: "Crée le", key: "createdAt" as const },
 ]
 
@@ -117,7 +117,7 @@ export function DataTable({ data, setReload }:any) {
                             <TableActions
                                 data={data}
                                 columns={exportColumns}
-                                filename="utilisateurs"
+                                filename="camions"
                             />
                         </div>
                     </div>

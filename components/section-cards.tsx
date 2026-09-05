@@ -17,7 +17,7 @@ export function SectionCards({stats}:any) {
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Total Commandée</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+          <CardTitle className="text-warning text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {stats?.qteCommander?.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}
           </CardTitle>
           <CardAction>
@@ -41,7 +41,7 @@ export function SectionCards({stats}:any) {
        <Card className="@container/card">
         <CardHeader>
           <CardDescription>Total programmée</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+          <CardTitle className="text-warning text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {stats?.qteProgrammer?.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}
           </CardTitle>
           <CardAction>
@@ -63,7 +63,7 @@ export function SectionCards({stats}:any) {
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Total livrée</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+          <CardTitle className="text-warning text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {stats?.qteLivre?.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}
           </CardTitle>
           <CardAction>
@@ -87,7 +87,7 @@ export function SectionCards({stats}:any) {
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Total vendue</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+          <CardTitle className="text-warning text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {stats?.qteVendue?.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}
           </CardTitle>
           <CardAction>

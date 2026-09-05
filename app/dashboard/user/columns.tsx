@@ -51,7 +51,7 @@ export function useColumns(onEdit: (user: User) => void, onDelete: (user: User) 
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
+              <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-warning text-white">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -98,7 +98,7 @@ export function useColumns(onEdit: (user: User) => void, onDelete: (user: User) 
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => row.getValue("id") || "—",
+      cell: ({ row }) => row.index + 1,
     },
     {
       accessorKey: "fullname",

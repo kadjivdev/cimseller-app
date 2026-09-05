@@ -53,7 +53,7 @@ export default function TransfertProgrammationModal({ open, onOpenChange, progra
       programId: programmation?.id,
       zoneDest: programmation?.transferts?.at(-1)?.zoneDest || programmation?.zoneId,
       date: programmation?.transferts?.at(-1)?.date?.split("T")?.[0] || new Date().toISOString().split("T")?.[0],
-      qteReste: programmation?.transferts?.at(-1)?.qteReste || programmation?.qteProgrammer,
+      qteReste: programmation?.transferts?.at(-1)?.qteReste || programmation?.stock,
       observation: programmation?.transferts?.at(-1)?.observation || ''
     }))
 

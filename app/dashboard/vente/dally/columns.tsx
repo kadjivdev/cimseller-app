@@ -87,7 +87,7 @@ export function useColumns(): ColumnDef<Vente>[] {
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => {
-        return row.getValue("id") || "—"
+        return row.index + 1
       },
     },
     {

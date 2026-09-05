@@ -77,7 +77,7 @@ export function useColumns(onEdit: (reglement: Reglement) => void, onDelete: (re
           !reglement.validatedBy ?
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-dark text-white">
+                <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-warning text-white">
                   <span className="sr-only">Open menu</span>
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
@@ -141,7 +141,7 @@ export function useColumns(onEdit: (reglement: Reglement) => void, onDelete: (re
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => {
-        return row.getValue("id") || "—"
+        return row.index + 1
       },
     },
     {

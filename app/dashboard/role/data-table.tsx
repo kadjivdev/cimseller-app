@@ -31,6 +31,7 @@ import { ArrowLeft, ArrowRight, Settings2 } from "lucide-react"
 // modals
 import UpdateRoleModal from "./modal"
 import DeleteRoleModal from "./delete-modal"
+import { MyPagination } from "@/components/MyPagination"
 
 const exportColumns = [
     { label: "Nom", key: "name" as const },
@@ -186,50 +187,7 @@ export function DataTable({ data, setReload }:any) {
                     </div>
 
                     {/* ── Pagination avec numéros de page ── */}
-                <div className="flex items-center justify-between">
-                    <p className="text-sm text-muted-foreground">
-                        Page {currentPage} sur {pageCount}
-                    </p>
-                    <div className="flex items-center gap-1">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="rounded shadow-sm border"
-                            onClick={() => table.previousPage()}
-                            disabled={!table.getCanPreviousPage()}
-                        >
-                            <ArrowLeft />
-                        </Button>
-
-                        {pageNumbers.map((page, idx) =>
-                            page === "ellipsis" ? (
-                                <span key={`ellipsis-${idx}`} className="px-2 text-muted-foreground select-none">
-                                    …
-                                </span>
-                            ) : (
-                                <Button
-                                    key={page}
-                                    variant={page === currentPage ? "default" : "outline"}
-                                    size="sm"
-                                    className={`w-9 rounded border ${page===currentPage?'bg-dark text-white':''}`}
-                                    onClick={() => table.setPageIndex(page - 1)}
-                                >
-                                    {page}
-                                </Button>
-                            )
-                        )}
-
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="border rounded whadow-sm"
-                            onClick={() => table.nextPage()}
-                            disabled={!table.getCanNextPage()}
-                        >
-                            <ArrowRight />
-                        </Button>
-                    </div>
-                </div>
+                    <MyPagination table={table}/>
                 </div>
             </Card>
 
