@@ -1,7 +1,7 @@
 // next.config.ts
 const nextConfig = {
   experimental: {
-    webpackBuildWorker: true,
+    webpackBuildWorker: false,//true
   },
   turbopack: {
     root: __dirname, // 👈 force le bon répertoire
