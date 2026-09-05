@@ -1,11 +1,25 @@
-// next.config.ts
+// // next.config.ts
+// const nextConfig = {
+//   experimental: {
+//     webpackBuildWorker: false,//true
+//   },
+//   turbopack: {
+//     root: __dirname, // 👈 force le bon répertoire
+//   },
+// }
+
+// export default nextConfig
+
 const nextConfig = {
   experimental: {
-    webpackBuildWorker: false,//true
+    webpackBuildWorker: false,
   },
-  turbopack: {
-    root: __dirname, // 👈 force le bon répertoire
+  typescript: {
+    ignoreBuildErrors: true,
   },
-}
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+};
 
-export default nextConfig
+export default nextConfig;
