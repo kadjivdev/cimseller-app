@@ -114,7 +114,6 @@ export function useColumns(
                   {(programmation.qteLivre> programmation.qteProgrammer || programmation.qteLivre== programmation.qteProgrammer)?
                   <span className=""><Eye /> Détail livraison</span> :<span className=""><VanIcon /> Livrer</span> 
                 }</DropdownMenuItem>
-                
                 {/* transferer le bon  */}
                 {user.role?.id!=5 && // les vendeurs ne doivente pas transferer les bons
                 <DropdownMenuItem
