@@ -1,0 +1,375 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "onMatchHeaders": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/dashboard",
+      "regex": "^/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard(?:/)?$"
+    },
+    {
+      "page": "/dashboard/agent",
+      "regex": "^/dashboard/agent(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/agent(?:/)?$"
+    },
+    {
+      "page": "/dashboard/agent/create",
+      "regex": "^/dashboard/agent/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/agent/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/approvisionnement",
+      "regex": "^/dashboard/approvisionnement(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/approvisionnement(?:/)?$"
+    },
+    {
+      "page": "/dashboard/approvisionnement/create",
+      "regex": "^/dashboard/approvisionnement/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/approvisionnement/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/avaliseur",
+      "regex": "^/dashboard/avaliseur(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/avaliseur(?:/)?$"
+    },
+    {
+      "page": "/dashboard/avaliseur/create",
+      "regex": "^/dashboard/avaliseur/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/avaliseur/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/banque",
+      "regex": "^/dashboard/banque(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/banque(?:/)?$"
+    },
+    {
+      "page": "/dashboard/banque/create",
+      "regex": "^/dashboard/banque/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/banque/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/bon-commande",
+      "regex": "^/dashboard/bon\\-commande(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/bon\\-commande(?:/)?$"
+    },
+    {
+      "page": "/dashboard/bon-commande/accuses",
+      "regex": "^/dashboard/bon\\-commande/accuses(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/bon\\-commande/accuses(?:/)?$"
+    },
+    {
+      "page": "/dashboard/bon-commande/create",
+      "regex": "^/dashboard/bon\\-commande/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/bon\\-commande/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/bon-commande/recus",
+      "regex": "^/dashboard/bon\\-commande/recus(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/bon\\-commande/recus(?:/)?$"
+    },
+    {
+      "page": "/dashboard/camion",
+      "regex": "^/dashboard/camion(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/camion(?:/)?$"
+    },
+    {
+      "page": "/dashboard/camion/create",
+      "regex": "^/dashboard/camion/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/camion/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/chauffeur",
+      "regex": "^/dashboard/chauffeur(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/chauffeur(?:/)?$"
+    },
+    {
+      "page": "/dashboard/chauffeur/create",
+      "regex": "^/dashboard/chauffeur/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/chauffeur/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/client",
+      "regex": "^/dashboard/client(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/client(?:/)?$"
+    },
+    {
+      "page": "/dashboard/client/actif",
+      "regex": "^/dashboard/client/actif(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/client/actif(?:/)?$"
+    },
+    {
+      "page": "/dashboard/client/bef",
+      "regex": "^/dashboard/client/bef(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/client/bef(?:/)?$"
+    },
+    {
+      "page": "/dashboard/client/create",
+      "regex": "^/dashboard/client/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/client/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/client/inactif",
+      "regex": "^/dashboard/client/inactif(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/client/inactif(?:/)?$"
+    },
+    {
+      "page": "/dashboard/compte-bancaire",
+      "regex": "^/dashboard/compte\\-bancaire(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/compte\\-bancaire(?:/)?$"
+    },
+    {
+      "page": "/dashboard/compte-bancaire/create",
+      "regex": "^/dashboard/compte\\-bancaire/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/compte\\-bancaire/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/fournisseur",
+      "regex": "^/dashboard/fournisseur(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/fournisseur(?:/)?$"
+    },
+    {
+      "page": "/dashboard/fournisseur/create",
+      "regex": "^/dashboard/fournisseur/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/fournisseur/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/livraison",
+      "regex": "^/dashboard/livraison(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/livraison(?:/)?$"
+    },
+    {
+      "page": "/dashboard/permission",
+      "regex": "^/dashboard/permission(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/permission(?:/)?$"
+    },
+    {
+      "page": "/dashboard/produit",
+      "regex": "^/dashboard/produit(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/produit(?:/)?$"
+    },
+    {
+      "page": "/dashboard/produit/create",
+      "regex": "^/dashboard/produit/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/produit/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/profil",
+      "regex": "^/dashboard/profil(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/profil(?:/)?$"
+    },
+    {
+      "page": "/dashboard/programmation",
+      "regex": "^/dashboard/programmation(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/programmation(?:/)?$"
+    },
+    {
+      "page": "/dashboard/reglement",
+      "regex": "^/dashboard/reglement(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/reglement(?:/)?$"
+    },
+    {
+      "page": "/dashboard/reglement/create",
+      "regex": "^/dashboard/reglement/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/reglement/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/representant",
+      "regex": "^/dashboard/representant(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/representant(?:/)?$"
+    },
+    {
+      "page": "/dashboard/representant/create",
+      "regex": "^/dashboard/representant/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/representant/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/role",
+      "regex": "^/dashboard/role(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/role(?:/)?$"
+    },
+    {
+      "page": "/dashboard/role/create",
+      "regex": "^/dashboard/role/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/role/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/suivi-chauffeur",
+      "regex": "^/dashboard/suivi\\-chauffeur(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/suivi\\-chauffeur(?:/)?$"
+    },
+    {
+      "page": "/dashboard/suivi-sortie",
+      "regex": "^/dashboard/suivi\\-sortie(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/suivi\\-sortie(?:/)?$"
+    },
+    {
+      "page": "/dashboard/user",
+      "regex": "^/dashboard/user(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/user(?:/)?$"
+    },
+    {
+      "page": "/dashboard/user/create",
+      "regex": "^/dashboard/user/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/user/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/vente",
+      "regex": "^/dashboard/vente(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/vente(?:/)?$"
+    },
+    {
+      "page": "/dashboard/vente/a-traiter",
+      "regex": "^/dashboard/vente/a\\-traiter(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/vente/a\\-traiter(?:/)?$"
+    },
+    {
+      "page": "/dashboard/vente/comptabilized",
+      "regex": "^/dashboard/vente/comptabilized(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/vente/comptabilized(?:/)?$"
+    },
+    {
+      "page": "/dashboard/vente/dally",
+      "regex": "^/dashboard/vente/dally(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/vente/dally(?:/)?$"
+    },
+    {
+      "page": "/dashboard/vente/en-attente",
+      "regex": "^/dashboard/vente/en\\-attente(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/vente/en\\-attente(?:/)?$"
+    },
+    {
+      "page": "/dashboard/vente/no-comptabilized",
+      "regex": "^/dashboard/vente/no\\-comptabilized(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/vente/no\\-comptabilized(?:/)?$"
+    },
+    {
+      "page": "/dashboard/vente/traiter",
+      "regex": "^/dashboard/vente/traiter(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/vente/traiter(?:/)?$"
+    },
+    {
+      "page": "/dashboard/zone",
+      "regex": "^/dashboard/zone(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/zone(?:/)?$"
+    },
+    {
+      "page": "/dashboard/zone/create",
+      "regex": "^/dashboard/zone/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/zone/create(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

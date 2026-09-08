@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/dashboard/layout,_N_T_/dashboard/client/layout,_N_T_/dashboard/client/bef/layout,_N_T_/dashboard/client/bef/page,_N_T_/dashboard/client/bef"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/dashboard/client/bef/__PAGE__",
+    "/dashboard/client/bef",
+    "/dashboard/client",
+    "/dashboard",
+    "/_index",
+    "/_head"
+  ]
+}

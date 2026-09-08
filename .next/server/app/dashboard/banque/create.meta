@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/dashboard/layout,_N_T_/dashboard/banque/layout,_N_T_/dashboard/banque/create/layout,_N_T_/dashboard/banque/create/page,_N_T_/dashboard/banque/create"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/dashboard/banque/create/__PAGE__",
+    "/dashboard/banque/create",
+    "/dashboard/banque",
+    "/dashboard",
+    "/_index",
+    "/_head"
+  ]
+}

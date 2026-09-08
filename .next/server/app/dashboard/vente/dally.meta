@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/dashboard/layout,_N_T_/dashboard/vente/layout,_N_T_/dashboard/vente/dally/layout,_N_T_/dashboard/vente/dally/page,_N_T_/dashboard/vente/dally"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/dashboard/vente/dally/__PAGE__",
+    "/dashboard/vente/dally",
+    "/dashboard/vente",
+    "/dashboard",
+    "/_index",
+    "/_head"
+  ]
+}
