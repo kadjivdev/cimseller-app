@@ -15,7 +15,6 @@ import { PencilLine, Send, X } from "lucide-react";
 import { useEffect, useState } from "react"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { FilterSelect } from "@/myComponents/FilterSelect"
 
 export default function UpdateVenteModal({ open, onOpenChange, vente, setReload }) {
   const router = useRouter()
@@ -26,22 +25,30 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
   const [totaux, setTotaux] = useState({ priceHT: 0, priceAib: 0, priceTva: 0, priceTtc: 0, price118: 0, priceMarge: 0 })
 
   useEffect(() => {
+    if (!vente) return
+    setData((prev) => ({
+      ...prev,
+      usinePrice: vente?.unitePrice??0,
+      unitPriceTtc: vente?.unitePrice??0
+    }))
+  }, [])
+
+  useEffect(() => {
     if (!vente || !vente?.venteComptability) return
     console.log("Vente de useEffect :", vente)
 
-    let unitePrice = data.unitPriceTtc > 0 ?
-      data.unitPriceTtc : vente?.unitePrice
+    let unitePrice = data.unitPriceTtc 
 
     const unitPriceHT = unitePrice / 1.19
     const unitPriceAib = unitPriceHT / 100
     const unitPriceTva = unitPriceHT * 18 / 100
-    const unitPriceTtc = unitPriceHT + unitPriceAib + unitPriceTva
+    const unitPriceTtc = unitePrice//  unitPriceHT + unitPriceAib + unitPriceTva
 
     setData((prev) => ({
       ...prev,
       usinePrice: vente?.unitePrice,
       unitPriceHT, unitPriceAib, unitPriceTva, unitPriceTtc,
-      // unitPriceMarge:0
+      unitPriceMarge: unitPriceTtc - vente?.unitePrice
     }))
 
     setTotaux({
@@ -50,11 +57,11 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
       priceTva: unitPriceTva * vente?.qteTotal,
       priceTtc: unitPriceTtc * vente?.qteTotal,
       price118: unitPriceHT * 1.18,
-      priceMarge: data.unitPriceMarge * vente?.qteTotal,
+      priceMarge: (unitPriceTtc - vente?.unitePrice??0) * vente?.qteTotal,
     })
-    console.log("unitPriceMarge in data:", data.unitPriceMarge)
 
-  }, [vente, data.unitPriceTtc, data.unitPriceMarge])
+    console.log("unitPriceMarge in data:", data.unitPriceMarge)
+  }, [vente, data.unitPriceTtc])
 
   const handleChange = (e) => {
     e.preventDefault()
@@ -69,76 +76,6 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
   useEffect(() => {
     console.log("updated data :", data)
   }, [data])
-
-  function operation() {
-
-    // Récupérer les taux de TVA et de marge
-    const tauxHT = data.aib ?? 1.19;
-    const marge = data.marge;
-
-    // Calculer le prix HT à partir du prix usine TTC
-    const prixUsineHT = (data.usinePrice / tauxHT).toFixed(2);
-
-    // Calculer le prix avec marge
-    const prixMarge = parseFloat(prixUsineHT) + parseFloat(marge);
-
-
-    // Calculer le prix hors Taxe à partir du prix TTC
-
-    let prixHt = 0;
-
-    const PrixHTaib = (data.ttcPrice / data.aib).toFixed(2)
-
-    prixHt = PrixHTaib
-
-    console.log('Prix ht : ', prixHt);
-
-    // Calculer le prix bruite à partir du prix ht
-    const prixBruite = parseFloat(prixHt) * 1.18
-
-    // Calculer le prix net hors taxe à partir du prix hors taxe
-    const quantite = parseInt(vente?.qteTotal);
-
-    const prixNHT = parseFloat(prixHt) * quantite;
-
-    //Calculer TVA à partir du net hors taxe 
-    const prixTVA = parseInt(prixNHT * 0.18);
-
-    // Calculer le prix AIB
-    let prixAIBok = 0
-    let prixAIB = 0
-
-    if (data.aib == 1.23) {
-      prixAIB = parseFloat((prixNHT * 5) / 100);
-    }
-    if (data.aib == 1.19) {
-      prixAIB = parseFloat(prixNHT / 100);
-    }
-    if (data.aib == 1.18) {
-      prixAIB = 0;
-    }
-    prixAIBok = prixAIB
-
-    console.log('prixAIB', data.aib);
-    console.log('prixAIBok', prixAIBok);
-
-    //Calculer TTC 
-    const prixTTC = prixNHT + prixTVA + prixAIBok;
-
-    // Mettre à jour les éléments à l'écran
-    setTotaux((prev) => (
-      {
-        ...prev,
-        usinePrixHT: Number(prixUsineHT),
-        margePrice: Number(prixMarge.toFixed(2)),
-        htPrice: Number(prixHt),
-        bruitPrice: Number(prixBruite),
-        netHorsTaxe: Number(prixNHT.toFixed(2)),
-        tvaPrice: Number(prixTVA.toFixed(2)),
-        aibPrice: Number(prixAIBok.toFixed(2)),
-        prixTTC: Number(prixTTC.toFixed(2))
-      }), [])
-  }
 
   // submission
   const updateVenteForm = async (e) => {
@@ -271,6 +208,8 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
                     {errors?.unitPriceHT && <span className="text-danger">{errors?.unitPriceHT}</span>}
                   </div>
                 </div>
+              </div>
+              <div className="row">
                 <div className="col-md-12">
                   <div className="mb-2">
                     <Label htmlFor="unitPriceTtc">Prix TTC <span className="text-danger">*</span>  </Label>
@@ -279,10 +218,27 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
                       name="unitPriceTtc"
                       placeholder="Ex: 75000"
                       required
-                      min={1}
                       value={data.unitPriceTtc}
                       onChange={handleChange} />
                     {errors?.unitPriceTtc && <span className="text-danger">{errors?.unitPriceTtc}</span>}
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-12">
+                  <div className="mb-2">
+                    <Label htmlFor="unitPriceTva">AIB <span className="text-danger">*</span>  </Label>
+                    <Input id="unitPriceTva"
+                      type="number"
+                      name="unitPriceAib"
+                      placeholder="Ex: 18/100"
+                      required
+                      min={1}
+                      max={data?.unitPriceAib}
+                      value={data.unitPriceAib}
+                      readOnly
+                      onChange={handleChange} />
+                    {errors?.unitPriceAib && <span className="text-danger">{errors?.unitPriceAib}</span>}
                   </div>
                 </div>
                 <div className="col-md-12">
@@ -301,6 +257,8 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
                     {errors?.unitPriceTva && <span className="text-danger">{errors?.unitPriceTva}</span>}
                   </div>
                 </div>
+              </div>
+              <div className="row">
                 <div className="col-md-12">
                   <div className="mb-2">
                     <Label htmlFor="unitPriceMarge">Marge <span className="text-danger">*</span>  </Label>
@@ -309,6 +267,7 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
                       name="unitPriceMarge"
                       placeholder="Ex: 10000"
                       required
+                      readOnly
                       min={0}
                       value={data.unitPriceMarge}
                       onChange={handleChange} />
@@ -316,6 +275,7 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
                   </div>
                 </div>
               </div>
+
               <DialogFooter className="flex justify-content-center">
                 <Button className="shadow-sm rounded bg-dark text-white" variant="outline" onClick={(e) => { e.preventDefault(), onOpenChange(false) }}><X /> Annuler</Button>
                 <Button
@@ -358,7 +318,7 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
             </div>
           </div>
         </div>
-      </DialogContent>
+      </DialogContent >
     </Dialog >
   )
 }

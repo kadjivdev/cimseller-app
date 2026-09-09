@@ -125,7 +125,7 @@ export function useColumns(setOpen:any,setSelectedVente:any)
                 {/* modifier */}
                   <DropdownMenuItem
                     style={{ cursor: "pointer" }}
-                    className="bg-info text-white"
+                    className="bg-dark text-white"
                     onSelect={(e) => {
                       e.preventDefault()
                       onEdit(vente) // 👈 remonte juste de la vente
@@ -136,18 +136,6 @@ export function useColumns(setOpen:any,setSelectedVente:any)
               </DropdownMenuContent>
             </DropdownMenu> 
         )
-      },
-    },
-    {
-      accessorKey: "id",
-      header: ({ column }) => (
-        <Button className="w-100 rounded shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          N° <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      // ✅ Ajouter cell
-      cell: ({ row }) => {
-        return row.index + 1
       },
     },
     {
