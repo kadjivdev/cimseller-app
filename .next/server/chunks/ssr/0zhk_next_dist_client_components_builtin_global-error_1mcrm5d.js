@@ -1,3 +1,0 @@
-module.exports=[60188,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(1511);a.n(d("[project]/Desktop/cimseller-app/node_modules/next/dist/client/components/builtin/global-error.js <module evaluation>"))},6237,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(1511);a.n(d("[project]/Desktop/cimseller-app/node_modules/next/dist/client/components/builtin/global-error.js"))},20591,a=>{"use strict";a.i(60188);var b=a.i(6237);a.n(b)},65977,a=>{a.n(a.i(20591))}];
-
-//# sourceMappingURL=0zhk_next_dist_client_components_builtin_global-error_1mcrm5d.js.map
