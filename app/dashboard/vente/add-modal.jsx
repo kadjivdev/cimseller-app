@@ -161,7 +161,7 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
   // handle client payeur facture selection
   const handleClientSelect = (clientId) => {
     console.log("Le client selectionné :", clientId)
-    setData((prev) => ({ ...prev, clientId }))
+    setData((prev) => ({ ...prev, clientId, clientCommanderId: clientId }))
     setClient(clients?.find((cl) => cl.id == clientId))
   }
 
@@ -304,17 +304,7 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
                 {errors?.typeId && <span className="text-danger">{errors?.typeId}</span>}
               </div>
             </div>
-            <div className="col-md-6">
-              <div className="mb-2">
-                <Label htmlFor="clientCommanderId">Le Client commandeur <span className="text-danger">*</span>  </Label>
-                <FilterSelect
-                  options={clients?.map((cl) => ({ id: cl.id, label: `${cl.raison_sociale}` }))}
-                  handleSelect={handleClientCommanderSelect}
-                  selected={data?.clientCommanderId}
-                />
-                {errors?.clientCommanderId && <span className="text-danger">{errors?.clientCommanderId}</span>}
-              </div>
-            </div>
+
             <div className="col-md-6">
               <div className="mb-2">
                 <Label htmlFor="clientId">Le Client payeur <span className="text-danger">*</span>  </Label>
@@ -426,7 +416,7 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
                 <Textarea id="observation"
                   type="text"
                   name="observation"
-                  placeholder="Ex: Laissez un commanteire ici."
+                  placeholder="Ex: Laissez un commentaire ici."
                   value={data.observation}
                   onChange={handleChange} />
                 {errors?.observation && <span className="text-danger">{errors?.observation}</span>}

@@ -28,7 +28,7 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
     if (!vente) return
     setData((prev) => ({
       ...prev,
-      usinePrice: vente?.unitePrice??0,
+      usinePrice: vente?.usinePrice??0,
       unitPriceTtc: vente?.unitePrice??0
     }))
   }, [])
@@ -46,9 +46,9 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
 
     setData((prev) => ({
       ...prev,
-      usinePrice: vente?.unitePrice,
+      usinePrice: vente?.usinePrice??0,
       unitPriceHT, unitPriceAib, unitPriceTva, unitPriceTtc,
-      unitPriceMarge: unitPriceTtc - vente?.unitePrice
+      unitPriceMarge: unitPriceTtc - vente?.usinePrice
     }))
 
     setTotaux({
@@ -57,7 +57,7 @@ export default function UpdateVenteModal({ open, onOpenChange, vente, setReload 
       priceTva: unitPriceTva * vente?.qteTotal,
       priceTtc: unitPriceTtc * vente?.qteTotal,
       price118: unitPriceHT * 1.18,
-      priceMarge: (unitPriceTtc - vente?.unitePrice??0) * vente?.qteTotal,
+      priceMarge: (unitPriceTtc - vente?.usinePrice??0) * vente?.qteTotal,
     })
 
     console.log("unitPriceMarge in data:", data.unitPriceMarge)

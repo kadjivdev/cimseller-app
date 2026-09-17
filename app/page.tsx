@@ -31,7 +31,7 @@ export default function Home() {
       <Toaster position="top-right" />
       <div className="container-fluid">
         <div className="row">
-          <div className="col-md-8 col-sm-6 bg-dark min-h-screen flex flex-col items-center justify-center">
+          <div className=" col-md-8 col-sm-6 bg-dark min-h-screen flex flex-col items-center justify-center">
             <img
               className="img-fluid"
               width={500}

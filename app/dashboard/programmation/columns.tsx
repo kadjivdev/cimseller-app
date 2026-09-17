@@ -51,6 +51,7 @@ export type Programmation = {
   dateProgrammation: string
   qteProgrammer: Number
   qteLivre: Number
+  stock: Number
   qteVendue: Number
   bl: string
   imprimer: Boolean
@@ -83,8 +84,10 @@ export function useColumns(
       ),
       cell: ({ row }) => {
         const programmation = row.original
+        const isStockExiste = Number(programmation?.stock) > 0
+
         return (
-          (!programmation.validatedBy && programmation.statut?.id!=2) ?
+          (isStockExiste && programmation.statut?.id!=2) ?
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0 shadow-sm rounded bg-warning text-white">
@@ -98,7 +101,7 @@ export function useColumns(
                 <DropdownMenuSeparator />
 
                 {/* modifier */}
-                {(!programmation.validatedBy && isPermittedTo("programmation.edit")) &&
+                {(isStockExiste && isPermittedTo("programmation.edit")) && programmation.statut?.id!=2 &&
                   <DropdownMenuItem
                     style={{ cursor: "pointer" }}
                     className="text-warning"
@@ -111,8 +114,8 @@ export function useColumns(
                   </DropdownMenuItem>
                 }
                 
-                {/* valider */}
-                {((!programmation.validatedBy && isPermittedTo("programmation.edit")) && programmation.statut?.id!=2) &&
+                {/* annuler */}
+                {((programmation.statut?.id!=2 && isPermittedTo("programmation.edit"))) &&
                   <DropdownMenuItem
                     style={{ cursor: "pointer" }}
                     className="text-info"
@@ -126,7 +129,7 @@ export function useColumns(
                 }
 
                 {/* suppression */}
-                {(!programmation.validatedBy && isPermittedTo("programmation.delete")) &&
+                {(!programmation.validatedBy && isPermittedTo("programmation.delete")) && programmation.statut?.id!=2 &&
                   <DropdownMenuItem
                     style={{ cursor: "pointer" }}
                     className="text-danger"

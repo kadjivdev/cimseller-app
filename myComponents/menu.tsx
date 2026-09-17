@@ -7,11 +7,9 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import routes from "@/app/routes"
 import { useEffect, useState } from "react"
 import { useApp } from "@/app/AppContext"
-// import NavLink from "@/components/NavLink"
 import Link from "next/link"
 
 type FileTreeItem = { name: string, url: String, icon: Object } | { name: string; items: FileTreeItem[] }
@@ -23,8 +21,6 @@ export function Menu() {
   });
 
   const {user} = useApp()
-
-  console.log("Menu user :",user)
 
   const isPermittedTo = (name:string)=>{
     return user?.role?.permissions?.some((pr:any)=>pr.name==name)
@@ -541,11 +537,6 @@ isPermittedTo('zone.view'))?[
   return (
     <Card className="gap-2 overflow-y-auto max-h-[90vh]" size="sm">
       <CardHeader>
-        {/* <Tabs defaultValue="explorer">
-          <TabsList className="w-full">
-            <TabsTrigger value="explorer"><SquareMenu /> Menu</TabsTrigger>
-          </TabsList>
-        </Tabs> */}
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-1">

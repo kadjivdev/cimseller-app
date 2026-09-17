@@ -1,4 +1,3 @@
-// components/RouteLoadingToast.jsx
 "use client"
 
 import { usePathname } from "next/navigation"
@@ -8,46 +7,49 @@ import { toast } from "sonner"
 export default function RouteLoadingToast() {
   const pathname = usePathname()
   const toastIdRef = useRef(null)
-  const timeoutRef = useRef(null)
+  const showTimerRef = useRef(null)
+  const safetyTimerRef = useRef(null)
 
-  const dismiss = () => {
-    if (toastIdRef.current) {
-      toast.dismiss(toastIdRef.current)
-      toastIdRef.current = null
-    }
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-      timeoutRef.current = null
-    }
+  const clear = () => {
+    if (showTimerRef.current) { clearTimeout(showTimerRef.current); showTimerRef.current = null }
+    if (safetyTimerRef.current) { clearTimeout(safetyTimerRef.current); safetyTimerRef.current = null }
+    if (toastIdRef.current) { toast.dismiss(toastIdRef.current); toastIdRef.current = null }
   }
 
   useEffect(() => {
     const handleClick = (e) => {
-      const anchor = e.target.closest('a')
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+
+      const target = e.target
+      if (!(target instanceof Element)) return
+      const anchor = target.closest("a")
       if (!anchor) return
-      const href = anchor.getAttribute('href')
-      if (!href || href.startsWith('http') || href.startsWith('#')) return
 
-      dismiss() // ferme un toast précédent s'il traîne encore
+      const href = anchor.getAttribute("href")
+      if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return
+      if (anchor.hasAttribute("download")) return
+      if (anchor.target && anchor.target !== "_self") return
 
-      toastIdRef.current = toast.loading("Chargement de la page ...")
+      const url = new URL(anchor.href, window.location.href)
+      if (url.origin !== window.location.origin) return
+      if (url.pathname === window.location.pathname) return
 
-      timeoutRef.current = setTimeout(() => {
-        dismiss() // filet de sécurité
-      }, 4000)
+      clear()
+      // petit délai : pas de flash sur les navigations instantanées
+      showTimerRef.current = setTimeout(() => {
+        toastIdRef.current = toast.loading("Chargement de la page ...")
+      }, 150)
+      safetyTimerRef.current = setTimeout(clear, 8000)
     }
 
-    document.addEventListener('click', handleClick)
+    document.addEventListener("click", handleClick, true) // ← capture
     return () => {
-      document.removeEventListener('click', handleClick)
-      dismiss() // ✅ nettoyage si le composant se démonte
+      document.removeEventListener("click", handleClick, true)
+      clear()
     }
   }, [])
 
-  // fermeture normale dès que la route change réellement
-  useEffect(() => {
-    dismiss()
-  }, [pathname])
+  useEffect(() => { clear() }, [pathname])
 
   return null
 }

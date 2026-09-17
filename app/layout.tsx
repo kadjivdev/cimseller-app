@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import type { ReactNode } from "react"
+import { Suspense, type ReactNode } from "react"
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { AppProvider } from "./AppContext"
+import RouteLoadingToast from "@/components/NavLink"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,12 +26,14 @@ export default function RootLayout({ children}: Readonly<{children: ReactNode}>)
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <AppProvider>
           <TooltipProvider>
             <Toaster position="top-right" />
+            <Suspense fallback={null}>
+              <RouteLoadingToast />
+            </Suspense>
             {children}
           </TooltipProvider>
         </AppProvider>

@@ -170,6 +170,10 @@ export default function TransfertProgrammationModal({ open, onOpenChange, progra
                     <span className="mx-1 badge bg-light text-dark border rounded">
                       {transfert?.zoneDestination?.name}
                     </span>
+                    Qte:
+                    <span className="mx-1 badge bg-light text-dark border rounded">
+                      {transfert?.qteReste}
+                    </span>
                   </div>
                 ))}
               </div>

@@ -54,7 +54,8 @@ export default function DeliveryProgrammationModal({ open, onOpenChange, program
     e.preventDefault()
     let { value, checked, files, type, name, max } = e.target
 
-    if (name == "qteLivre" && value > max) {
+    console.log("Value :",Number(value),"max :",Number(max))
+    if (name == "qteLivre" && Number(value) > Number(max)) {
       toast.error(`Le stock maximum est de ${max} Tonne(s)`)
       setData((prev) => ({
         ...prev, qteLivre: max
