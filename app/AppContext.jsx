@@ -69,32 +69,45 @@ export const AppProvider = ({ children }) => {
 
     // Logout
     const logout = useCallback(async () => {
+        let response;
+        let logoutError;
+
         try {
-            const response = await axiosInstance.post(apiRoutes.logout);
+            response = await axiosInstance.post(apiRoutes.logout);
+        } catch (error) {
+            logoutError = error;
+        }
+
+        let cookieCleanupError;
+        try {
+            const cleanupResponse = await fetch("/api/auth/logout", {
+                method: "POST",
+                cache: "no-store",
+            });
+            if (!cleanupResponse.ok) {
+                throw new Error("Impossible de supprimer les cookies de session");
+            }
+        } catch (error) {
+            cookieCleanupError = error;
+        } finally {
             setUser(null);
             setIsAuthenticated(false);
-            window.localStorage.removeItem("user")
-
-            // Les cookies d'auth doivent être créés avec HttpOnly=false côté API.
-            for (const cookieName of ["access_token", "refresh_token"]) {
-                document.cookie = `${cookieName}=; Max-Age=0; path=/; SameSite=Lax`;
-            }
-
-            return { success: true, status: response.status, message: response.message };
-        } catch (error) {
-            let errorStatus = error.response?.status;
-            let errorMessage = '';
-
-            if (errorStatus === 500) {
-                errorMessage = error || 'Erreur côté serveur';
-            } else if (errorStatus === 401) {
-                errorMessage = 'Vous n\'êtes pas connexté.e!';
-            } else {
-                errorMessage = error || 'Erreur de déconnexion';
-            }
-
-            throw new Error(errorMessage)
+            window.localStorage.removeItem("user");
         }
+
+        if (logoutError) {
+            const errorStatus = logoutError.response?.status;
+            const errorMessage = errorStatus === 401
+                ? "Vous n'êtes pas connecté.e!"
+                : logoutError.response?.data?.message || "Erreur de déconnexion";
+            throw new Error(errorMessage);
+        }
+
+        if (cookieCleanupError) {
+            throw new Error("La session locale n'a pas pu être supprimée");
+        }
+
+        return { success: true, status: response.status, message: response.data?.message };
     }, []);
 
     // Register
