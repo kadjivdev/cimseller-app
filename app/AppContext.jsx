@@ -74,6 +74,12 @@ export const AppProvider = ({ children }) => {
             setUser(null);
             setIsAuthenticated(false);
             window.localStorage.removeItem("user")
+
+            // Les cookies d'auth doivent être créés avec HttpOnly=false côté API.
+            for (const cookieName of ["access_token", "refresh_token"]) {
+                document.cookie = `${cookieName}=; Max-Age=0; path=/; SameSite=Lax`;
+            }
+
             return { success: true, status: response.status, message: response.message };
         } catch (error) {
             let errorStatus = error.response?.status;
