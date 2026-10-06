@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export type Client = {
   id: number
+  oldId: number
   zone: {
     id: Number
     name: String
@@ -98,7 +99,7 @@ export function useColumns(
       },
     },
     {
-      accessorKey: "id",
+      accessorKey: "number",
       header: ({ column }) => (
         <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           N° <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -106,6 +107,26 @@ export function useColumns(
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => row.index + 1,
+    },
+    {
+      accessorKey: "id",
+      header: ({ column }) => (
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          ID <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.original.id || "—",
+    },
+    {
+      accessorKey: "oldId",
+      header: ({ column }) => (
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Old Id <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => row.original.oldId || "—",
     },
     {
       accessorKey: "raison_sociale",
@@ -182,6 +203,16 @@ export function useColumns(
           ><ListOrdered /></button>
         </>
       },
+    },
+    {
+      accessorKey: "oldSolde",
+      header: ({ column }) => (
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Ancien solde <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge bg-light text-success text-lg border">{(Number(row.getValue('oldSolde'))).toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || "—"}</span>,
     },
     {
       accessorKey: "solde",
