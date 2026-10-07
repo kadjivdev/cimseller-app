@@ -67,47 +67,52 @@ export const AppProvider = ({ children }) => {
         }
     }, []);
 
-    // Logout
+    // Supprime un cookie côté navigateur
+    const deleteCookie = (name) => {
+        const base = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0`;
+        // Même path que celui de la création (souvent "/")
+        document.cookie = `${base}; path=/`;
+        // Si le cookie a été créé avec un domain précis, supprime-le aussi avec ce domain
+        // document.cookie = `${base}; path=/; domain=.mondomaine.com`;
+    };
+
+    const clearAllCookies = () => {
+        document.cookie
+            .split(";")
+            .map((c) => c.split("=")[0].trim())
+            .filter(Boolean)
+            .forEach(deleteCookie);
+    };
+
     const logout = useCallback(async () => {
-        let response;
-        let logoutError;
+        let backendError = null;
+        let message;
 
+        // 1. Invalider la session côté API (avant de supprimer les cookies,
+        //    car l'API a besoin du cookie/token pour t'identifier)
         try {
-            response = await axiosInstance.post(apiRoutes.logout);
+            const response = await axiosInstance.post(apiRoutes.logout);
+            message = response.data?.message;
         } catch (error) {
-            logoutError = error;
+            backendError = error;
         }
 
-        let cookieCleanupError;
+        // 2. Nettoyage local : toujours exécuté, quoi qu'il arrive avant
+        clearAllCookies();
+        setUser(null);
+        setIsAuthenticated(false);
         try {
-            const cleanupResponse = await fetch("/api/auth/logout", {
-                method: "POST",
-                cache: "no-store",
-            });
-            if (!cleanupResponse.ok) {
-                throw new Error("Impossible de supprimer les cookies de session");
-            }
-        } catch (error) {
-            cookieCleanupError = error;
-        } finally {
-            setUser(null);
-            setIsAuthenticated(false);
             window.localStorage.removeItem("user");
+        } catch (error) {
+            console.warn("Impossible de vider le localStorage", error);
         }
 
-        if (logoutError) {
-            const errorStatus = logoutError.response?.status;
-            const errorMessage = errorStatus === 401
-                ? "Vous n'êtes pas connecté.e!"
-                : logoutError.response?.data?.message || "Erreur de déconnexion";
-            throw new Error(errorMessage);
+        // 3. Erreurs : un 401 signifie session déjà expirée, donc utilisateur bien déconnecté
+        if (backendError && backendError.response?.status !== 401) {
+            throw new Error(backendError.response?.data?.message || "Erreur de déconnexion");
         }
 
-        if (cookieCleanupError) {
-            throw new Error("La session locale n'a pas pu être supprimée");
-        }
-
-        return { success: true, status: response.status, message: response.data?.message };
+        return { success: true, message: message ?? "Déconnecté" };
     }, []);
 
     // Register
