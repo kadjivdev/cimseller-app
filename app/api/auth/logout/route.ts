@@ -4,7 +4,7 @@ const cookieNames = ["access_token", "refresh_token"];
 
 export async function POST() {
     const response = new NextResponse(null, { status: 204 });
-    const cookieDomain = process.env.AUTH_COOKIE_DOMAIN;
+    const cookieDomain = process.env.AUTH_COOKIE_DOMAIN || ".kadjivsarl.com";
     const cookieOptions = {
         value: "",
         maxAge: 0,
@@ -20,6 +20,8 @@ export async function POST() {
             response.cookies.set({ name, ...cookieOptions, domain: cookieDomain });
         }
     }
+
+    console.log("Cookies cleared:", cookieNames.join(", "));
 
     return response;
 }
