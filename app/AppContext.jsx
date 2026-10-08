@@ -6,6 +6,32 @@ import apiRoutes from "@/api/routes"
 
 export const AppContext = createContext();
 
+const SESSION_COOKIES = ["access_token", "refresh_token"];
+
+// Supprime un cookie quel que soit son domain (host-only ou domaine parent)
+const deleteCookie = (name) => {
+    const isHttps = window.location.protocol === "https:";
+    const parts = window.location.hostname.split(".");
+
+    // front.cimseller.kadjivsarl.com -> [host-only, front.cimseller..., .front.cimseller...,
+    //                                    cimseller.kadjivsarl.com, .cimseller..., kadjivsarl.com, .kadjivsarl.com]
+    const domains = [null];
+    for (let i = 0; i < parts.length - 1; i++) {
+        const d = parts.slice(i).join(".");
+        domains.push(d, `.${d}`);
+    }
+
+    const expired =
+        `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0; path=/` +
+        (isHttps ? "; secure; samesite=none" : "");
+
+    domains.forEach((d) => {
+        document.cookie = d ? `${expired}; domain=${d}` : expired;
+    });
+};
+
+const clearSessionCookies = () => SESSION_COOKIES.forEach(deleteCookie);
+
 export const AppProvider = ({ children }) => {
 
     const [user, setUser] = useState(null);
@@ -67,23 +93,6 @@ export const AppProvider = ({ children }) => {
         }
     }, []);
 
-    // Supprime un cookie côté navigateur
-    const deleteCookie = (name) => {
-        const base = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0`;
-        // Même path que celui de la création (souvent "/")
-        document.cookie = `${base}; path=/`;
-        // Si le cookie a été créé avec un domain précis, supprime-le aussi avec ce domain
-        // document.cookie = `${base}; path=/; domain=.mondomaine.com`;
-    };
-
-    const clearAllCookies = () => {
-        document.cookie
-            .split(";")
-            .map((c) => c.split("=")[0].trim())
-            .filter(Boolean)
-            .forEach(deleteCookie);
-    };
-
     const logout = useCallback(async () => {
         let backendError = null;
         let message;
@@ -98,7 +107,7 @@ export const AppProvider = ({ children }) => {
         }
 
         // 2. Nettoyage local : toujours exécuté, quoi qu'il arrive avant
-        clearAllCookies();
+        clearSessionCookies();
         setUser(null);
         setIsAuthenticated(false);
         try {
