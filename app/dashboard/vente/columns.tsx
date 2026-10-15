@@ -40,6 +40,7 @@ export type Vente = {
     id: Number,
     name: String,
   }
+  filleuls:String,
   statut: {
     id: Number,
     name: String,
@@ -252,6 +253,16 @@ export function useColumns(
       ),
       // ✅ Ajouter cell
       cell: ({ row }) => <span className="badge border text-dark">{`${row.original?.client?.raison_sociale}` || "—"}</span>,
+    },
+    {
+      accessorKey: "filleuls",
+      header: ({ column }) => (
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Filleuls <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => <span className="badge border text-dark">{`${row.original.filleuls || "—"}`}</span>,
     },
     {
       accessorKey: "unitePrice",

@@ -12,19 +12,17 @@ import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 import axiosInstance from "@/api/axios"
 import apiRoutes from "@/api/routes"
-import { useRouter } from "next/navigation"
-import routes from "@/app/routes"
-import { PencilLine, ShoppingCart, SquareArrowRightEnter, Trash2, X } from "lucide-react";
+import { ShoppingCart, SquareArrowRightEnter, X } from "lucide-react";
 import { Field, FieldLabel } from "@/components/ui/field"
 import { FilterSelect } from "@/myComponents/FilterSelect";
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 
 export default function AddVenteModal({ open, onOpenChange, programmation, handleProgrammationSelect }) {
-  const router = useRouter()
 
-  const [data, setData] = useState({ programmationId: "", typeId: '', typeFactureVenteId: '', clientCommanderId: '', clientd: '', date: '', unitePrice: '', qteTotal: '', remise: 0, transport: 0, montant: '', destination: '', preuve: '', observation: '' })
+  const [data, setData] = useState({ programmationId: "", typeId: '', typeFactureVenteId: '', clientCommanderId: '', clientd: '', date: '', unitePrice: '', qteTotal: '', remise: 0, transport: 0, montant: '', destination: '', preuve: '', observation: '', name: '', ifu: '' })
   const [errors, setErrors] = useState({ typeId: '', typeFactureVenteId: '', clientCommanderId: '', clientd: '', date: '', unitePrice: '', qteTotal: '', remise: '', transport: '', destination: '', preuve: '', observation: '' })
+  const [isClientBuyer, setIsClientBuyer] = useState(false)
 
   // const [activeButton,setActiveButton] = useState(false)
 
@@ -150,12 +148,6 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
   const handleTypeFactureSelect = (typeFactureVenteId) => {
     console.log("Le type selectionné :", typeFactureVenteId)
     setData((prev) => ({ ...prev, typeFactureVenteId }))
-  }
-
-  // handle client commandeur facture selection
-  const handleClientCommanderSelect = (clientCommanderId) => {
-    console.log("Le client commandeur selectionné :", clientCommanderId)
-    setData((prev) => ({ ...prev, clientCommanderId }))
   }
 
   // handle client payeur facture selection
@@ -307,7 +299,7 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
 
             <div className="col-md-6">
               <div className="mb-2">
-                <Label htmlFor="clientId">Le Client payeur <span className="text-danger">*</span>  </Label>
+                <Label htmlFor="clientId">Le Client <span className="text-danger">*</span>  </Label>
                 <FilterSelect
                   options={clients?.map((cl) => ({ id: cl.id, label: `${cl.raison_sociale} | Solde : ${cl.solde?.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) || 0.00}` }))}
                   handleSelect={handleClientSelect}
@@ -316,6 +308,45 @@ export default function AddVenteModal({ open, onOpenChange, programmation, handl
                 {errors?.clientId && <span className="text-danger">{errors?.clientId}</span>}
               </div>
             </div>
+
+            <div className="col-md-6">
+              <div className="mb-2">
+                <Label htmlFor="#">Le Client payeur <span className="text-danger">*</span>  </Label>
+                <FilterSelect
+                  options={[{ id: 1, label: "Lui même" }, { id: 2, label: "Autre personne" }]}
+                  handleSelect={(value) => {
+                    value == 2 ?
+                      setIsClientBuyer(true) : setIsClientBuyer(false)
+                  }}
+                />
+              </div>
+            </div>
+
+            {isClientBuyer &&
+              <div className="col-md-12 d-flex justify-content-around">
+                <div className="mb-2">
+                  <Label htmlFor="name">Nom & Prénom <span className="text-danger">*</span>  </Label>
+                  <Input id="name"
+                    type="string"
+                    name="name"
+                    placeholder="Ex: GOGO Christian"
+                    required
+                    value={data.name}
+                    onChange={handleChange} />
+                </div>
+                <div className="mb-2">
+                  <Label htmlFor="ifu">Ifu <span className="text-danger">*</span>  </Label>
+                  <Input id="ifu"
+                    type="string"
+                    name="ifu"
+                    placeholder="Ex: 131516181910"
+                    required
+                    value={data.ifu}
+                    onChange={handleChange} />
+                </div>
+              </div>
+            }
+
             <div className="col-md-6">
               <div className="mb-2">
                 <Label htmlFor="typeFactureVenteId">Type de facture de vente <span className="text-danger">*</span>  </Label>

@@ -1,27 +1,15 @@
 'use client'
 
 import DashboardLayourt from "@/app/dashboard/dashboardLoyourt";
-import { Spinner } from "@/components/ui/spinner";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import axiosInstance from "@/api/axios";
-import axios from "axios";
 import apiRoutes from "@/api/routes";
 import routes from "@/app/routes";
-import { List, MessageSquarePlus, Users } from 'lucide-react';
+import { MessageSquarePlus, Users } from 'lucide-react';
 
-import { columns } from "./columns"
 import { DataTable } from "./data-table"
 
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
 import Link from "next/link";
 import { useApp } from "@/app/AppContext"
 
