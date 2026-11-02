@@ -2,7 +2,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowRight, ArrowUpDown, CircleCheckBig, Eye, FileText, MoreHorizontal, VanIcon, X } from "lucide-react"
+import { ArrowRight, ArrowUpDown, CircleCheckBig, DoorClosed, DoorOpen, Eye, FileText, MoreHorizontal, VanIcon, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenuSeparator,
@@ -58,6 +58,7 @@ export type Programmation = {
   bl: string
   preuve: String
   imprimer: Boolean
+  closed: Boolean
   transfert:Boolean
   livraisonComment: String
   date: String
@@ -77,7 +78,6 @@ export function useColumns(
   }
 
   return [
-    
     {
       id: "actions",
       header: ({ column }) => (
@@ -87,6 +87,22 @@ export function useColumns(
       ),
       cell: ({ row }) => {
         const programmation = row.original
+        const {qteLivre,qteProgrammer} = programmation
+
+        const showTransfert = () => {
+          if(user.role?.id == 5) return false; // les vendeurs ne doivent pas transferer les bons
+
+          if ((Number(qteLivre) === 0 || !qteLivre)) {
+            return true;
+          }
+
+          if(Number(qteLivre) == Number(qteProgrammer)) return false; // si la quantité livrée est égale à la quantité programmée, ne pas afficher le transfert
+
+          return Number(qteLivre) > 0 && Number(qteLivre) < Number(qteProgrammer) && programmation.closed
+        };
+
+        console.log("showTransfert", showTransfert(), programmation.closed, user.role?.id!=5)
+
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -103,19 +119,22 @@ export function useColumns(
               {/* livrer le bon */}
               {isPermittedTo("programmation.edit") &&
               <>
-                <DropdownMenuItem
-                  style={{ cursor: "pointer" }}
-                  className="text-success"
-                  onSelect={(e) => {
-                    e.preventDefault()
-                    onDelivery(programmation) // 👈 remonte juste du bon
-                  }}
-                >
-                  {(programmation.qteLivre> programmation.qteProgrammer || programmation.qteLivre== programmation.qteProgrammer)?
-                  <span className=""><Eye /> Détail livraison</span> :<span className=""><VanIcon /> Livrer</span> 
-                }</DropdownMenuItem>
+                {!programmation.closed && 
+                  <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-success"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      onDelivery(programmation) // 👈 remonte juste du bon
+                    }}
+                  >
+                    {(programmation.qteLivre> programmation.qteProgrammer || programmation.qteLivre== programmation.qteProgrammer)?
+                    <span className=""><Eye /> Détail livraison</span> :<span className=""><VanIcon /> Livrer</span> 
+                  }</DropdownMenuItem>
+                }
+
                 {/* transferer le bon  */}
-                {user.role?.id!=5 && // les vendeurs ne doivente pas transferer les bons
+                {showTransfert() &&
                 <DropdownMenuItem
                     style={{ cursor: "pointer" }}
                     className="text-warning"
@@ -128,6 +147,22 @@ export function useColumns(
                       programmation?.transfert?
                       <><Eye /> Voir le transfert </>:
                       <><ArrowRight /> Transferer </>
+                    }
+                </DropdownMenuItem>
+                }
+
+                {/* cloture le bon  */}
+                {Number(qteLivre)>0 && user.role?.id==5 && !programmation.closed && // seuls les vendeurs peuvent cloturer les bons
+                <DropdownMenuItem
+                    style={{ cursor: "pointer" }}
+                    className="text-warning"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      onClose(programmation) // 👈 remonte juste du bon
+                    }}
+                  >
+                    {
+                      <><DoorClosed /> Clôturer </>
                     }
                 </DropdownMenuItem>
                 }
@@ -280,7 +315,7 @@ export function useColumns(
         </Button>
       ),
       // ✅ Ajouter cell
-      cell: ({ row }) => <Textarea placeholder={row.getValue("livraisonComment") || '---'} />,
+      cell: ({ row }) => <Textarea rows={1} className="field-sizing-fixed h-10 min-h-0 resize-none" placeholder={row.getValue("livraisonComment") || '---'} />,
     },
     {
       accessorKey: "zone",
@@ -308,6 +343,34 @@ export function useColumns(
             <span className="badge shadow-sm rounded border text-dark">{row.original?.preuve && <Link target="_blank" href={row.original?.preuve as string}><FileText className="text-dark" /> </Link>}</span>
           </>
           )
+      }
+    },
+    {
+      accessorKey: "closed",
+      header: ({ column }) => (
+        <Button className="w-100 rounded border shadow-sm" variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Clôturée <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      // ✅ Ajouter cell
+      cell: ({ row }) => {
+        let closed = row.original?.closed
+        let icon = closed? <DoorClosed/>: <DoorOpen/>;
+        let classText = closed? 'bg-success': 'bg-dark';
+        
+        return <>
+          <span className={`flex items-center gap-1 whitespace-nowrap badge border ${classText}`}>
+            <span className="[&>svg]:size-3">{icon}</span>
+          </span>
+          {row.original?.closed ?
+            <span className="flex badge bg-success text-white">
+            Clôturée
+          </span>:
+          <span className="flex badge bg-light text-dark">
+            Non Clôturée
+          </span>
+          }
+        </>
       }
     },
     {

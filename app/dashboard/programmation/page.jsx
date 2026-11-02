@@ -79,7 +79,7 @@ export default function index() {
             {
                 loading: 'Chargement du bon de commande ...',
                 success: (res) => {
-                    console.log("Le bon :", res.data)
+                    console.log("Bon programmations :", res.data?.programmations)
                     setSelectedBon(res.data)
                     setProgrammations(res.data?.programmations || [])
                     return 'Bon chargé avec succès!'

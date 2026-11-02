@@ -158,7 +158,6 @@ export const AppProvider = ({ children }) => {
         </AppContext.Provider>
     );
 };
-
 export const useApp = () => {
     const context = React.useContext(AppContext);
     if (!context) {

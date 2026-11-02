@@ -68,16 +68,19 @@ export function DataTable({ data, date, setDate, handleBonSelect }:any) {
 
     // 
     const handleDelivery = (programmation: Programmation) => {
+        console.log("handleDelivery called")
         setSelectedProgrammation(programmation)
         setOpenDelivery(true)
     }
 
     const handleTransfer = (programmation: Programmation) => {
+        console.log("handleTransfer called")
         setSelectedProgrammation(programmation)
         setOpenTransfer(true)
     }
 
     const handleClose = (programmation: Programmation) => {
+        console.log("handleClose called")
         setSelectedProgrammation(programmation)
         setOpenClose(true)
     }
@@ -96,7 +99,6 @@ export function DataTable({ data, date, setDate, handleBonSelect }:any) {
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-
 
     return (
         <>
@@ -216,7 +218,6 @@ export function DataTable({ data, date, setDate, handleBonSelect }:any) {
                 programmation={selectedProgrammation}
                 handleBonSelect={handleBonSelect}
             />
-
         </>
     )
 }

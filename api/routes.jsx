@@ -40,7 +40,7 @@ const apiRoutes = {
   allCommandeTypes: `commandes-types`,
   allCommandeStatus: `commandes-status`,
 
-  
+
   // commande's routes
   allCommande: `commandes`,
   createCommande: `commandes`,
@@ -76,7 +76,8 @@ const apiRoutes = {
   actualiseProgrammation: `programmations/actualise`,
   transfertProgrammation: `programmations/transfert`,
   livraisonProgrammation: `programmations/livraison`,
-  annulerProgrammation:`programmations/annuler`,
+  annulerProgrammation: `programmations/annuler`,
+  cloturerProgrammation: (id)=> `programmations/cloturer/${id}`,
   updateProgrammation: (id) => (`programmations/${id}`),
   validateProgrammation: (id) => (`programmations/${id}`),
   retrieveProgrammation: (id) => (`programmations/${id}`),
